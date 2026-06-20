@@ -43,23 +43,48 @@ export default function OnboardingFlow({ onComplete }) {
   async function completeOnboarding() {
     setLoading(true)
     try {
-      const { data: authData } = await supabase.auth.signInWithOtp({
-        email,
-        options: { emailRedirectTo: APP_URL, shouldCreateUser: true },
-      })
-      const allGroups = [stage, ...selectedGroups]
-      const newUser = {
-        email, name, stage,
-        isPremium: false, isCreator: false, accountType: 'rebuilder',
-        streak: 0, lastCheckIn: null,
-        joinDate: new Date().toISOString(),
-        location, groups: allGroups,
-        milestonesCompleted: {},
+      const password = Array.from(crypto.getRandomValues(new Uint8Array(16)))
+        .map(b => b.toString(16).padStart(2, '0')).join('')
+
+      const { data, error } = await supabase.auth.signUp({ email, password })
+      if (error && error.code !== 'user_already_exists') throw error
+      if (error?.code === 'user_already_exists') {
+        const stored = localStorage.getItem('rs_pwd')
+        if (!stored) throw new Error('An account with this email already exists. Please use a different email.')
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email, password: stored })
+        if (signInError) throw new Error('An account with this email already exists. Please use a different email.')
+        Object.assign(data, signInData)
       }
-      localStorage.setItem('rs_user', JSON.stringify(newUser))
-      localStorage.setItem('rs_habits', JSON.stringify(STARTER_HABITS))
-      // Supabase upsert will happen via syncUser after onComplete
-      onComplete(newUser, STARTER_HABITS)
+
+      const userId = data.user.id
+      const allGroups = [stage, ...selectedGroups]
+      const now = new Date().toISOString()
+
+      await supabase.from('rebuilders').upsert({
+        id: userId, email, name, stage,
+        is_premium: false, is_creator: false, account_type: 'rebuilder',
+        streak: 0, join_date: now,
+        location: location || null, groups: allGroups,
+        milestones_completed: {}, updated_at: now,
+      })
+
+      const userHabits = STARTER_HABITS.map(h => ({
+        id: `${userId}_${h.id}`, user_id: userId,
+        name: h.name, completed_dates: [],
+      }))
+      await supabase.from('habits').insert(userHabits)
+
+      localStorage.setItem('rs_pwd', password)
+
+      const newUser = {
+        supabaseId: userId, email, name, stage,
+        isPremium: false, isCreator: false, accountType: 'rebuilder',
+        streak: 0, lastCheckIn: null, joinDate: now,
+        location, groups: allGroups, milestonesCompleted: {},
+      }
+      const newHabits = STARTER_HABITS.map(h => ({ ...h, id: `${userId}_${h.id}` }))
+
+      onComplete(newUser, newHabits)
     } catch (e) {
       console.error('Onboarding error:', e)
       setLoading(false)

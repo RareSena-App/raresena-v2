@@ -320,11 +320,11 @@ function AppProvider({ children, initialUser, initialHabits }) {
 
   function saveUser(updated) {
     setUser(updated)
-    localStorage.setItem('rs_user', JSON.stringify(updated))
     syncUser(updated)
   }
 
   async function syncUser(u) {
+    if (!u.supabaseId) return
     try {
       await supabase.from('rebuilders').upsert({
         id: u.supabaseId, email: u.email, name: u.name,
@@ -347,31 +347,26 @@ function AppProvider({ children, initialUser, initialHabits }) {
         if (h.id !== habitId) return h
         const dates = h.completedDates || []
         const t = today()
-        return dates.includes(t)
-          ? { ...h, completedDates: dates.filter(d => d !== t) }
-          : { ...h, completedDates: [...dates, t] }
+        const newDates = dates.includes(t) ? dates.filter(d => d !== t) : [...dates, t]
+        supabase.from('habits').update({ completed_dates: newDates }).eq('id', habitId)
+        return { ...h, completedDates: newDates }
       })
-      localStorage.setItem('rs_habits', JSON.stringify(updated))
       return updated
     })
   }
 
   function addHabit(name) {
-    const h = { id: `h_${Date.now()}`, name, completedDates: [],
-      createdAt: new Date().toISOString() }
-    setHabits(prev => {
-      const updated = [...prev, h]
-      localStorage.setItem('rs_habits', JSON.stringify(updated))
-      return updated
+    const h = { id: `${user.supabaseId}_h_${Date.now()}`, name,
+      completedDates: [], createdAt: new Date().toISOString() }
+    supabase.from('habits').insert({
+      id: h.id, user_id: user.supabaseId, name: h.name, completed_dates: [],
     })
+    setHabits(prev => [...prev, h])
   }
 
   function removeHabit(id) {
-    setHabits(prev => {
-      const updated = prev.filter(h => h.id !== id)
-      localStorage.setItem('rs_habits', JSON.stringify(updated))
-      return updated
-    })
+    supabase.from('habits').delete().eq('id', id)
+    setHabits(prev => prev.filter(h => h.id !== id))
   }
 
   function toggleMilestone(key) {
@@ -405,52 +400,36 @@ export default function App() {
   const [portal, setPortal] = useState('rebuild')
 
   useEffect(() => {
-    // Handle Stripe payment success redirect
     const params = new URLSearchParams(window.location.search)
     if (params.get('payment') === 'success') {
-      const saved = localStorage.getItem('rs_user')
-      if (saved) {
-        const u = JSON.parse(saved)
-        // Determine which product was paid for based on pending_payment_type
-        const type = u.pendingPaymentType || 'premium'
-        const updated = type === 'creator'
-          ? { ...u, isCreator: true, pendingPaymentType: null }
-          : { ...u, isPremium: true, pendingPaymentType: null }
-        localStorage.setItem('rs_user', JSON.stringify(updated))
-      }
       window.history.replaceState({}, '', window.location.pathname)
     }
   }, [])
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('rs_user')
-    const savedHabits = localStorage.getItem('rs_habits')
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!session) { setAppState('onboard'); return }
 
-    if (savedUser) {
-      const u = JSON.parse(savedUser)
+      const [{ data: userData }, { data: habitsData }] = await Promise.all([
+        supabase.from('rebuilders').select('*').eq('id', session.user.id).single(),
+        supabase.from('habits').select('*').eq('user_id', session.user.id),
+      ])
+
+      if (!userData) { setAppState('onboard'); return }
+
+      const u = buildUserFromSupabase(userData)
+      const habits = (habitsData || []).map(h => ({
+        id: h.id, name: h.name,
+        completedDates: h.completed_dates || [],
+        createdAt: h.created_at,
+      }))
+
       setUserData(u)
-      setHabitsData(savedHabits ? JSON.parse(savedHabits) : [])
-      // Route to correct portal
+      setHabitsData(habits)
       if (u.accountType === 'brand') setAppState('brand')
       else if (u.accountType === 'admin') setAppState('admin')
       else setAppState('main')
-    } else {
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session) {
-          supabase.from('rebuilders').select('*').eq('id', session.user.id).single()
-            .then(({ data }) => {
-              if (data) {
-                const u = buildUserFromSupabase(data)
-                localStorage.setItem('rs_user', JSON.stringify(u))
-                setUserData(u)
-                if (u.accountType === 'brand') setAppState('brand')
-                else if (u.accountType === 'admin') setAppState('admin')
-                else setAppState('main')
-              } else { setAppState('onboard') }
-            })
-        } else { setAppState('onboard') }
-      })
-    }
+    })
   }, [])
 
   function buildUserFromSupabase(data) {
@@ -473,7 +452,7 @@ export default function App() {
 
   function handleLogout() {
     supabase.auth.signOut()
-    localStorage.clear()
+    localStorage.removeItem('rs_pwd')
     setUserData(null)
     setHabitsData([])
     setAppState('onboard')
