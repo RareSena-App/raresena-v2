@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
-import { supabase, T, css, Btn } from '../App.jsx'
+import { supabase, T, css, Btn, APP_URL } from '../App.jsx'
 
 const TOAST_STYLE = { style: { background: '#222220', color: '#fff', fontSize: '13px' } }
 
@@ -13,7 +13,7 @@ export default function LoginFlow({ onBack }) {
     setLoading(true)
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { shouldCreateUser: false, emailRedirectTo: window.location.origin },
+      options: { shouldCreateUser: false, emailRedirectTo: APP_URL },
     })
     setLoading(false)
     if (error) {
