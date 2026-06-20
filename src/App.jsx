@@ -452,7 +452,6 @@ export default function App() {
 
   function handleLogout() {
     supabase.auth.signOut()
-    localStorage.removeItem('rs_pwd')
     setUserData(null)
     setHabitsData([])
     setAppState('onboard')

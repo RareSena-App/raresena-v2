@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import toast, { Toaster } from 'react-hot-toast'
 import { supabase, QUESTIONS, STAGES, STAGE_DATA, CIRCLE_GROUPS,
   STAGE_GROUP_PRESELECT, getStageFromAnswers, T, css, Btn, Card, APP_URL } from '../App.jsx'
+import LoginFlow from './Login.jsx'
 
 const STARTER_HABITS = [
   { id: 'h1', name: 'Morning journal (3 sentences)', completedDates: [], createdAt: new Date().toISOString() },
@@ -17,6 +19,9 @@ export default function OnboardingFlow({ onComplete }) {
   const [location, setLocation] = useState('')
   const [selectedGroups, setSelectedGroups] = useState([])
   const [loading, setLoading] = useState(false)
+  const [showLogin, setShowLogin] = useState(false)
+
+  if (showLogin) return <LoginFlow onBack={() => setShowLogin(false)} />
 
   function selectAnswer(stageAnswer) {
     const qIdx = step - 3
@@ -47,14 +52,12 @@ export default function OnboardingFlow({ onComplete }) {
         .map(b => b.toString(16).padStart(2, '0')).join('')
 
       const { data, error } = await supabase.auth.signUp({ email, password })
-      if (error && error.code !== 'user_already_exists') throw error
       if (error?.code === 'user_already_exists') {
-        const stored = localStorage.getItem('rs_pwd')
-        if (!stored) throw new Error('An account with this email already exists. Please use a different email.')
-        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email, password: stored })
-        if (signInError) throw new Error('An account with this email already exists. Please use a different email.')
-        Object.assign(data, signInData)
+        toast.error('An account with this email already exists. Please use a different email.')
+        setLoading(false)
+        return
       }
+      if (error) throw error
 
       const userId = data.user.id
       const allGroups = [stage, ...selectedGroups]
@@ -84,9 +87,11 @@ export default function OnboardingFlow({ onComplete }) {
       }
       const newHabits = STARTER_HABITS.map(h => ({ ...h, id: `${userId}_${h.id}` }))
 
+      toast.success('Welcome to RareSena! Setting up your rebuild...')
       onComplete(newUser, newHabits)
     } catch (e) {
       console.error('Onboarding error:', e)
+      toast.error('Something went wrong. Please try again.')
       setLoading(false)
     }
   }
@@ -96,6 +101,7 @@ export default function OnboardingFlow({ onComplete }) {
     <div style={{ ...css.screen, display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center', padding: '32px 24px',
       textAlign: 'center', minHeight: '100vh' }}>
+      <Toaster position="bottom-center" toastOptions={{ style: { background: '#222220', color: '#fff', fontSize: '13px' } }} />
       <div style={{ fontSize: '56px', marginBottom: '20px' }}>🌿</div>
       <h1 style={{ fontSize: '28px', fontWeight: '800', marginBottom: '8px', lineHeight: '1.2' }}>
         RareSena<br />Rebuild
@@ -112,6 +118,12 @@ export default function OnboardingFlow({ onComplete }) {
         <p style={{ color: T.mutedDk, fontSize: '12px', marginTop: '14px' }}>
           Free to start. Under 3 minutes to your stage.
         </p>
+        <button onClick={() => setShowLogin(true)}
+          style={{ background: 'none', border: 'none', color: T.muted,
+            fontSize: '13px', marginTop: '20px', cursor: 'pointer',
+            fontFamily: 'inherit', width: '100%' }}>
+          Already a member? Sign in →
+        </button>
       </div>
     </div>
   )
@@ -294,6 +306,8 @@ export default function OnboardingFlow({ onComplete }) {
       <Btn onClick={completeOnboarding} disabled={loading}>
         {loading ? 'Setting up your rebuild...' : 'Enter my rebuild →'}
       </Btn>
+      <Back onClick={() => setStep(2)} />
+      <Toaster position="bottom-center" toastOptions={{ style: { background: '#222220', color: '#fff', fontSize: '13px' } }} />
     </div>
   )
 
