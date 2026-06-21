@@ -31,10 +31,21 @@ export default function AdminPanel({ onLogout }) {
   }
 
   async function approveBrand(brand) {
-    await supabase.from('brand_enquiries').update({
-      status: 'approved', approved_at: new Date().toISOString()
-    }).eq('id', brand.id)
-    setPendingBrands(prev => prev.filter(b => b.id !== brand.id))
+    const res = await fetch('/api/approve-brand', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        enquiryId: brand.id,
+        email: brand.email,
+        companyName: brand.company_name,
+      }),
+    })
+    if (res.ok) {
+      setPendingBrands(prev => prev.filter(b => b.id !== brand.id))
+    } else {
+      const err = await res.json()
+      alert('Approval failed: ' + (err.error || 'Unknown error'))
+    }
   }
 
   async function declineBrand(brand) {

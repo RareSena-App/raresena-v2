@@ -20,8 +20,10 @@ export default function OnboardingFlow({ onComplete }) {
   const [selectedGroups, setSelectedGroups] = useState([])
   const [loading, setLoading] = useState(false)
   const [showLogin, setShowLogin] = useState(false)
+  const [showBrandEnquiry, setShowBrandEnquiry] = useState(false)
 
   if (showLogin) return <LoginFlow onBack={() => setShowLogin(false)} />
+  if (showBrandEnquiry) return <BrandEnquiryForm onBack={() => setShowBrandEnquiry(false)} />
 
   function selectAnswer(stageAnswer) {
     const qIdx = step - 3
@@ -121,6 +123,12 @@ export default function OnboardingFlow({ onComplete }) {
             fontSize: '13px', marginTop: '20px', cursor: 'pointer',
             fontFamily: 'inherit', width: '100%' }}>
           Already a member? Sign in →
+        </button>
+        <button onClick={() => setShowBrandEnquiry(true)}
+          style={{ background: 'none', border: 'none', color: T.mutedDk,
+            fontSize: '12px', marginTop: '10px', cursor: 'pointer',
+            fontFamily: 'inherit', width: '100%' }}>
+          Are you a brand? Apply to partner →
         </button>
       </div>
     </div>
@@ -317,5 +325,92 @@ function Back({ onClick }) {
     <button onClick={onClick} style={{ background: 'none', border: 'none',
       color: T.muted, fontSize: '13px', marginTop: '16px',
       cursor: 'pointer', display: 'block', fontFamily: 'inherit' }}>← Back</button>
+  )
+}
+
+function BrandEnquiryForm({ onBack }) {
+  const [form, setForm] = useState({
+    company_name: '', contact_name: '', email: '',
+    website: '', campaign_type: '', budget_range: '', target_audience: '', description: '',
+  })
+  const [loading, setLoading] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+
+  const set = (key, val) => setForm(prev => ({ ...prev, [key]: val }))
+
+  async function submit() {
+    if (!form.company_name.trim() || !form.contact_name.trim() || !form.email.includes('@')) return
+    setLoading(true)
+    const { error } = await supabase.from('brand_enquiries').insert({
+      ...form, status: 'pending_approval', created_at: new Date().toISOString(),
+    })
+    if (error) {
+      toast.error('Something went wrong. Please try again.')
+    } else {
+      setSubmitted(true)
+    }
+    setLoading(false)
+  }
+
+  if (submitted) return (
+    <div style={{ ...css.screen, display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'center', padding: '32px 24px',
+      textAlign: 'center', minHeight: '100vh' }}>
+      <Toaster position="bottom-center" toastOptions={{ style: { background: '#222220', color: '#fff', fontSize: '13px' } }} />
+      <div style={{ fontSize: '52px', marginBottom: '20px' }}>✅</div>
+      <h2 style={{ fontSize: '22px', fontWeight: '700', marginBottom: '12px' }}>Application received</h2>
+      <p style={{ color: T.muted, fontSize: '14px', lineHeight: '1.7', maxWidth: '300px', marginBottom: '32px' }}>
+        Thank you, <strong>{form.contact_name.split(' ')[0]}</strong>. Sena will review your application and get back to you at <strong>{form.email}</strong> within 48 hours.
+      </p>
+      <Btn ghost onClick={onBack}>Back to home →</Btn>
+    </div>
+  )
+
+  return (
+    <div style={{ ...css.screen, padding: '48px 24px 48px', minHeight: '100vh' }}>
+      <Toaster position="bottom-center" toastOptions={{ style: { background: '#222220', color: '#fff', fontSize: '13px' } }} />
+      <button onClick={onBack} style={{ background: 'none', border: 'none', color: T.muted,
+        fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit', marginBottom: '20px', display: 'block' }}>
+        ← Back
+      </button>
+      <p style={{ color: T.gold, fontSize: '12px', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: '6px' }}>
+        Rare Studio
+      </p>
+      <h2 style={{ fontSize: '22px', fontWeight: '700', marginBottom: '6px' }}>Partner with us</h2>
+      <p style={{ color: T.muted, fontSize: '13px', lineHeight: '1.6', marginBottom: '28px' }}>
+        Tell us about your brand and campaign goals. We'll review and get back to you within 48 hours.
+      </p>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+        {[
+          ['Company name *', 'company_name', 'text', 'e.g. Bloom Skincare'],
+          ['Your name *', 'contact_name', 'text', 'e.g. Sarah Ahmed'],
+          ['Email address *', 'email', 'email', 'your@company.com'],
+          ['Website', 'website', 'url', 'www.yourcompany.com'],
+          ['Campaign type', 'campaign_type', 'text', 'e.g. Product launch, Brand awareness, UGC'],
+          ['Budget range', 'budget_range', 'text', 'e.g. £500–£1,000 per campaign'],
+          ['Target audience', 'target_audience', 'text', 'e.g. UK immigrants, 25–40, wellness-focused'],
+        ].map(([label, key, type, placeholder]) => (
+          <div key={key}>
+            <p style={{ color: T.muted, fontSize: '12px', marginBottom: '6px' }}>{label}</p>
+            <input style={css.input} type={type} placeholder={placeholder}
+              value={form[key]} onChange={e => set(key, e.target.value)} />
+          </div>
+        ))}
+        <div>
+          <p style={{ color: T.muted, fontSize: '12px', marginBottom: '6px' }}>Tell us more about your campaign goals</p>
+          <textarea style={{ ...css.input, height: '100px', resize: 'none' }}
+            placeholder="What are you hoping to achieve? What makes your brand a good fit for the RareSena community?"
+            value={form.description} onChange={e => set('description', e.target.value)} />
+        </div>
+        <Btn onClick={submit}
+          disabled={loading || !form.company_name.trim() || !form.contact_name.trim() || !form.email.includes('@')}>
+          {loading ? 'Submitting...' : 'Submit application →'}
+        </Btn>
+        <p style={{ textAlign: 'center', color: T.mutedDk, fontSize: '12px' }}>
+          We review all applications personally. No auto-approvals.
+        </p>
+      </div>
+    </div>
   )
 }
