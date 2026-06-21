@@ -1,32 +1,67 @@
-import { useState } from 'react'
-import { useApp, T, css, Btn, Card, PageHeader, EmptyState } from '../App.jsx'
-
-const PENDING_BRANDS = [
-  { id: 1, company: 'GlowLife UK', contact: 'Sarah Mitchell', email: 'sarah@glowlife.co.uk',
-    website: 'glowlife.co.uk', type: 'Beauty and Wellness', budget: '£500–£1,000/campaign',
-    audience: 'Women 25–45, UK-wide', description: 'We are a UK wellness brand looking for authentic immigrant and diaspora creators to showcase our products.' },
-  { id: 2, company: 'TechBridge London', contact: 'James Okafor', email: 'james@techbridge.io',
-    website: 'techbridge.io', type: 'Tech and SaaS', budget: '£300–£600/campaign',
-    audience: 'Professionals 22–35, London and major cities', description: 'We build tools for remote and distributed teams and want creators who understand multicultural workplaces.' },
-]
-
-const FLAGGED_POSTS = [
-  { id: 1, author: 'Anonymous User', content: 'This post has been reported for inappropriate content.', group: 'Financial Literacy', reports: 2 },
-]
-
-const ACTIVE_CAMPAIGNS_DATA = [
-  { id: 1, brand: 'HomeBase Essentials', creator: 'Kofi A.', value: '£380', status: 'In progress', days: '3 days to deadline' },
-]
+import { useState, useEffect } from 'react'
+import { useApp, T, css, Btn, Card, PageHeader, EmptyState, supabase } from '../App.jsx'
 
 export default function AdminPanel({ onLogout }) {
   const [screen, setScreen] = useState('admin-home')
-  const [activeBrand, setActiveBrand] = useState(null)
-  const [brandStatuses, setBrandStatuses] = useState({})
+  const [pendingBrands, setPendingBrands] = useState([])
+  const [allPosts, setAllPosts] = useState([])
+  const [activeCampaigns, setActiveCampaigns] = useState([])
   const [announcement, setAnnouncement] = useState('')
   const [announcementTarget, setAnnouncementTarget] = useState('all')
+  const [announcementSent, setAnnouncementSent] = useState(false)
+  const [loading, setLoading] = useState(true)
   const { user } = useApp()
 
-  const pendingCount = PENDING_BRANDS.filter(b => !brandStatuses[b.id]).length
+  useEffect(() => { fetchData() }, [])
+
+  async function fetchData() {
+    setLoading(true)
+    const [{ data: brands }, { data: posts }, { data: campaigns }] = await Promise.all([
+      supabase.from('brand_enquiries').select('*')
+        .eq('status', 'pending_approval').order('created_at', { ascending: false }),
+      supabase.from('circle_posts').select('*, rebuilders(name)')
+        .eq('is_removed', false).order('created_at', { ascending: false }).limit(50),
+      supabase.from('campaigns').select('*, brand_rebuilder:rebuilders!brand_user_id(name), creator_rebuilder:rebuilders!creator_user_id(name)')
+        .eq('status', 'active'),
+    ])
+    setPendingBrands(brands || [])
+    setAllPosts(posts || [])
+    setActiveCampaigns(campaigns || [])
+    setLoading(false)
+  }
+
+  async function approveBrand(brand) {
+    await supabase.from('brand_enquiries').update({
+      status: 'approved', approved_at: new Date().toISOString()
+    }).eq('id', brand.id)
+    setPendingBrands(prev => prev.filter(b => b.id !== brand.id))
+  }
+
+  async function declineBrand(brand) {
+    await supabase.from('brand_enquiries').update({ status: 'declined' }).eq('id', brand.id)
+    setPendingBrands(prev => prev.filter(b => b.id !== brand.id))
+  }
+
+  async function removePost(postId) {
+    await supabase.from('circle_posts').update({ is_removed: true }).eq('id', postId)
+    setAllPosts(prev => prev.filter(p => p.id !== postId))
+  }
+
+  async function sendAnnouncement() {
+    if (!announcement.trim()) return
+    await supabase.from('circle_posts').insert({
+      user_id: user.supabaseId,
+      content: `📢 Announcement from Sena:\n\n${announcement}`,
+      group_name: announcementTarget === 'creators' ? 'Rare Studio Creators' : 'Reset',
+      stage: user.stage || 'Realize',
+      is_pinned: true,
+    })
+    setAnnouncement('')
+    setAnnouncementSent(true)
+    setTimeout(() => setAnnouncementSent(false), 3000)
+  }
+
+  const pendingCount = pendingBrands.length
 
   function AdminNav() {
     const nav = [
@@ -66,15 +101,15 @@ export default function AdminPanel({ onLogout }) {
       <AdminNav />
       <div style={{ marginBottom: '20px' }}>
         <p style={{ color: T.gold, fontSize: '12px', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Admin Panel</p>
-        <h1 style={{ fontSize: '22px', fontWeight: '700' }}>Hello, Sena 🌿</h1>
+        <h1 style={{ fontSize: '22px', fontWeight: '700' }}>Hello, {user.name.split(' ')[0]} 🌿</h1>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '20px' }}>
         {[
           ['✓', pendingCount, 'Brand approvals', 'red', () => setScreen('approvals')],
-          ['🛡️', FLAGGED_POSTS.length, 'Flagged posts', 'orange', () => setScreen('moderation')],
-          ['🚀', ACTIVE_CAMPAIGNS_DATA.length, 'Active campaigns', 'green', () => setScreen('campaigns-admin')],
-          ['💰', '£95', 'Commission this month', 'gold', null],
+          ['🛡️', allPosts.length, 'Posts to moderate', 'orange', () => setScreen('moderation')],
+          ['🚀', activeCampaigns.length, 'Active campaigns', 'green', () => setScreen('campaigns-admin')],
+          ['💰', '—', 'Commission this month', 'gold', null],
         ].map(([icon, val, label, col, action]) => (
           <div key={label} onClick={action || undefined}
             style={{ background: T.bg2, border: `1px solid ${T.bg4}`, borderRadius: '12px',
@@ -113,39 +148,33 @@ export default function AdminPanel({ onLogout }) {
     <div style={{ ...css.screen, ...css.padded }}>
       <AdminNav />
       <PageHeader title="Brand Approvals"
-        sub={`${pendingCount} pending · ${Object.values(brandStatuses).filter(s => s === 'approved').length} approved`} />
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        {PENDING_BRANDS.map(brand => {
-          const status = brandStatuses[brand.id]
-          return (
-            <div key={brand.id} style={{ background: T.bg2,
-              border: `1px solid ${status === 'approved' ? T.green + '44' : status === 'declined' ? T.red + '44' : T.bg4}`,
+        sub={pendingCount > 0 ? `${pendingCount} pending review` : 'All caught up'} />
+      {pendingBrands.length === 0 ? (
+        <EmptyState icon="✓" title="No pending brands"
+          sub="All brand enquiries have been reviewed." />
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {pendingBrands.map(brand => (
+            <div key={brand.id} style={{ background: T.bg2, border: `1px solid ${T.bg4}`,
               borderRadius: '12px', padding: '16px' }}>
-              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start',
+                justifyContent: 'space-between', marginBottom: '10px' }}>
                 <div>
-                  <p style={{ fontWeight: '700', fontSize: '15px' }}>{brand.company}</p>
-                  <p style={{ color: T.muted, fontSize: '12px' }}>{brand.contact} · {brand.email}</p>
+                  <p style={{ fontWeight: '700', fontSize: '15px' }}>{brand.company_name}</p>
+                  <p style={{ color: T.muted, fontSize: '12px' }}>{brand.contact_name} · {brand.email}</p>
                 </div>
-                {status ? (
-                  <span style={{ background: status === 'approved' ? `${T.green}22` : `${T.red}22`,
-                    color: status === 'approved' ? T.green : T.red,
-                    padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: '600' }}>
-                    {status.toUpperCase()}
-                  </span>
-                ) : (
-                  <span style={{ background: `${T.gold}22`, color: T.gold,
-                    padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: '600' }}>
-                    PENDING
-                  </span>
-                )}
+                <span style={{ background: `${T.gold}22`, color: T.gold,
+                  padding: '4px 10px', borderRadius: '6px', fontSize: '12px', fontWeight: '600' }}>
+                  PENDING
+                </span>
               </div>
 
               <p style={{ fontSize: '13px', lineHeight: '1.6', color: T.white, marginBottom: '12px' }}>
                 {brand.description}
               </p>
 
-              {[['Type', brand.type], ['Budget', brand.budget],
-                ['Target audience', brand.audience], ['Website', brand.website]].map(([label, val]) => (
+              {[['Type', brand.campaign_type], ['Budget', brand.budget_range],
+                ['Target audience', brand.target_audience], ['Website', brand.website]].map(([label, val]) => val && (
                 <div key={label} style={{ display: 'flex', justifyContent: 'space-between',
                   padding: '6px 0', borderBottom: `1px solid ${T.bg4}` }}>
                   <p style={{ color: T.muted, fontSize: '12px' }}>{label}</p>
@@ -153,30 +182,20 @@ export default function AdminPanel({ onLogout }) {
                 </div>
               ))}
 
-              {!status && (
-                <div style={{ display: 'flex', gap: '10px', marginTop: '14px' }}>
-                  <button onClick={() => setBrandStatuses(prev => ({ ...prev, [brand.id]: 'approved' }))}
-                    style={{ flex: 1, background: T.green, color: T.white, border: 'none',
-                      borderRadius: '8px', padding: '12px', fontWeight: '600', fontSize: '14px',
-                      cursor: 'pointer', fontFamily: 'inherit' }}>✓ Approve</button>
-                  <button onClick={() => setBrandStatuses(prev => ({ ...prev, [brand.id]: 'declined' }))}
-                    style={{ flex: 1, background: 'none', color: T.red, border: `1px solid ${T.red}44`,
-                      borderRadius: '8px', padding: '12px', fontWeight: '600', fontSize: '14px',
-                      cursor: 'pointer', fontFamily: 'inherit' }}>✕ Decline</button>
-                </div>
-              )}
-              {status === 'approved' && (
-                <div style={{ marginTop: '10px', padding: '10px', background: `${T.green}11`,
-                  borderRadius: '6px', textAlign: 'center' }}>
-                  <p style={{ color: T.green, fontSize: '12px' }}>
-                    ✓ Welcome email sent automatically to {brand.email}
-                  </p>
-                </div>
-              )}
+              <div style={{ display: 'flex', gap: '10px', marginTop: '14px' }}>
+                <button onClick={() => approveBrand(brand)}
+                  style={{ flex: 1, background: T.green, color: T.white, border: 'none',
+                    borderRadius: '8px', padding: '12px', fontWeight: '600', fontSize: '14px',
+                    cursor: 'pointer', fontFamily: 'inherit' }}>✓ Approve</button>
+                <button onClick={() => declineBrand(brand)}
+                  style={{ flex: 1, background: 'none', color: T.red, border: `1px solid ${T.red}44`,
+                    borderRadius: '8px', padding: '12px', fontWeight: '600', fontSize: '14px',
+                    cursor: 'pointer', fontFamily: 'inherit' }}>✕ Decline</button>
+              </div>
             </div>
-          )
-        })}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 
@@ -185,35 +204,33 @@ export default function AdminPanel({ onLogout }) {
     <div style={{ ...css.screen, ...css.padded }}>
       <AdminNav />
       <PageHeader title="Community Moderation"
-        sub={`${FLAGGED_POSTS.length} reported post${FLAGGED_POSTS.length !== 1 ? 's' : ''}`} />
-      {FLAGGED_POSTS.length === 0 ? (
-        <EmptyState icon="🛡️" title="No flagged posts"
-          sub="The community is looking healthy. No posts require your review." />
+        sub={`${allPosts.length} posts in community`} />
+      {allPosts.length === 0 ? (
+        <EmptyState icon="🛡️" title="No posts"
+          sub="The community feed is empty." />
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {FLAGGED_POSTS.map(post => (
+          {allPosts.map(post => (
             <Card key={post.id}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <p style={{ fontWeight: '600', fontSize: '14px' }}>{post.author}</p>
-                <span style={{ background: `${T.red}22`, color: T.red,
-                  padding: '3px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: '600' }}>
-                  {post.reports} report{post.reports !== 1 ? 's' : ''}
-                </span>
+              <div style={{ display: 'flex', alignItems: 'center',
+                justifyContent: 'space-between', marginBottom: '8px' }}>
+                <p style={{ fontWeight: '600', fontSize: '14px' }}>
+                  {post.rebuilders?.name || 'Rebuilder'}
+                </p>
+                <span style={{ color: T.mutedDk, fontSize: '11px' }}>{post.group_name}</span>
               </div>
-              <p style={{ color: T.muted, fontSize: '12px', marginBottom: '6px' }}>
-                Group: {post.group}
-              </p>
               <p style={{ fontSize: '13px', lineHeight: '1.6', color: T.white, marginBottom: '14px' }}>
                 {post.content}
               </p>
               <div style={{ display: 'flex', gap: '10px' }}>
-                <button style={{ flex: 1, background: T.red, color: T.white, border: 'none',
-                  borderRadius: '8px', padding: '10px', fontWeight: '600', fontSize: '13px',
-                  cursor: 'pointer', fontFamily: 'inherit' }}>Remove post</button>
+                <button onClick={() => removePost(post.id)}
+                  style={{ flex: 1, background: T.red, color: T.white, border: 'none',
+                    borderRadius: '8px', padding: '10px', fontWeight: '600', fontSize: '13px',
+                    cursor: 'pointer', fontFamily: 'inherit' }}>Remove post</button>
                 <button style={{ flex: 1, background: 'none', color: T.muted,
                   border: `1px solid ${T.bg4}`, borderRadius: '8px', padding: '10px',
                   fontWeight: '600', fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit' }}>
-                  Dismiss report
+                  Keep post
                 </button>
               </div>
             </Card>
@@ -227,27 +244,30 @@ export default function AdminPanel({ onLogout }) {
   if (screen === 'campaigns-admin') return (
     <div style={{ ...css.screen, ...css.padded }}>
       <AdminNav />
-      <PageHeader title="All Campaigns"
-        sub={`${ACTIVE_CAMPAIGNS_DATA.length} active`} />
-      {ACTIVE_CAMPAIGNS_DATA.length === 0 ? (
+      <PageHeader title="All Campaigns" sub={`${activeCampaigns.length} active`} />
+      {activeCampaigns.length === 0 ? (
         <EmptyState icon="🚀" title="No active campaigns"
           sub="Campaigns appear here once a brand selects a creator for a brief." />
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {ACTIVE_CAMPAIGNS_DATA.map(c => (
+          {activeCampaigns.map(c => (
             <Card key={c.id}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <p style={{ fontWeight: '700', fontSize: '14px' }}>{c.brand}</p>
-                <span style={{ color: T.gold, fontSize: '13px', fontWeight: '600' }}>{c.value}</span>
-              </div>
-              <p style={{ color: T.muted, fontSize: '13px', marginBottom: '6px' }}>Creator: {c.creator}</p>
-              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                <span style={{ background: `${T.green}22`, color: T.green,
-                  padding: '3px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: '600' }}>
-                  {c.status}
+              <div style={{ display: 'flex', alignItems: 'center',
+                justifyContent: 'space-between', marginBottom: '8px' }}>
+                <p style={{ fontWeight: '700', fontSize: '14px' }}>
+                  {c.brand_rebuilder?.name || 'Brand'}
+                </p>
+                <span style={{ color: T.gold, fontSize: '13px', fontWeight: '600' }}>
+                  {c.campaign_value || '—'}
                 </span>
-                <span style={{ color: T.red, fontSize: '12px' }}>⏱ {c.days}</span>
               </div>
+              <p style={{ color: T.muted, fontSize: '13px', marginBottom: '6px' }}>
+                Creator: {c.creator_rebuilder?.name || 'Creator'}
+              </p>
+              <span style={{ background: `${T.green}22`, color: T.green,
+                padding: '3px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: '600' }}>
+                {c.status}
+              </span>
             </Card>
           ))}
         </div>
@@ -280,11 +300,12 @@ export default function AdminPanel({ onLogout }) {
           placeholder="Write your announcement — this will appear as a pinned post in the community..."
           value={announcement} onChange={e => setAnnouncement(e.target.value)} />
       </div>
-      <Btn onClick={() => {
-        if (!announcement.trim()) return
-        setAnnouncement('')
-        alert('Announcement sent to ' + announcementTarget + ' users.')
-      }} disabled={!announcement.trim()}>
+      {announcementSent && (
+        <p style={{ color: T.green, fontSize: '13px', marginBottom: '12px', textAlign: 'center' }}>
+          ✓ Announcement posted to community
+        </p>
+      )}
+      <Btn onClick={sendAnnouncement} disabled={!announcement.trim()}>
         Send announcement →
       </Btn>
       <div style={{ marginTop: '24px', paddingTop: '24px', borderTop: `1px solid ${T.bg4}` }}>
