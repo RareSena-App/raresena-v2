@@ -1,21 +1,72 @@
-import { useState } from 'react'
-import { useApp, T, css, Btn, Card, BrandNav, PageHeader, EmptyState } from '../App.jsx'
-
-const SAMPLE_CREATORS = [
-  { id: 1, name: 'Amara J.', initials: 'AJ', niche: 'Lifestyle and Wellness', audience: '12K', location: 'London', campaigns: 8, rate: '£300–£500', bio: 'Immigrant lifestyle creator sharing authentic UK life stories, wellness tips, and cultural experiences.' },
-  { id: 2, name: 'Kofi A.', initials: 'KA', niche: 'Food and Culture', audience: '28K', location: 'Manchester', campaigns: 15, rate: '£450–£800', bio: 'West African cuisine meets UK living. Recipe videos, cultural storytelling, and honest product reviews.' },
-  { id: 3, name: 'Priya S.', initials: 'PS', niche: 'Tech and Productivity', audience: '9K', location: 'Birmingham', campaigns: 5, rate: '£250–£400', bio: 'Software engineer turned content creator. Tech reviews, productivity tips, and career content for young professionals.' },
-  { id: 4, name: 'Fatima B.', initials: 'FB', niche: 'Beauty and Skincare', audience: '45K', location: 'Leeds', campaigns: 22, rate: '£600–£1,200', bio: 'Melanin-rich beauty content. Honest skincare reviews, makeup tutorials, and brand partnerships that celebrate diversity.' },
-]
+import { useState, useEffect } from 'react'
+import { useApp, T, css, Btn, Card, BrandNav, PageHeader, EmptyState, supabase } from '../App.jsx'
 
 export default function BrandPortal({ onLogout }) {
   const [screen, setScreen] = useState('brand-home')
   const [activeCreator, setActiveCreator] = useState(null)
-  const [activeBrief, setActiveBrief] = useState(null)
-  const [activeCampaign, setActiveCampaign] = useState(null)
+  const [creators, setCreators] = useState([])
+  const [loadingCreators, setLoadingCreators] = useState(true)
   const [briefs, setBriefs] = useState([])
-  const [briefForm, setBriefForm] = useState({ name: '', niche: '', deliverables: '', budget: '', timeline: '', rights: '', deadline: '' })
+  const [briefForm, setBriefForm] = useState({ name: '', niche: '', deliverables: '', budget: '', timeline: '', rights: '', deadline: '', description: '' })
+  const [postingBrief, setPostingBrief] = useState(false)
+  const [niicheFilter, setNicheFilter] = useState('All')
   const { user } = useApp()
+
+  useEffect(() => { fetchCreators() }, [])
+
+  async function fetchCreators() {
+    setLoadingCreators(true)
+    const { data } = await supabase
+      .from('rebuilders')
+      .select('id, name, location, stage, creator_bio, creator_niche, creator_audience_size, creator_rate_range, creator_campaigns_count, creator_tiktok, creator_instagram')
+      .eq('is_creator', true)
+      .eq('creator_status', 'active')
+      .order('creator_campaigns_count', { ascending: false })
+    setCreators((data || []).map(formatCreator))
+    setLoadingCreators(false)
+  }
+
+  function formatCreator(c) {
+    const name = c.name || 'Creator'
+    const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
+    return {
+      ...c,
+      initials,
+      niche: c.creator_niche || c.stage || '—',
+      bio: c.creator_bio || 'RareSena verified creator.',
+      audience: c.creator_audience_size || '—',
+      rate: c.creator_rate_range || '—',
+      campaigns: c.creator_campaigns_count || 0,
+      location: c.location || 'UK',
+    }
+  }
+
+  async function postBrief() {
+    if (!briefForm.name.trim()) return
+    setPostingBrief(true)
+    await supabase.from('brand_briefs').insert({
+      brand_user_id: user.supabaseId,
+      campaign_name: briefForm.name,
+      niche_required: briefForm.niche,
+      deliverables: briefForm.deliverables,
+      budget: briefForm.budget,
+      timeline: briefForm.timeline,
+      usage_rights: briefForm.rights,
+      deadline: briefForm.deadline,
+      description: briefForm.description,
+      status: 'open',
+    })
+    setBriefs(prev => [...prev, { id: Date.now(), ...briefForm }])
+    setBriefForm({ name: '', niche: '', deliverables: '', budget: '', timeline: '', rights: '', deadline: '', description: '' })
+    setPostingBrief(false)
+    setScreen('brand-home')
+  }
+
+  const filteredCreators = niicheFilter === 'All'
+    ? creators
+    : creators.filter(c => c.niche?.toLowerCase().includes(niicheFilter.toLowerCase()))
+
+  const niches = ['All', ...Array.from(new Set(creators.map(c => c.niche).filter(n => n && n !== '—')))]
 
   // ── BRAND DASHBOARD ──
   if (screen === 'brand-home') return (
@@ -32,8 +83,12 @@ export default function BrandPortal({ onLogout }) {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '20px' }}>
-        {[['📋', briefs.length, 'Active briefs'], ['👥', SAMPLE_CREATORS.length, 'Creators available'],
-          ['🚀', 0, 'Campaigns active'], ['✓', 0, 'Campaigns complete']].map(([icon, val, label]) => (
+        {[
+          ['📋', briefs.length, 'Active briefs'],
+          ['👥', loadingCreators ? '…' : creators.length, 'Creators available'],
+          ['🚀', 0, 'Campaigns active'],
+          ['✓', 0, 'Campaigns complete'],
+        ].map(([icon, val, label]) => (
           <Card key={label} style={{ textAlign: 'center', marginBottom: 0 }}>
             <p style={{ fontSize: '22px', marginBottom: '4px' }}>{icon}</p>
             <p style={{ fontSize: '20px', fontWeight: '700', color: T.gold }}>{val}</p>
@@ -83,45 +138,64 @@ export default function BrandPortal({ onLogout }) {
   if (screen === 'creators') return (
     <div style={{ ...css.screen, ...css.padded }}>
       <BrandNav screen="creators" setScreen={setScreen} />
-      <PageHeader title="Creator Directory" sub={`${SAMPLE_CREATORS.length} verified creators`} />
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
-        {['All', 'Lifestyle', 'Beauty', 'Food', 'Tech'].map(filter => (
-          <button key={filter}
-            style={{ padding: '6px 14px', borderRadius: '20px', border: `1px solid ${T.bg4}`,
-              background: filter === 'All' ? T.gold : T.bg2,
-              color: filter === 'All' ? T.bg : T.muted,
-              fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit' }}>{filter}</button>
-        ))}
-      </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        {SAMPLE_CREATORS.map(creator => (
-          <div key={creator.id} onClick={() => { setActiveCreator(creator); setScreen('creator-profile-view') }}
-            style={{ background: T.bg2, border: `1px solid ${T.bg4}`, borderRadius: '10px',
-              padding: '14px 16px', cursor: 'pointer' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-              <div style={{ width: '40px', height: '40px', borderRadius: '50%',
-                background: `${T.purple}33`, display: 'flex', alignItems: 'center',
-                justifyContent: 'center', fontSize: '16px', fontWeight: '700',
-                color: T.purple, flexShrink: 0 }}>{creator.initials}</div>
-              <div style={{ flex: 1 }}>
-                <p style={{ fontWeight: '600', fontSize: '14px' }}>{creator.name}</p>
-                <p style={{ color: T.muted, fontSize: '12px' }}>{creator.niche} · {creator.location}</p>
+      <PageHeader title="Creator Directory"
+        sub={loadingCreators ? 'Loading...' : `${creators.length} verified creator${creators.length !== 1 ? 's' : ''}`} />
+
+      {niches.length > 1 && (
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
+          {niches.slice(0, 5).map(filter => (
+            <button key={filter} onClick={() => setNicheFilter(filter)}
+              style={{ padding: '6px 14px', borderRadius: '20px', border: `1px solid ${niicheFilter === filter ? T.gold : T.bg4}`,
+                background: niicheFilter === filter ? T.gold : T.bg2,
+                color: niicheFilter === filter ? T.bg : T.muted,
+                fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit' }}>{filter}</button>
+          ))}
+        </div>
+      )}
+
+      {loadingCreators ? (
+        <p style={{ color: T.muted, textAlign: 'center', padding: '40px 0' }}>Loading creators...</p>
+      ) : filteredCreators.length === 0 ? (
+        <EmptyState icon="👥" title="No creators yet"
+          sub="Creators will appear here once they join and activate their Rare Studio membership." />
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {filteredCreators.map(creator => (
+            <div key={creator.id}
+              onClick={() => { setActiveCreator(creator); setScreen('creator-profile-view') }}
+              style={{ background: T.bg2, border: `1px solid ${T.bg4}`, borderRadius: '10px',
+                padding: '14px 16px', cursor: 'pointer' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '50%',
+                  background: `${T.purple}33`, display: 'flex', alignItems: 'center',
+                  justifyContent: 'center', fontSize: '16px', fontWeight: '700',
+                  color: T.purple, flexShrink: 0 }}>{creator.initials}</div>
+                <div style={{ flex: 1 }}>
+                  <p style={{ fontWeight: '600', fontSize: '14px' }}>{creator.name}</p>
+                  <p style={{ color: T.muted, fontSize: '12px' }}>{creator.niche} · {creator.location}</p>
+                </div>
+                {creator.audience !== '—' && (
+                  <div style={{ textAlign: 'right' }}>
+                    <p style={{ color: T.gold, fontSize: '13px', fontWeight: '600' }}>{creator.audience}</p>
+                    <p style={{ color: T.mutedDk, fontSize: '11px' }}>followers</p>
+                  </div>
+                )}
               </div>
-              <div style={{ textAlign: 'right' }}>
-                <p style={{ color: T.gold, fontSize: '13px', fontWeight: '600' }}>{creator.audience}</p>
-                <p style={{ color: T.mutedDk, fontSize: '11px' }}>followers</p>
+              <p style={{ color: T.muted, fontSize: '12px', lineHeight: '1.5', marginBottom: '8px' }}>
+                {creator.bio.length > 90 ? creator.bio.substring(0, 90) + '...' : creator.bio}
+              </p>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                {creator.campaigns > 0 && (
+                  <span style={{ ...css.tag(T.blue) }}>{creator.campaigns} campaign{creator.campaigns !== 1 ? 's' : ''}</span>
+                )}
+                {creator.rate !== '—' && (
+                  <span style={{ ...css.tag(T.gold) }}>{creator.rate}</span>
+                )}
               </div>
             </div>
-            <p style={{ color: T.muted, fontSize: '12px', lineHeight: '1.5', marginBottom: '8px' }}>
-              {creator.bio.substring(0, 90)}...
-            </p>
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <span style={{ ...css.tag(T.blue) }}>{creator.campaigns} campaigns</span>
-              <span style={{ ...css.tag(T.gold) }}>{creator.rate}</span>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 
@@ -145,10 +219,15 @@ export default function BrandPortal({ onLogout }) {
         <p style={{ fontSize: '14px', lineHeight: '1.7', color: T.white, marginBottom: '16px' }}>
           {activeCreator.bio}
         </p>
-        {[['Niche', activeCreator.niche], ['Audience size', activeCreator.audience],
-          ['Location', activeCreator.location], ['Rate range', activeCreator.rate],
-          ['Campaigns completed', activeCreator.campaigns.toString()],
-        ].map(([label, val]) => (
+        {[
+          ['Niche', activeCreator.niche],
+          ['Audience size', activeCreator.audience],
+          ['Location', activeCreator.location],
+          ['Rate range', activeCreator.rate],
+          ['Campaigns completed', activeCreator.campaigns > 0 ? activeCreator.campaigns.toString() : '—'],
+          ['TikTok', activeCreator.creator_tiktok],
+          ['Instagram', activeCreator.creator_instagram],
+        ].filter(([, val]) => val && val !== '—' && val !== 'undefined').map(([label, val]) => (
           <div key={label} style={{ display: 'flex', justifyContent: 'space-between',
             padding: '8px 0', borderBottom: `1px solid ${T.bg4}` }}>
             <p style={{ color: T.muted, fontSize: '13px' }}>{label}</p>
@@ -189,15 +268,12 @@ export default function BrandPortal({ onLogout }) {
         <div>
           <p style={{ color: T.muted, fontSize: '12px', marginBottom: '6px' }}>Campaign description</p>
           <textarea style={{ ...css.input, height: '100px', resize: 'none' }}
-            placeholder="Tell creators what you're looking for and why your brand is worth their time..." />
+            placeholder="Tell creators what you're looking for and why your brand is worth their time..."
+            value={briefForm.description}
+            onChange={e => setBriefForm(prev => ({ ...prev, description: e.target.value }))} />
         </div>
-        <Btn onClick={() => {
-          if (!briefForm.name.trim()) return
-          setBriefs(prev => [...prev, { id: Date.now(), ...briefForm }])
-          setBriefForm({ name: '', niche: '', deliverables: '', budget: '', timeline: '', rights: '', deadline: '' })
-          setScreen('brand-home')
-        }} disabled={!briefForm.name.trim()}>
-          Post brief — notify matching creators →
+        <Btn onClick={postBrief} disabled={!briefForm.name.trim() || postingBrief}>
+          {postingBrief ? 'Posting...' : 'Post brief — notify matching creators →'}
         </Btn>
         <p style={{ textAlign: 'center', color: T.mutedDk, fontSize: '12px' }}>
           Matching creators are notified automatically when your brief is posted.
@@ -260,7 +336,8 @@ export default function BrandPortal({ onLogout }) {
           <p style={{ color: T.green, fontSize: '13px', fontWeight: '600', marginTop: '3px' }}>✓ Active — approved by Sena</p>
         </div>
       </Card>
-      {[['📞', 'Contact Sena', () => window.open('mailto:hello@raresena.com', '_blank')],
+      {[
+        ['📞', 'Contact Sena', () => window.open('mailto:hello@raresena.com', '_blank')],
         ['🌐', 'Visit raresena.com', () => window.open('https://raresena.com', '_blank')],
       ].map(([icon, label, action]) => (
         <button key={label} onClick={action}
