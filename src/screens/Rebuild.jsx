@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { useApp, STAGE_DATA, STAGES, CIRCLE_GROUPS, T, css,
   Btn, Card, GoldCTA, StageBadge, RebuildNav, PageHeader,
   EmptyState, today, getDaysSince, createStripeCheckout,
-  STRIPE_MONTHLY_PRICE, STRIPE_ANNUAL_PRICE } from '../App.jsx'
+  STRIPE_MONTHLY_PRICE, STRIPE_ANNUAL_PRICE, supabase } from '../App.jsx'
 
 // Sample circle posts
 const SAMPLE_POSTS = [
@@ -44,6 +44,16 @@ export default function RebuildPortal({ onLogout }) {
   const [showAddHabit, setShowAddHabit] = useState(false)
   const [premiumPlan, setPremiumPlan] = useState('annual')
   const [postText, setPostText] = useState('')
+  const [showDay30Share, setShowDay30Share] = useState(false)
+  const [day30PostText, setDay30PostText] = useState('30 days of rebuilding. I am building something real. 🌿')
+  const [circlePosts, setCirclePosts] = useState([])
+  const [showPostComposer, setShowPostComposer] = useState(false)
+  const [newPostText, setNewPostText] = useState('')
+  const [postingGroup, setPostingGroup] = useState(null)
+
+  useEffect(() => {
+    if (screen === 'circle') fetchCirclePosts()
+  }, [screen])
 
   const { user, habits, saveUser, toggleHabit, addHabit, removeHabit, toggleMilestone } = useApp()
   const d = STAGE_DATA[user.stage]
@@ -51,6 +61,47 @@ export default function RebuildPortal({ onLogout }) {
   const checkedToday = user.lastCheckIn && new Date(user.lastCheckIn).toDateString() === today()
   const todayHabits = habits.map(h => ({ ...h, done: (h.completedDates || []).includes(today()) }))
   const doneCount = todayHabits.filter(h => h.done).length
+
+  async function fetchCirclePosts() {
+    const { data } = await supabase
+      .from('circle_posts')
+      .select('*, rebuilders(name, stage)')
+      .eq('is_removed', false)
+      .order('is_pinned', { ascending: false })
+      .order('created_at', { ascending: false })
+      .limit(30)
+    setCirclePosts((data || []).map(formatPost))
+  }
+
+  async function submitPost(groupName) {
+    if (!newPostText.trim()) return
+    await supabase.from('circle_posts').insert({
+      user_id: user.supabaseId,
+      content: newPostText,
+      group_name: groupName || user.stage,
+      stage: user.stage,
+    })
+    setNewPostText('')
+    setShowPostComposer(false)
+    setPostingGroup(null)
+    fetchCirclePosts()
+  }
+
+  async function handleLike(postId, currentLikes) {
+    await supabase.from('circle_posts').update({ likes: currentLikes + 1 }).eq('id', postId)
+    setCirclePosts(prev => prev.map(p => p.id === postId ? { ...p, likes: p.likes + 1 } : p))
+  }
+
+  async function shareDay30ToCircle() {
+    if (!day30PostText.trim()) return
+    await supabase.from('circle_posts').insert({
+      user_id: user.supabaseId,
+      content: day30PostText,
+      group_name: user.stage,
+      stage: user.stage,
+    })
+    setShowDay30Share(false)
+  }
 
   function doCheckIn() {
     if (checkedToday) return
@@ -137,7 +188,7 @@ export default function RebuildPortal({ onLogout }) {
         )}
       </div>
 
-      {daysSince >= 3 && !user.isPremium && (
+      {user.streak >= 3 && !user.isPremium && (
         <Card gold style={{ marginTop: '20px' }}>
           <p style={{ fontWeight: '600', marginBottom: '8px' }}>📊 Your rebuild trajectory</p>
           <div style={{ height: '80px', background: T.bg3, borderRadius: '8px',
@@ -151,12 +202,12 @@ export default function RebuildPortal({ onLogout }) {
         </Card>
       )}
 
-      {daysSince >= 7 && (
+      {user.streak >= 7 && user.streak < 30 && (
         <div style={{ background: T.goldDim, border: `1px solid ${T.gold}`,
           borderRadius: '12px', padding: '18px', marginTop: '16px', textAlign: 'center' }}>
           <p style={{ fontSize: '22px', marginBottom: '8px' }}>🎯</p>
           <p style={{ fontWeight: '700', fontSize: '15px', marginBottom: '6px' }}>
-            You have been rebuilding for {daysSince} days.
+            You have been rebuilding for {user.streak} days.
           </p>
           <p style={{ color: T.muted, fontSize: '13px', marginBottom: '16px', lineHeight: '1.6' }}>
             The fastest next step is 45 minutes with Sena — mapping your specific situation,
@@ -165,6 +216,42 @@ export default function RebuildPortal({ onLogout }) {
           <Btn onClick={() => window.open('https://raresena.com/book', '_blank')}>
             Book your £100 consultation →
           </Btn>
+        </div>
+      )}
+
+      {user.streak >= 30 && (
+        <div style={{ background: T.bg2, border: `1px solid ${T.green}`,
+          borderRadius: '12px', padding: '18px', marginTop: '16px' }}>
+          <p style={{ fontSize: '32px', marginBottom: '8px', textAlign: 'center' }}>🏆</p>
+          <p style={{ fontWeight: '700', fontSize: '16px', marginBottom: '6px', textAlign: 'center' }}>
+            30 days. You are building something real.
+          </p>
+          <p style={{ color: T.muted, fontSize: '13px', lineHeight: '1.6',
+            textAlign: 'center', marginBottom: '16px' }}>
+            A month of showing up. That is rare. That is you.
+          </p>
+          {!showDay30Share ? (
+            <Btn ghost col={T.green} sm onClick={() => setShowDay30Share(true)}>
+              Share with your community →
+            </Btn>
+          ) : (
+            <div>
+              <textarea
+                style={{ ...css.input, minHeight: '80px', resize: 'none',
+                  marginBottom: '10px', display: 'block' }}
+                value={day30PostText}
+                onChange={e => setDay30PostText(e.target.value)}
+              />
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <Btn sm onClick={shareDay30ToCircle}>Post to Circle →</Btn>
+                <button onClick={() => setShowDay30Share(false)}
+                  style={{ background: 'none', border: 'none', color: T.muted,
+                    cursor: 'pointer', fontSize: '13px', fontFamily: 'inherit' }}>
+                  Not now
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -277,14 +364,15 @@ export default function RebuildPortal({ onLogout }) {
     <div style={{ ...css.screen, ...css.padded }}>
       <RebuildNav screen="circle" setScreen={setScreen} />
       {activeGroup ? (
-        <GroupView group={activeGroup} user={user} onBack={() => setActiveGroup(null)}
-          onUpgrade={() => setScreen('upgrade')} />
+        <GroupView group={activeGroup} user={user} posts={circlePosts} onBack={() => setActiveGroup(null)}
+          onUpgrade={() => setScreen('upgrade')} onLike={handleLike} onPost={submitPost} />
       ) : (
         <>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
             <h2 style={{ fontSize: '20px', fontWeight: '700' }}>Rare Circle</h2>
             {user.isPremium && (
-              <button style={{ background: T.gold, color: T.bg, border: 'none',
+              <button onClick={() => { setPostingGroup(null); setShowPostComposer(true) }}
+                style={{ background: T.gold, color: T.bg, border: 'none',
                 borderRadius: '6px', padding: '8px 14px', fontWeight: '600',
                 fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit' }}>+ Post</button>
             )}
@@ -324,12 +412,39 @@ export default function RebuildPortal({ onLogout }) {
             </div>
           </div>
 
+          {/* Post composer */}
+          {showPostComposer && (
+            <div style={{ background: T.bg2, border: `1px solid ${T.bg4}`,
+              borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
+              <textarea
+                style={{ ...css.input, minHeight: '80px', resize: 'none',
+                  marginBottom: '10px', display: 'block' }}
+                placeholder="Share something with your community..."
+                value={newPostText}
+                onChange={e => setNewPostText(e.target.value)}
+                autoFocus
+              />
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <Btn sm onClick={() => submitPost(postingGroup)}>Post →</Btn>
+                <button onClick={() => { setShowPostComposer(false); setNewPostText('') }}
+                  style={{ background: 'none', border: 'none', color: T.muted,
+                    cursor: 'pointer', fontSize: '13px', fontFamily: 'inherit' }}>Cancel</button>
+              </div>
+            </div>
+          )}
+
           {/* Feed */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {SAMPLE_POSTS.map(post => (
-              <PostCard key={post.id} post={post} user={user}
-                onUpgrade={() => setScreen('upgrade')} />
-            ))}
+            {circlePosts.length === 0 ? (
+              <EmptyState icon="💬" title="No posts yet"
+                sub="Be the first to share something with your community." />
+            ) : (
+              circlePosts.map(post => (
+                <PostCard key={post.id} post={post} user={user}
+                  onUpgrade={() => setScreen('upgrade')}
+                  onLike={() => handleLike(post.id, post.likes)} />
+              ))
+            )}
           </div>
         </>
       )}
@@ -622,10 +737,11 @@ export default function RebuildPortal({ onLogout }) {
 
 // ── SHARED SUB-COMPONENTS ──────────────────────────────────────────────────────
 
-function PostCard({ post, user, onUpgrade }) {
-  const sd = STAGE_DATA[post.stage]
+function PostCard({ post, user, onUpgrade, onLike }) {
+  const stage = post.stage || 'Reset'
+  const sd = STAGE_DATA[stage] || STAGE_DATA['Reset']
   return (
-    <Card>
+    <Card style={{ borderLeft: post.is_pinned ? `3px solid ${T.gold}` : undefined }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
         <div style={{ width: '36px', height: '36px', borderRadius: '50%',
           background: `${sd.col}33`, display: 'flex', alignItems: 'center',
@@ -636,9 +752,10 @@ function PostCard({ post, user, onUpgrade }) {
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
             <span style={{ display: 'inline-block', padding: '2px 8px', borderRadius: '20px',
               fontSize: '11px', fontWeight: '600', background: `${sd.col}22`, color: sd.col }}>
-              {post.stage}
+              {stage}
             </span>
             <span style={{ color: T.mutedDk, fontSize: '11px' }}>{post.time}</span>
+            {post.is_pinned && <span style={{ color: T.gold, fontSize: '11px' }}>📌 Pinned</span>}
           </div>
         </div>
       </div>
@@ -646,18 +763,13 @@ function PostCard({ post, user, onUpgrade }) {
         {post.content}
       </p>
       <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-        <button style={{ background: 'none', border: 'none', color: T.muted,
-          fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit' }}>❤️ {post.likes}</button>
-        {user.isPremium ? (
-          <button style={{ background: 'none', border: 'none', color: T.muted,
-            fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit' }}>
-            💬 {post.replies} replies
-          </button>
-        ) : (
+        <button onClick={onLike} style={{ background: 'none', border: 'none', color: T.muted,
+          fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit' }}>❤️ {post.likes || 0}</button>
+        {!user.isPremium && (
           <button onClick={onUpgrade} style={{ background: 'none',
             border: `1px solid ${T.bg4}`, color: T.muted, fontSize: '12px',
             cursor: 'pointer', borderRadius: '4px', padding: '3px 10px', fontFamily: 'inherit' }}>
-            🔒 {post.replies} replies
+            🔒 Premium to reply
           </button>
         )}
       </div>
@@ -665,24 +777,59 @@ function PostCard({ post, user, onUpgrade }) {
   )
 }
 
-function GroupView({ group, user, onBack, onUpgrade }) {
-  const groupPosts = SAMPLE_POSTS.filter(p => p.groupName === group || p.stage === group)
+function formatPost(p) {
+  const name = p.rebuilders?.name || 'Rebuilder'
+  const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
+  const mins = Math.floor((Date.now() - new Date(p.created_at)) / 60000)
+  const time = mins < 60 ? `${mins}m ago` : mins < 1440 ? `${Math.floor(mins / 60)}h ago` : `${Math.floor(mins / 1440)}d ago`
+  return { ...p, author: name, initials, time }
+}
+
+function GroupView({ group, user, posts, onBack, onUpgrade, onLike, onPost }) {
+  const [showComposer, setShowComposer] = useState(false)
+  const [text, setText] = useState('')
+  const groupPosts = posts.filter(p => p.group_name === group || p.groupName === group)
+
+  async function handlePost() {
+    if (!text.trim()) return
+    await onPost(group)
+    setText('')
+    setShowComposer(false)
+  }
+
   return (
     <div>
-      <PageHeader title={group} sub={`${groupPosts.length} recent posts`} onBack={onBack}
+      <PageHeader title={group} sub={`${groupPosts.length} posts`} onBack={onBack}
         action={user.isPremium ? (
-          <button style={{ background: T.gold, color: T.bg, border: 'none',
+          <button onClick={() => setShowComposer(true)}
+            style={{ background: T.gold, color: T.bg, border: 'none',
             borderRadius: '6px', padding: '8px 14px', fontWeight: '600',
             fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit' }}>+ Post</button>
         ) : null} />
+      {showComposer && (
+        <div style={{ background: T.bg2, border: `1px solid ${T.bg4}`,
+          borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
+          <textarea
+            style={{ ...css.input, minHeight: '80px', resize: 'none',
+              marginBottom: '10px', display: 'block' }}
+            placeholder={`Share something with ${group}...`}
+            value={text} onChange={e => setText(e.target.value)} autoFocus />
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <Btn sm onClick={handlePost}>Post →</Btn>
+            <button onClick={() => { setShowComposer(false); setText('') }}
+              style={{ background: 'none', border: 'none', color: T.muted,
+                cursor: 'pointer', fontSize: '13px', fontFamily: 'inherit' }}>Cancel</button>
+          </div>
+        </div>
+      )}
       {groupPosts.length === 0 ? (
         <EmptyState icon="💬" title="No posts yet"
-          sub="Be the first to post in this group."
-          cta={user.isPremium ? 'Write a post →' : undefined} />
+          sub="Be the first to post in this group." />
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {groupPosts.map(post => (
-            <PostCard key={post.id} post={post} user={user} onUpgrade={onUpgrade} />
+            <PostCard key={post.id} post={post} user={user} onUpgrade={onUpgrade}
+              onLike={() => onLike(post.id, post.likes)} />
           ))}
         </div>
       )}

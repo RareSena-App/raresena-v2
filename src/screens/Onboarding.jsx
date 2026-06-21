@@ -77,8 +77,6 @@ export default function OnboardingFlow({ onComplete }) {
       }))
       await supabase.from('habits').insert(userHabits)
 
-      localStorage.setItem('rs_pwd', password)
-
       const newUser = {
         supabaseId: userId, email, name, stage,
         isPremium: false, isCreator: false, accountType: 'rebuilder',
