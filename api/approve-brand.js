@@ -1,9 +1,12 @@
 import { createClient } from '@supabase/supabase-js'
+import { Resend } from 'resend'
+import { brandApprovedEmail } from './emails.js'
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 )
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
@@ -58,6 +61,15 @@ export default async function handler(req, res) {
       status: 'approved',
       approved_at: new Date().toISOString(),
     }).eq('id', enquiryId)
+
+    // 4. Send welcome email
+    const { subject, html } = brandApprovedEmail({ companyName })
+    await resend.emails.send({
+      from: 'RareSena <hello@raresena.com>',
+      to: email,
+      subject,
+      html,
+    })
 
     return res.status(200).json({ success: true })
   } catch (err) {

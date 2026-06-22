@@ -3,12 +3,15 @@
 
 import Stripe from 'stripe'
 import { createClient } from '@supabase/supabase-js'
+import { Resend } from 'resend'
+import { creatorWelcomeEmail } from './emails.js'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 )
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 async function getRawBody(req) {
   return new Promise((resolve, reject) => {
@@ -56,6 +59,19 @@ export default async function handler(req, res) {
             updated_at: new Date().toISOString(),
           })
           .eq('email', customerEmail)
+
+        // Send creator welcome email
+        const { data: creator } = await supabase
+          .from('rebuilders').select('name').eq('email', customerEmail).single()
+        if (creator?.name) {
+          const { subject, html } = creatorWelcomeEmail({ name: creator.name.split(' ')[0] })
+          await resend.emails.send({
+            from: 'RareSena <hello@raresena.com>',
+            to: customerEmail,
+            subject,
+            html,
+          })
+        }
 
       } else {
         // Rebuild Premium payment — activate premium features

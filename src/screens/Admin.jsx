@@ -49,8 +49,21 @@ export default function AdminPanel({ onLogout }) {
   }
 
   async function declineBrand(brand) {
-    await supabase.from('brand_enquiries').update({ status: 'declined' }).eq('id', brand.id)
-    setPendingBrands(prev => prev.filter(b => b.id !== brand.id))
+    const res = await fetch('/api/decline-brand', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        enquiryId: brand.id,
+        email: brand.email,
+        companyName: brand.company_name,
+      }),
+    })
+    if (res.ok) {
+      setPendingBrands(prev => prev.filter(b => b.id !== brand.id))
+    } else {
+      const err = await res.json()
+      alert('Decline failed: ' + (err.error || 'Unknown error'))
+    }
   }
 
   async function removePost(postId) {
