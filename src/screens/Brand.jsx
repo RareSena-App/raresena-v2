@@ -7,12 +7,23 @@ export default function BrandPortal({ onLogout }) {
   const [creators, setCreators] = useState([])
   const [loadingCreators, setLoadingCreators] = useState(true)
   const [briefs, setBriefs] = useState([])
+  const [briefsLoading, setBriefsLoading] = useState(true)
   const [briefForm, setBriefForm] = useState({ name: '', niche: '', deliverables: '', budget: '', timeline: '', rights: '', deadline: '', description: '' })
   const [postingBrief, setPostingBrief] = useState(false)
   const [niicheFilter, setNicheFilter] = useState('All')
+  const [activeBriefForApps, setActiveBriefForApps] = useState(null)
+  const [briefApplications, setBriefApplications] = useState([])
+  const [appsLoading, setAppsLoading] = useState(false)
+  const [updatingAppId, setUpdatingAppId] = useState(null)
   const { user } = useApp()
 
-  useEffect(() => { fetchCreators() }, [])
+  useEffect(() => {
+    fetchCreators()
+  }, [])
+
+  useEffect(() => {
+    if (user.supabaseId) fetchBrandBriefs()
+  }, [user.supabaseId])
 
   async function fetchCreators() {
     setLoadingCreators(true)
@@ -41,6 +52,35 @@ export default function BrandPortal({ onLogout }) {
     }
   }
 
+  async function fetchBrandBriefs() {
+    setBriefsLoading(true)
+    const { data } = await supabase
+      .from('brand_briefs')
+      .select('*')
+      .eq('brand_user_id', user.supabaseId)
+      .order('created_at', { ascending: false })
+    setBriefs(data || [])
+    setBriefsLoading(false)
+  }
+
+  async function fetchBriefApplications(briefId) {
+    setAppsLoading(true)
+    const { data } = await supabase
+      .from('brief_applications')
+      .select('*, creator:rebuilders!creator_user_id(name, creator_bio, creator_niche, creator_audience_size, creator_rate_range, creator_tiktok, creator_instagram)')
+      .eq('brief_id', briefId)
+      .order('created_at', { ascending: false })
+    setBriefApplications(data || [])
+    setAppsLoading(false)
+  }
+
+  async function updateApplicationStatus(appId, newStatus) {
+    setUpdatingAppId(appId)
+    await supabase.from('brief_applications').update({ status: newStatus }).eq('id', appId)
+    setBriefApplications(prev => prev.map(a => a.id === appId ? { ...a, status: newStatus } : a))
+    setUpdatingAppId(null)
+  }
+
   async function postBrief() {
     if (!briefForm.name.trim()) return
     setPostingBrief(true)
@@ -56,7 +96,7 @@ export default function BrandPortal({ onLogout }) {
       description: briefForm.description,
       status: 'open',
     })
-    setBriefs(prev => [...prev, { id: Date.now(), ...briefForm }])
+    await fetchBrandBriefs()
     setBriefForm({ name: '', niche: '', deliverables: '', budget: '', timeline: '', rights: '', deadline: '', description: '' })
     setPostingBrief(false)
     setScreen('brand-home')
@@ -84,7 +124,7 @@ export default function BrandPortal({ onLogout }) {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '20px' }}>
         {[
-          ['📋', briefs.length, 'Active briefs'],
+          ['📋', briefsLoading ? '…' : briefs.length, 'Active briefs'],
           ['👥', loadingCreators ? '…' : creators.length, 'Creators available'],
           ['🚀', 0, 'Campaigns active'],
           ['✓', 0, 'Campaigns complete'],
@@ -105,19 +145,26 @@ export default function BrandPortal({ onLogout }) {
       {briefs.length > 0 && (
         <div>
           <p style={{ fontWeight: '600', fontSize: '15px', marginBottom: '12px' }}>Your active briefs</p>
-          {briefs.map(b => (
-            <Card key={b.id} style={{ marginBottom: '10px' }}>
+          {briefs.slice(0, 3).map(b => (
+            <div key={b.id} onClick={() => {
+              setActiveBriefForApps(b)
+              fetchBriefApplications(b.id)
+              setScreen('brief-applications')
+            }} style={{ background: T.bg2, border: `1px solid ${T.bg4}`, borderRadius: '10px',
+              padding: '14px 16px', marginBottom: '8px', cursor: 'pointer' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
-                  <p style={{ fontWeight: '600', fontSize: '14px' }}>{b.name}</p>
+                  <p style={{ fontWeight: '600', fontSize: '14px' }}>{b.campaign_name}</p>
                   <p style={{ color: T.muted, fontSize: '12px', marginTop: '3px' }}>
-                    {b.niche} · {b.budget}
+                    {b.niche_required} · {b.budget}
                   </p>
                 </div>
                 <span style={{ background: `${T.green}22`, color: T.green,
-                  padding: '3px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: '600' }}>OPEN</span>
+                  padding: '3px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: '600' }}>
+                  {b.status?.toUpperCase() || 'OPEN'}
+                </span>
               </div>
-            </Card>
+            </div>
           ))}
         </div>
       )}
@@ -291,22 +338,147 @@ export default function BrandPortal({ onLogout }) {
           style={{ background: T.gold, color: T.bg, border: 'none', borderRadius: '6px',
             padding: '8px 14px', fontWeight: '600', fontSize: '13px',
             cursor: 'pointer', fontFamily: 'inherit' }}>+ New brief</button>} />
-      {briefs.length === 0 ? (
+      {briefsLoading ? (
+        <p style={{ color: T.muted, textAlign: 'center', padding: '40px 0' }}>Loading...</p>
+      ) : briefs.length === 0 ? (
         <EmptyState icon="📋" title="No briefs posted yet"
           sub="Post your first brief and matching creators will be notified automatically."
           cta="Post a brief →" onCta={() => setScreen('post-brief')} />
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           {briefs.map(b => (
-            <Card key={b.id}>
+            <div key={b.id} onClick={() => {
+              setActiveBriefForApps(b)
+              fetchBriefApplications(b.id)
+              setScreen('brief-applications')
+            }} style={{ background: T.bg2, border: `1px solid ${T.bg4}`,
+              borderRadius: '12px', padding: '14px 16px', cursor: 'pointer' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
-                <p style={{ fontWeight: '600', fontSize: '14px' }}>{b.name}</p>
+                <p style={{ fontWeight: '600', fontSize: '14px' }}>{b.campaign_name}</p>
                 <span style={{ background: `${T.green}22`, color: T.green,
-                  padding: '3px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: '600' }}>OPEN</span>
+                  padding: '3px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: '600' }}>
+                  {b.status?.toUpperCase() || 'OPEN'}
+                </span>
               </div>
-              <p style={{ color: T.muted, fontSize: '12px' }}>{b.niche} · {b.budget} · {b.deadline}</p>
-            </Card>
+              <p style={{ color: T.muted, fontSize: '12px' }}>
+                {b.niche_required} · {b.budget} · {b.deadline}
+              </p>
+              <p style={{ color: T.mutedDk, fontSize: '12px', marginTop: '4px' }}>
+                Tap to view applications →
+              </p>
+            </div>
           ))}
+        </div>
+      )}
+    </div>
+  )
+
+  // ── BRIEF APPLICATIONS (brand reviews creator applications) ──
+  if (screen === 'brief-applications' && activeBriefForApps) return (
+    <div style={{ ...css.screen, ...css.padded }}>
+      <BrandNav screen="brand-briefs" setScreen={setScreen} />
+      <PageHeader title={activeBriefForApps.campaign_name} onBack={() => setScreen('brand-briefs')}
+        sub={appsLoading ? 'Loading...' : `${briefApplications.length} application${briefApplications.length !== 1 ? 's' : ''}`} />
+      {appsLoading ? (
+        <p style={{ color: T.muted, textAlign: 'center', padding: '40px 0' }}>Loading applications...</p>
+      ) : briefApplications.length === 0 ? (
+        <EmptyState icon="📝" title="No applications yet"
+          sub="Creators will apply once they see your brief. Applications appear here automatically." />
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {briefApplications.map(app => {
+            const statusCol = app.status === 'shortlisted' ? T.gold
+              : app.status === 'selected' ? T.green
+              : app.status === 'rejected' ? T.red
+              : T.muted
+            const isUpdating = updatingAppId === app.id
+            return (
+              <Card key={app.id}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{ width: '36px', height: '36px', borderRadius: '50%',
+                      background: `${T.purple}33`, display: 'flex', alignItems: 'center',
+                      justifyContent: 'center', fontSize: '14px', fontWeight: '700',
+                      color: T.purple, flexShrink: 0 }}>
+                      {(app.creator?.name || 'C')[0]}
+                    </div>
+                    <div>
+                      <p style={{ fontWeight: '600', fontSize: '14px' }}>{app.creator?.name || 'Creator'}</p>
+                      {app.creator?.creator_niche && (
+                        <p style={{ color: T.muted, fontSize: '12px' }}>{app.creator.creator_niche}</p>
+                      )}
+                    </div>
+                  </div>
+                  <span style={{ background: `${statusCol}22`, color: statusCol,
+                    padding: '3px 8px', borderRadius: '4px', fontSize: '11px',
+                    fontWeight: '600', textTransform: 'uppercase' }}>{app.status}</span>
+                </div>
+
+                {app.creator?.creator_audience_size && (
+                  <p style={{ color: T.muted, fontSize: '12px', marginBottom: '8px' }}>
+                    Audience: {app.creator.creator_audience_size}
+                  </p>
+                )}
+
+                <div style={{ background: T.bg3, borderRadius: '8px', padding: '10px 12px', marginBottom: '10px' }}>
+                  <p style={{ color: T.muted, fontSize: '11px', marginBottom: '4px' }}>Pitch</p>
+                  <p style={{ fontSize: '13px', lineHeight: '1.6', color: T.white }}>{app.pitch}</p>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between',
+                  padding: '8px 0', borderBottom: `1px solid ${T.bg4}`, marginBottom: '12px' }}>
+                  <p style={{ color: T.muted, fontSize: '13px' }}>Proposed rate</p>
+                  <p style={{ fontSize: '13px', color: T.gold, fontWeight: '600' }}>{app.proposed_rate}</p>
+                </div>
+
+                {app.status !== 'selected' && app.status !== 'rejected' && (
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button onClick={() => updateApplicationStatus(app.id, 'selected')}
+                      disabled={isUpdating}
+                      style={{ flex: 1, background: T.green, color: T.white, border: 'none',
+                        borderRadius: '8px', padding: '10px', fontWeight: '600', fontSize: '13px',
+                        cursor: isUpdating ? 'default' : 'pointer', fontFamily: 'inherit',
+                        opacity: isUpdating ? 0.6 : 1 }}>
+                      ✓ Select
+                    </button>
+                    {app.status !== 'shortlisted' && (
+                      <button onClick={() => updateApplicationStatus(app.id, 'shortlisted')}
+                        disabled={isUpdating}
+                        style={{ flex: 1, background: T.goldDim, color: T.gold,
+                          border: `1px solid ${T.gold}44`, borderRadius: '8px', padding: '10px',
+                          fontWeight: '600', fontSize: '13px',
+                          cursor: isUpdating ? 'default' : 'pointer', fontFamily: 'inherit' }}>
+                        ★ Shortlist
+                      </button>
+                    )}
+                    <button onClick={() => updateApplicationStatus(app.id, 'rejected')}
+                      disabled={isUpdating}
+                      style={{ flex: 1, background: 'none', color: T.muted,
+                        border: `1px solid ${T.bg4}`, borderRadius: '8px', padding: '10px',
+                        fontWeight: '600', fontSize: '13px',
+                        cursor: isUpdating ? 'default' : 'pointer', fontFamily: 'inherit' }}>
+                      ✕ Pass
+                    </button>
+                  </div>
+                )}
+                {app.status === 'selected' && (
+                  <div style={{ background: `${T.green}11`, border: `1px solid ${T.green}33`,
+                    borderRadius: '8px', padding: '10px', textAlign: 'center' }}>
+                    <p style={{ color: T.green, fontSize: '13px', fontWeight: '600' }}>
+                      ✓ Creator selected — they have been notified
+                    </p>
+                  </div>
+                )}
+                {app.status === 'rejected' && (
+                  <button onClick={() => updateApplicationStatus(app.id, 'submitted')}
+                    style={{ background: 'none', border: 'none', color: T.mutedDk,
+                      fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit', padding: '4px 0' }}>
+                    Undo rejection
+                  </button>
+                )}
+              </Card>
+            )
+          })}
         </div>
       )}
     </div>

@@ -1,38 +1,123 @@
-import { useState } from 'react'
-import { useApp, T, css, Btn, Card, GoldCTA, StudioNav, PageHeader,
-  EmptyState, StageBadge, createStripeCheckout,
+import { useState, useEffect } from 'react'
+import { useApp, T, css, Btn, Card, StudioNav, PageHeader,
+  EmptyState, createStripeCheckout, supabase,
   STRIPE_CREATOR_ONETIME, STRIPE_CREATOR_MONTHLY } from '../App.jsx'
-
-const SAMPLE_BRIEFS = [
-  { id: 1, brand: 'NaturalGlow Beauty', niche: 'Beauty and Skincare', budget: '£350',
-    deliverables: '3 × UGC videos (30-60 seconds)', deadline: '5 days left',
-    description: 'We are looking for authentic creators to showcase our new vitamin C serum. We want real reactions and honest reviews that resonate with a diverse UK audience.', applicants: 4 },
-  { id: 2, brand: 'FreshMart UK', niche: 'Food and Lifestyle', budget: '£500',
-    deliverables: '5 × UGC videos + 3 Instagram posts', deadline: '8 days left',
-    description: 'Seeking creators from immigrant and diaspora backgrounds to showcase how our products fit into multicultural UK kitchens.', applicants: 7 },
-  { id: 3, brand: 'TechStart London', niche: 'Tech and Productivity', budget: '£420',
-    deliverables: '2 × YouTube-style reviews + 4 TikTok clips', deadline: '12 days left',
-    description: 'Looking for creators who can explain our project management app to young professionals and entrepreneurs in an authentic, relatable way.', applicants: 2 },
-]
-
-const SAMPLE_APPLICATIONS = [
-  { id: 1, briefId: 1, brand: 'NaturalGlow Beauty', status: 'submitted', date: '2 days ago', rate: '£320' },
-  { id: 2, briefId: 2, brand: 'FreshMart UK', status: 'shortlisted', date: '5 days ago', rate: '£480' },
-]
-
-const SAMPLE_CAMPAIGNS = [
-  { id: 1, brand: 'HomeBase Essentials', status: 'active', deadline: '3 days',
-    deliverable: '4 × 30-second UGC videos', value: '£380' },
-]
 
 export default function StudioPortal({ onLogout }) {
   const [screen, setScreen] = useState('studio-home')
   const [activeBrief, setActiveBrief] = useState(null)
-  const [activeCampaign, setActiveCampaign] = useState(null)
-  const [applied, setApplied] = useState([])
+  const [briefs, setBriefs] = useState([])
+  const [myApplications, setMyApplications] = useState([])
+  const [briefsLoading, setBriefsLoading] = useState(true)
   const [pitch, setPitch] = useState('')
-  const [rate, setRate] = useState('')
-  const { user, saveUser } = useApp()
+  const [proposedRate, setProposedRate] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [profileForm, setProfileForm] = useState({ bio: '', niche: '', tiktok: '', instagram: '', audience: '', rate: '' })
+  const [profileSaving, setProfileSaving] = useState(false)
+  const [profileSaved, setProfileSaved] = useState(false)
+  const [raiseDisputeBriefId, setRaiseDisputeBriefId] = useState(null)
+  const [disputeText, setDisputeText] = useState('')
+  const [disputeSent, setDisputeSent] = useState(false)
+  const { user } = useApp()
+
+  useEffect(() => {
+    if (!user.supabaseId) return
+    fetchBriefs()
+    fetchMyApplications()
+    loadProfile()
+  }, [user.supabaseId])
+
+  async function fetchBriefs() {
+    setBriefsLoading(true)
+    const { data } = await supabase
+      .from('brand_briefs')
+      .select('*')
+      .eq('status', 'open')
+      .order('created_at', { ascending: false })
+    setBriefs(data || [])
+    setBriefsLoading(false)
+  }
+
+  async function fetchMyApplications() {
+    const { data } = await supabase
+      .from('brief_applications')
+      .select('*, brief:brand_briefs(campaign_name, budget, deliverables)')
+      .eq('creator_user_id', user.supabaseId)
+      .order('created_at', { ascending: false })
+    setMyApplications(data || [])
+  }
+
+  async function loadProfile() {
+    const { data } = await supabase
+      .from('rebuilders')
+      .select('creator_bio, creator_niche, creator_tiktok, creator_instagram, creator_audience_size, creator_rate_range')
+      .eq('id', user.supabaseId)
+      .single()
+    if (data) {
+      setProfileForm({
+        bio: data.creator_bio || '',
+        niche: data.creator_niche || '',
+        tiktok: data.creator_tiktok || '',
+        instagram: data.creator_instagram || '',
+        audience: data.creator_audience_size || '',
+        rate: data.creator_rate_range || '',
+      })
+    }
+  }
+
+  async function saveProfile() {
+    setProfileSaving(true)
+    await supabase.from('rebuilders').update({
+      creator_bio: profileForm.bio,
+      creator_niche: profileForm.niche,
+      creator_tiktok: profileForm.tiktok,
+      creator_instagram: profileForm.instagram,
+      creator_audience_size: profileForm.audience,
+      creator_rate_range: profileForm.rate,
+      updated_at: new Date().toISOString(),
+    }).eq('id', user.supabaseId)
+    setProfileSaving(false)
+    setProfileSaved(true)
+    setTimeout(() => setProfileSaved(false), 2500)
+  }
+
+  async function applyToBrief() {
+    if (!pitch.trim() || !proposedRate.trim() || !activeBrief) return
+    setSubmitting(true)
+    const { error } = await supabase.from('brief_applications').insert({
+      brief_id: activeBrief.id,
+      creator_user_id: user.supabaseId,
+      pitch,
+      proposed_rate: proposedRate,
+      status: 'submitted',
+    })
+    if (!error) {
+      await fetchMyApplications()
+      setPitch('')
+      setProposedRate('')
+      setScreen('my-applications')
+    }
+    setSubmitting(false)
+  }
+
+  async function raiseDispute(appId) {
+    if (!disputeText.trim()) return
+    const { error } = await supabase.from('disputes').insert({
+      application_id: appId,
+      raised_by_user_id: user.supabaseId,
+      description: disputeText,
+      status: 'open',
+    })
+    if (!error) {
+      setDisputeText('')
+      setRaiseDisputeBriefId(null)
+      setDisputeSent(true)
+      setTimeout(() => setDisputeSent(false), 3000)
+    }
+  }
+
+  const appliedBriefIds = new Set(myApplications.map(a => a.brief_id))
+  const activeCampaigns = myApplications.filter(a => a.status === 'selected')
 
   // ── DASHBOARD ──
   if (screen === 'studio-home') return (
@@ -51,9 +136,9 @@ export default function StudioPortal({ onLogout }) {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
-        {[['📋', SAMPLE_BRIEFS.length, 'Briefs available'],
-          ['📝', SAMPLE_APPLICATIONS.length, 'Applications'],
-          ['🚀', SAMPLE_CAMPAIGNS.length, 'Active campaigns'],
+        {[['📋', briefsLoading ? '…' : briefs.length, 'Briefs available'],
+          ['📝', myApplications.length, 'Applications'],
+          ['🚀', activeCampaigns.length, 'Active campaigns'],
           ['💰', '£0', 'Total earnings']].map(([icon, val, label]) => (
           <Card key={label} style={{ textAlign: 'center', marginBottom: 0 }}>
             <p style={{ fontSize: '22px', marginBottom: '4px' }}>{icon}</p>
@@ -63,20 +148,22 @@ export default function StudioPortal({ onLogout }) {
         ))}
       </div>
 
-      {SAMPLE_CAMPAIGNS.length > 0 && (
+      {activeCampaigns.length > 0 && (
         <div style={{ marginBottom: '20px' }}>
           <p style={{ fontWeight: '600', fontSize: '15px', marginBottom: '12px' }}>Active campaigns</p>
-          {SAMPLE_CAMPAIGNS.map(c => (
-            <div key={c.id} onClick={() => { setActiveCampaign(c); setScreen('campaign-detail') }}
+          {activeCampaigns.map(app => (
+            <div key={app.id}
               style={{ background: T.bg2, border: `1px solid ${T.gold}44`,
-                borderRadius: '10px', padding: '14px 16px', cursor: 'pointer', marginBottom: '8px' }}>
+                borderRadius: '10px', padding: '14px 16px', marginBottom: '8px' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <p style={{ fontWeight: '600', fontSize: '14px' }}>{c.brand}</p>
+                <p style={{ fontWeight: '600', fontSize: '14px' }}>{app.brief?.campaign_name || 'Campaign'}</p>
                 <span style={{ background: `${T.green}22`, color: T.green,
                   padding: '3px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: '600' }}>ACTIVE</span>
               </div>
-              <p style={{ color: T.muted, fontSize: '12px', marginTop: '4px' }}>{c.deliverable}</p>
-              <p style={{ color: T.red, fontSize: '12px', marginTop: '4px' }}>⏱ {c.deadline} remaining</p>
+              {app.brief?.deliverables && (
+                <p style={{ color: T.muted, fontSize: '12px', marginTop: '4px' }}>{app.brief.deliverables}</p>
+              )}
+              <p style={{ color: T.gold, fontSize: '12px', marginTop: '4px' }}>{app.proposed_rate}</p>
             </div>
           ))}
         </div>
@@ -89,10 +176,17 @@ export default function StudioPortal({ onLogout }) {
             style={{ background: 'none', border: 'none', color: T.gold,
               fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit' }}>View all →</button>
         </div>
-        {SAMPLE_BRIEFS.slice(0, 2).map(brief => (
-          <BriefCard key={brief.id} brief={brief} applied={applied}
-            onClick={() => { setActiveBrief(brief); setScreen('brief-detail') }} />
-        ))}
+        {briefsLoading ? (
+          <p style={{ color: T.muted, fontSize: '13px', padding: '20px 0', textAlign: 'center' }}>Loading...</p>
+        ) : briefs.length === 0 ? (
+          <EmptyState icon="📋" title="No briefs yet"
+            sub="Brand campaign briefs will appear here once posted." />
+        ) : (
+          briefs.slice(0, 2).map(brief => (
+            <BriefCard key={brief.id} brief={brief} isApplied={appliedBriefIds.has(brief.id)}
+              onClick={() => { setActiveBrief(brief); setScreen('brief-detail') }} />
+          ))
+        )}
       </div>
     </div>
   )
@@ -101,38 +195,53 @@ export default function StudioPortal({ onLogout }) {
   if (screen === 'briefs') return (
     <div style={{ ...css.screen, ...css.padded }}>
       <StudioNav screen="briefs" setScreen={setScreen} />
-      <PageHeader title="Brief Board" sub={`${SAMPLE_BRIEFS.length} active briefs`} />
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        {SAMPLE_BRIEFS.map(brief => (
-          <BriefCard key={brief.id} brief={brief} applied={applied}
-            onClick={() => { setActiveBrief(brief); setScreen('brief-detail') }} />
-        ))}
-      </div>
+      <PageHeader title="Brief Board"
+        sub={briefsLoading ? 'Loading...' : `${briefs.length} active brief${briefs.length !== 1 ? 's' : ''}`} />
+      {briefsLoading ? (
+        <p style={{ color: T.muted, textAlign: 'center', padding: '40px 0' }}>Loading briefs...</p>
+      ) : briefs.length === 0 ? (
+        <EmptyState icon="📋" title="No briefs yet"
+          sub="Brand campaign briefs appear here once posted. Check back soon." />
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {briefs.map(brief => (
+            <BriefCard key={brief.id} brief={brief} isApplied={appliedBriefIds.has(brief.id)}
+              onClick={() => { setActiveBrief(brief); setScreen('brief-detail') }} />
+          ))}
+        </div>
+      )}
     </div>
   )
 
   // ── BRIEF DETAIL ──
   if (screen === 'brief-detail' && activeBrief) {
-    const alreadyApplied = applied.includes(activeBrief.id)
+    const myApp = myApplications.find(a => a.brief_id === activeBrief.id)
+    const alreadyApplied = !!myApp
     return (
       <div style={{ ...css.screen, ...css.padded }}>
         <StudioNav screen="briefs" setScreen={setScreen} />
-        <PageHeader title={activeBrief.brand} onBack={() => setScreen('briefs')} />
+        <PageHeader title={activeBrief.campaign_name} onBack={() => setScreen('briefs')} />
         <Card>
           <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
-            <span style={{ ...css.tag(T.purple) }}>{activeBrief.niche}</span>
-            <span style={{ ...css.tag(T.gold) }}>{activeBrief.budget}</span>
-            <span style={{ ...css.tag(T.red) }}>⏱ {activeBrief.deadline}</span>
+            {activeBrief.niche_required && <span style={{ ...css.tag(T.purple) }}>{activeBrief.niche_required}</span>}
+            {activeBrief.budget && <span style={{ ...css.tag(T.gold) }}>{activeBrief.budget}</span>}
+            {activeBrief.deadline && <span style={{ ...css.tag(T.red) }}>⏱ {activeBrief.deadline}</span>}
           </div>
-          <p style={{ fontSize: '14px', lineHeight: '1.7', color: T.white, marginBottom: '14px' }}>
-            {activeBrief.description}
-          </p>
-          {[['Deliverables', activeBrief.deliverables], ['Budget', activeBrief.budget],
-            ['Applicants so far', `${activeBrief.applicants} creators`]].map(([label, val]) => (
+          {activeBrief.description && (
+            <p style={{ fontSize: '14px', lineHeight: '1.7', color: T.white, marginBottom: '14px' }}>
+              {activeBrief.description}
+            </p>
+          )}
+          {[['Deliverables', activeBrief.deliverables],
+            ['Budget', activeBrief.budget],
+            ['Timeline', activeBrief.timeline],
+            ['Usage rights', activeBrief.usage_rights],
+          ].filter(([, v]) => v).map(([label, val]) => (
             <div key={label} style={{ display: 'flex', justifyContent: 'space-between',
               padding: '8px 0', borderBottom: `1px solid ${T.bg4}` }}>
               <p style={{ color: T.muted, fontSize: '13px' }}>{label}</p>
-              <p style={{ fontSize: '13px', color: T.white, fontWeight: '500' }}>{val}</p>
+              <p style={{ fontSize: '13px', color: T.white, fontWeight: '500',
+                textAlign: 'right', maxWidth: '58%' }}>{val}</p>
             </div>
           ))}
         </Card>
@@ -149,24 +258,56 @@ export default function StudioPortal({ onLogout }) {
             <div style={{ marginBottom: '16px' }}>
               <p style={{ color: T.muted, fontSize: '12px', marginBottom: '6px' }}>Your proposed rate</p>
               <input style={css.input} type="text" placeholder="e.g. £350"
-                value={rate} onChange={e => setRate(e.target.value)} />
+                value={proposedRate} onChange={e => setProposedRate(e.target.value)} />
             </div>
-            <Btn onClick={() => {
-              if (!pitch.trim() || !rate.trim()) return
-              setApplied(prev => [...prev, activeBrief.id])
-              setScreen('my-applications')
-            }} disabled={!pitch.trim() || !rate.trim()}>
-              Submit application →
+            <Btn onClick={applyToBrief}
+              disabled={!pitch.trim() || !proposedRate.trim() || submitting}>
+              {submitting ? 'Submitting...' : 'Submit application →'}
             </Btn>
+          </div>
+        ) : myApp?.status === 'selected' ? (
+          <div style={{ marginTop: '16px' }}>
+            <div style={{ background: `${T.green}22`, border: `1px solid ${T.green}44`,
+              borderRadius: '10px', padding: '14px', marginBottom: '12px', textAlign: 'center' }}>
+              <p style={{ color: T.green, fontWeight: '600', fontSize: '14px' }}>🎉 You've been selected!</p>
+              <p style={{ color: T.muted, fontSize: '12px', marginTop: '4px' }}>
+                The brand has chosen you for this campaign. Expect to hear from them soon.
+              </p>
+            </div>
+            {raiseDisputeBriefId === myApp.id ? (
+              <div>
+                <textarea style={{ ...css.input, height: '70px', resize: 'none', marginBottom: '8px', display: 'block' }}
+                  placeholder="Describe the issue with this campaign..."
+                  value={disputeText} onChange={e => setDisputeText(e.target.value)} />
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <Btn sm onClick={() => raiseDispute(myApp.id)} disabled={!disputeText.trim()}>
+                    Submit dispute →
+                  </Btn>
+                  <button onClick={() => { setRaiseDisputeBriefId(null); setDisputeText('') }}
+                    style={{ background: 'none', border: 'none', color: T.muted,
+                      cursor: 'pointer', fontSize: '13px', fontFamily: 'inherit' }}>Cancel</button>
+                </div>
+              </div>
+            ) : (
+              <button onClick={() => setRaiseDisputeBriefId(myApp.id)}
+                style={{ background: 'none', border: 'none', color: T.mutedDk,
+                  fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit' }}>
+                Raise a dispute →
+              </button>
+            )}
+            {disputeSent && (
+              <div style={{ background: `${T.green}22`, border: `1px solid ${T.green}`, borderRadius: '10px',
+                padding: '12px', marginTop: '10px', textAlign: 'center' }}>
+                <p style={{ color: T.green, fontSize: '13px' }}>✓ Dispute raised — Sena will review within 48 hours</p>
+              </div>
+            )}
           </div>
         ) : (
           <div style={{ background: `${T.green}22`, border: `1px solid ${T.green}44`,
             borderRadius: '10px', padding: '14px', marginTop: '16px', textAlign: 'center' }}>
-            <p style={{ color: T.green, fontWeight: '600', fontSize: '14px' }}>
-              ✓ Application submitted
-            </p>
+            <p style={{ color: T.green, fontWeight: '600', fontSize: '14px' }}>✓ Application submitted</p>
             <p style={{ color: T.muted, fontSize: '12px', marginTop: '4px' }}>
-              The brand will be in touch if they select you.
+              The brand will review your application and be in touch if selected.
             </p>
           </div>
         )}
@@ -178,30 +319,67 @@ export default function StudioPortal({ onLogout }) {
   if (screen === 'my-applications') return (
     <div style={{ ...css.screen, ...css.padded }}>
       <StudioNav screen="briefs" setScreen={setScreen} />
-      <PageHeader title="My Applications" sub={`${SAMPLE_APPLICATIONS.length} total`} />
-      {SAMPLE_APPLICATIONS.length === 0 ? (
+      <PageHeader title="My Applications" sub={`${myApplications.length} total`} />
+      {myApplications.length === 0 ? (
         <EmptyState icon="📝" title="No applications yet"
           sub="Browse the Brief Board and apply for campaigns that match your niche."
           cta="Browse briefs →" onCta={() => setScreen('briefs')} />
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {SAMPLE_APPLICATIONS.map(app => {
-            const statusCol = app.status === 'shortlisted' ? T.gold : app.status === 'selected' ? T.green : T.muted
+          {myApplications.map(app => {
+            const statusCol = app.status === 'shortlisted' ? T.gold
+              : app.status === 'selected' ? T.green
+              : app.status === 'rejected' ? T.red
+              : T.muted
+            const d = new Date(app.created_at)
+            const daysSince = Math.floor((Date.now() - d) / 86400000)
+            const dateStr = daysSince === 0 ? 'today' : daysSince === 1 ? 'yesterday' : `${daysSince} days ago`
             return (
               <Card key={app.id}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
-                  <p style={{ fontWeight: '600', fontSize: '14px' }}>{app.brand}</p>
+                  <p style={{ fontWeight: '600', fontSize: '14px' }}>{app.brief?.campaign_name || 'Campaign'}</p>
                   <span style={{ background: `${statusCol}22`, color: statusCol,
                     padding: '3px 8px', borderRadius: '4px', fontSize: '11px',
                     fontWeight: '600', textTransform: 'uppercase' }}>{app.status}</span>
                 </div>
                 <div style={{ display: 'flex', gap: '16px' }}>
-                  <p style={{ color: T.muted, fontSize: '12px' }}>Proposed rate: {app.rate}</p>
-                  <p style={{ color: T.mutedDk, fontSize: '12px' }}>Applied {app.date}</p>
+                  {app.proposed_rate && <p style={{ color: T.muted, fontSize: '12px' }}>Proposed: {app.proposed_rate}</p>}
+                  <p style={{ color: T.mutedDk, fontSize: '12px' }}>Applied {dateStr}</p>
                 </div>
+                {app.status === 'selected' && (
+                  <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: `1px solid ${T.bg4}` }}>
+                    {raiseDisputeBriefId === app.id ? (
+                      <div>
+                        <textarea style={{ ...css.input, height: '70px', resize: 'none', marginBottom: '8px', display: 'block' }}
+                          placeholder="Describe the issue with this campaign..."
+                          value={disputeText} onChange={e => setDisputeText(e.target.value)} />
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <Btn sm onClick={() => raiseDispute(app.id)} disabled={!disputeText.trim()}>
+                            Submit dispute →
+                          </Btn>
+                          <button onClick={() => { setRaiseDisputeBriefId(null); setDisputeText('') }}
+                            style={{ background: 'none', border: 'none', color: T.muted,
+                              cursor: 'pointer', fontSize: '13px', fontFamily: 'inherit' }}>Cancel</button>
+                        </div>
+                      </div>
+                    ) : (
+                      <button onClick={() => setRaiseDisputeBriefId(app.id)}
+                        style={{ background: 'none', border: 'none', color: T.mutedDk,
+                          fontSize: '12px', cursor: 'pointer', fontFamily: 'inherit' }}>
+                        Raise a dispute →
+                      </button>
+                    )}
+                  </div>
+                )}
               </Card>
             )
           })}
+          {disputeSent && (
+            <div style={{ background: `${T.green}22`, border: `1px solid ${T.green}`, borderRadius: '10px',
+              padding: '12px', textAlign: 'center' }}>
+              <p style={{ color: T.green, fontSize: '13px' }}>✓ Dispute raised — Sena will review within 48 hours</p>
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -212,67 +390,27 @@ export default function StudioPortal({ onLogout }) {
     <div style={{ ...css.screen, ...css.padded }}>
       <StudioNav screen="campaigns" setScreen={setScreen} />
       <PageHeader title="My Campaigns" />
-      {SAMPLE_CAMPAIGNS.length === 0 ? (
+      {activeCampaigns.length === 0 ? (
         <EmptyState icon="🚀" title="No active campaigns"
           sub="Once a brand selects you for a brief, your campaign appears here."
           cta="Browse briefs →" onCta={() => setScreen('briefs')} />
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {SAMPLE_CAMPAIGNS.map(c => (
-            <Card key={c.id} gold>
+          {activeCampaigns.map(app => (
+            <Card key={app.id} gold>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <p style={{ fontWeight: '700', fontSize: '15px' }}>{c.brand}</p>
-                <span style={{ color: T.gold, fontSize: '13px', fontWeight: '600' }}>{c.value}</span>
+                <p style={{ fontWeight: '700', fontSize: '15px' }}>{app.brief?.campaign_name || 'Campaign'}</p>
+                <span style={{ color: T.gold, fontSize: '13px', fontWeight: '600' }}>{app.proposed_rate}</span>
               </div>
-              <p style={{ color: T.muted, fontSize: '13px', marginBottom: '8px' }}>{c.deliverable}</p>
-              <p style={{ color: T.red, fontSize: '12px', marginBottom: '12px' }}>⏱ {c.deadline} to deliver</p>
-              <Btn sm onClick={() => { setActiveCampaign(c); setScreen('campaign-detail') }}>
-                View campaign →
-              </Btn>
+              {app.brief?.deliverables && (
+                <p style={{ color: T.muted, fontSize: '13px', marginBottom: '8px' }}>{app.brief.deliverables}</p>
+              )}
+              <span style={{ background: `${T.green}22`, color: T.green,
+                padding: '3px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: '600' }}>SELECTED</span>
             </Card>
           ))}
         </div>
       )}
-    </div>
-  )
-
-  // ── CAMPAIGN DETAIL ──
-  if (screen === 'campaign-detail' && activeCampaign) return (
-    <div style={{ ...css.screen, ...css.padded }}>
-      <StudioNav screen="campaigns" setScreen={setScreen} />
-      <PageHeader title={activeCampaign.brand} onBack={() => setScreen('campaigns')} />
-      <Card>
-        {[['Deliverables', activeCampaign.deliverable],
-          ['Campaign value', activeCampaign.value],
-          ['Deadline', activeCampaign.deadline + ' remaining'],
-          ['Status', 'Active — content in production']].map(([label, val]) => (
-          <div key={label} style={{ display: 'flex', justifyContent: 'space-between',
-            padding: '10px 0', borderBottom: `1px solid ${T.bg4}` }}>
-            <p style={{ color: T.muted, fontSize: '13px' }}>{label}</p>
-            <p style={{ fontSize: '13px', color: T.white, fontWeight: '500' }}>{val}</p>
-          </div>
-        ))}
-      </Card>
-      <div style={{ marginTop: '16px' }}>
-        <p style={{ fontWeight: '600', fontSize: '15px', marginBottom: '12px' }}>Messages</p>
-        <Card>
-          <p style={{ color: T.muted, fontSize: '13px', textAlign: 'center', padding: '20px 0' }}>
-            Message thread with {activeCampaign.brand} appears here.
-          </p>
-        </Card>
-        <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
-          <input style={{ ...css.input, flex: 1 }} type="text" placeholder="Send a message..." />
-          <button style={{ background: T.gold, color: T.bg, border: 'none',
-            borderRadius: '8px', padding: '0 16px', fontWeight: '600',
-            cursor: 'pointer', fontFamily: 'inherit' }}>Send</button>
-        </div>
-      </div>
-      <div style={{ marginTop: '20px' }}>
-        <Btn onClick={() => {}}>Mark content as delivered →</Btn>
-        <p style={{ textAlign: 'center', color: T.mutedDk, fontSize: '12px', marginTop: '8px' }}>
-          Only mark delivered once the brand has received all content files.
-        </p>
-      </div>
     </div>
   )
 
@@ -281,26 +419,24 @@ export default function StudioPortal({ onLogout }) {
     <div style={{ ...css.screen, ...css.padded }}>
       <StudioNav screen="resources" setScreen={setScreen} />
       <PageHeader title="Creator Resources" />
-      {[{ icon: '🎓', title: 'UGC Mastery Course', sub: 'Your complete UGC income guide', tag: 'Included', url: 'https://raresena.com/courses' },
-        { icon: '📄', title: 'Creator Contract Template', sub: 'Protect every deal legally', tag: 'Included', url: '#' },
-        { icon: '💷', title: 'Rate Card Guide', sub: 'What to charge as a UK creator', tag: 'Included', url: '#' },
-        { icon: '📧', title: 'Brand Pitch Email Templates', sub: '5 pitch templates for every scenario', tag: 'Included', url: '#' },
-        { icon: '⚖️', title: 'Creator Legal Guide (UK Visa)', sub: 'Know your rights on every visa type', tag: 'Included', url: '#' },
-        { icon: '🚩', title: 'Brand Red Flag Checklist', sub: '10 contract warning signs to watch for', tag: 'Included', url: '#' },
+      {[{ icon: '🎓', title: 'UGC Mastery Course', sub: 'Your complete UGC income guide', url: 'https://raresena.com/courses' },
+        { icon: '📄', title: 'Creator Contract Template', sub: 'Protect every deal legally', url: '#' },
+        { icon: '💷', title: 'Rate Card Guide', sub: 'What to charge as a UK creator', url: '#' },
+        { icon: '📧', title: 'Brand Pitch Email Templates', sub: '5 pitch templates for every scenario', url: '#' },
+        { icon: '⚖️', title: 'Creator Legal Guide (UK Visa)', sub: 'Know your rights on every visa type', url: '#' },
+        { icon: '🚩', title: 'Brand Red Flag Checklist', sub: '10 contract warning signs to watch for', url: '#' },
       ].map(resource => (
         <Card key={resource.title} style={{ marginBottom: '10px' }}>
           <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
             <span style={{ fontSize: '24px', flexShrink: 0 }}>{resource.icon}</span>
             <div style={{ flex: 1 }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '3px' }}>
-                <p style={{ fontWeight: '600', fontSize: '14px' }}>{resource.title}</p>
-                <span style={{ background: `${T.green}22`, color: T.green,
-                  padding: '2px 7px', borderRadius: '4px', fontSize: '10px', fontWeight: '600' }}>
-                  {resource.tag}
-                </span>
-              </div>
+              <p style={{ fontWeight: '600', fontSize: '14px', marginBottom: '3px' }}>{resource.title}</p>
               <p style={{ color: T.muted, fontSize: '13px' }}>{resource.sub}</p>
             </div>
+            <span style={{ background: `${T.green}22`, color: T.green,
+              padding: '2px 7px', borderRadius: '4px', fontSize: '10px', fontWeight: '600', flexShrink: 0 }}>
+              Included
+            </span>
           </div>
         </Card>
       ))}
@@ -329,7 +465,7 @@ export default function StudioPortal({ onLogout }) {
     <div style={{ ...css.screen, ...css.padded }}>
       <StudioNav screen="studio-home" setScreen={setScreen} />
       <PageHeader title="My Creator Profile" onBack={() => setScreen('studio-home')}
-        sub="This is what brands see when they browse the creator directory" />
+        sub="This is what brands see in the creator directory" />
       <Card>
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '16px' }}>
           <div style={{ width: '52px', height: '52px', borderRadius: '50%',
@@ -341,19 +477,35 @@ export default function StudioPortal({ onLogout }) {
             <p style={{ color: T.muted, fontSize: '13px' }}>Creator Member</p>
           </div>
         </div>
-        {[['Bio', 'Add a bio — tell brands who you are and what you create'],
-          ['Primary niche', 'e.g. Lifestyle, Beauty, Food, Tech'],
-          ['TikTok', '@yourhandle'],
-          ['Instagram', '@yourhandle'],
-          ['Audience size', 'e.g. 5,000–10,000'],
-          ['Rate range', 'e.g. £250–£500 per campaign'],
-        ].map(([label, placeholder]) => (
-          <div key={label} style={{ marginBottom: '14px' }}>
+        <div style={{ marginBottom: '14px' }}>
+          <p style={{ color: T.muted, fontSize: '12px', marginBottom: '5px' }}>Bio</p>
+          <textarea style={{ ...css.input, height: '80px', resize: 'none' }}
+            placeholder="Tell brands who you are and what you create..."
+            value={profileForm.bio}
+            onChange={e => setProfileForm(p => ({ ...p, bio: e.target.value }))} />
+        </div>
+        {[
+          ['Primary niche', 'niche', 'e.g. Lifestyle, Beauty, Food, Tech'],
+          ['TikTok', 'tiktok', '@yourhandle'],
+          ['Instagram', 'instagram', '@yourhandle'],
+          ['Audience size', 'audience', 'e.g. 5,000–10,000'],
+          ['Rate range', 'rate', 'e.g. £250–£500 per campaign'],
+        ].map(([label, key, placeholder]) => (
+          <div key={key} style={{ marginBottom: '14px' }}>
             <p style={{ color: T.muted, fontSize: '12px', marginBottom: '5px' }}>{label}</p>
-            <input style={css.input} type="text" placeholder={placeholder} />
+            <input style={css.input} type="text" placeholder={placeholder}
+              value={profileForm[key]}
+              onChange={e => setProfileForm(p => ({ ...p, [key]: e.target.value }))} />
           </div>
         ))}
-        <Btn onClick={() => setScreen('studio-home')}>Save profile</Btn>
+        {profileSaved && (
+          <p style={{ color: T.green, fontSize: '13px', marginBottom: '10px', textAlign: 'center' }}>
+            ✓ Profile saved — brands can now find you
+          </p>
+        )}
+        <Btn onClick={saveProfile} disabled={profileSaving}>
+          {profileSaving ? 'Saving...' : 'Save profile →'}
+        </Btn>
       </Card>
     </div>
   )
@@ -361,24 +513,23 @@ export default function StudioPortal({ onLogout }) {
   return null
 }
 
-function BriefCard({ brief, applied, onClick }) {
-  const isApplied = applied.includes(brief.id)
+function BriefCard({ brief, isApplied, onClick }) {
   return (
     <div onClick={onClick} style={{ background: T.bg2,
       border: `1px solid ${isApplied ? T.green + '44' : T.bg4}`,
-      borderRadius: '10px', padding: '14px 16px', cursor: 'pointer' }}>
+      borderRadius: '10px', padding: '14px 16px', cursor: 'pointer', marginBottom: '8px' }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '6px' }}>
-        <p style={{ fontWeight: '600', fontSize: '14px' }}>{brief.brand}</p>
-        <span style={{ color: T.gold, fontSize: '13px', fontWeight: '700' }}>{brief.budget}</span>
+        <p style={{ fontWeight: '600', fontSize: '14px', flex: 1, marginRight: '8px' }}>{brief.campaign_name}</p>
+        {brief.budget && <span style={{ color: T.gold, fontSize: '13px', fontWeight: '700', flexShrink: 0 }}>{brief.budget}</span>}
       </div>
       <div style={{ display: 'flex', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
-        <span style={{ ...css.tag(T.purple) }}>{brief.niche}</span>
-        <span style={{ ...css.tag(T.red) }}>⏱ {brief.deadline}</span>
+        {brief.niche_required && <span style={{ ...css.tag(T.purple) }}>{brief.niche_required}</span>}
+        {brief.deadline && <span style={{ ...css.tag(T.red) }}>⏱ {brief.deadline}</span>}
         {isApplied && <span style={{ ...css.tag(T.green) }}>✓ Applied</span>}
       </div>
-      <p style={{ color: T.muted, fontSize: '12px' }}>
-        {brief.deliverables} · {brief.applicants} applicants
-      </p>
+      {brief.deliverables && (
+        <p style={{ color: T.muted, fontSize: '12px' }}>{brief.deliverables}</p>
+      )}
     </div>
   )
 }

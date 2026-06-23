@@ -10,9 +10,15 @@ export default function AdminPanel({ onLogout }) {
   const [announcementTarget, setAnnouncementTarget] = useState('all')
   const [announcementSent, setAnnouncementSent] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [disputes, setDisputes] = useState([])
+  const [resolvingId, setResolvingId] = useState(null)
+  const [resolutionNote, setResolutionNote] = useState('')
   const { user } = useApp()
 
-  useEffect(() => { fetchData() }, [])
+  useEffect(() => {
+    fetchData()
+    fetchDisputes()
+  }, [])
 
   async function fetchData() {
     setLoading(true)
@@ -71,6 +77,37 @@ export default function AdminPanel({ onLogout }) {
     setAllPosts(prev => prev.filter(p => p.id !== postId))
   }
 
+  async function fetchDisputes() {
+    const { data, error } = await supabase
+      .from('disputes')
+      .select('*, raised_by:rebuilders!raised_by_user_id(name), application:brief_applications(proposed_rate, pitch, brief:brand_briefs(campaign_name))')
+      .order('created_at', { ascending: false })
+      .limit(50)
+    if (!error) setDisputes(data || [])
+  }
+
+  async function resolveDispute(disputeId, note) {
+    setResolvingId(disputeId)
+    await supabase.from('disputes').update({
+      status: 'resolved',
+      resolution_note: note,
+      resolved_at: new Date().toISOString(),
+    }).eq('id', disputeId)
+    setDisputes(prev => prev.map(d => d.id === disputeId
+      ? { ...d, status: 'resolved', resolution_note: note }
+      : d
+    ))
+    setResolvingId(null)
+    setResolutionNote('')
+  }
+
+  async function dismissDispute(disputeId) {
+    setResolvingId(disputeId)
+    await supabase.from('disputes').update({ status: 'dismissed' }).eq('id', disputeId)
+    setDisputes(prev => prev.map(d => d.id === disputeId ? { ...d, status: 'dismissed' } : d))
+    setResolvingId(null)
+  }
+
   async function sendAnnouncement() {
     if (!announcement.trim()) return
     await supabase.from('circle_posts').insert({
@@ -87,12 +124,14 @@ export default function AdminPanel({ onLogout }) {
 
   const pendingCount = pendingBrands.length
 
+  const openDisputeCount = disputes.filter(d => d.status === 'open').length
+
   function AdminNav() {
     const nav = [
       { id: 'admin-home', icon: '📊', label: 'Dashboard' },
       { id: 'approvals', icon: '✓', label: 'Approvals' },
       { id: 'moderation', icon: '🛡️', label: 'Moderate' },
-      { id: 'campaigns-admin', icon: '🚀', label: 'Campaigns' },
+      { id: 'disputes', icon: '⚖️', label: 'Disputes' },
       { id: 'announce', icon: '📢', label: 'Announce' },
     ]
     return (
@@ -109,6 +148,13 @@ export default function AdminPanel({ onLogout }) {
                 background: T.red, borderRadius: '50%', display: 'flex', alignItems: 'center',
                 justifyContent: 'center', fontSize: '10px', fontWeight: '700', color: T.white }}>
                 {pendingCount}
+              </div>
+            )}
+            {n.id === 'disputes' && openDisputeCount > 0 && (
+              <div style={{ position: 'absolute', top: '6px', right: '12px', width: '16px', height: '16px',
+                background: T.orange, borderRadius: '50%', display: 'flex', alignItems: 'center',
+                justifyContent: 'center', fontSize: '10px', fontWeight: '700', color: T.white }}>
+                {openDisputeCount}
               </div>
             )}
             <span style={{ fontSize: '10px', fontWeight: '500',
@@ -132,7 +178,7 @@ export default function AdminPanel({ onLogout }) {
         {[
           ['✓', pendingCount, 'Brand approvals', 'red', () => setScreen('approvals')],
           ['🛡️', allPosts.length, 'Posts to moderate', 'orange', () => setScreen('moderation')],
-          ['🚀', activeCampaigns.length, 'Active campaigns', 'green', () => setScreen('campaigns-admin')],
+          ['⚖️', openDisputeCount, 'Open disputes', openDisputeCount > 0 ? 'orange' : 'green', () => setScreen('disputes')],
           ['💰', '—', 'Commission this month', 'gold', null],
         ].map(([icon, val, label, col, action]) => (
           <div key={label} onClick={action || undefined}
@@ -259,6 +305,97 @@ export default function AdminPanel({ onLogout }) {
               </div>
             </Card>
           ))}
+        </div>
+      )}
+    </div>
+  )
+
+  // ── DISPUTE MANAGEMENT ──
+  if (screen === 'disputes') return (
+    <div style={{ ...css.screen, ...css.padded }}>
+      <AdminNav />
+      <PageHeader title="Dispute Management"
+        sub={openDisputeCount > 0 ? `${openDisputeCount} open dispute${openDisputeCount !== 1 ? 's' : ''}` : 'No open disputes'} />
+      {disputes.length === 0 ? (
+        <EmptyState icon="⚖️" title="No disputes"
+          sub="Disputes raised by creators or brands will appear here for review." />
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {disputes.map(dispute => {
+            const statusCol = dispute.status === 'resolved' ? T.green : dispute.status === 'dismissed' ? T.mutedDk : T.orange
+            const d = new Date(dispute.created_at)
+            const daysSince = Math.floor((Date.now() - d) / 86400000)
+            const dateStr = daysSince === 0 ? 'today' : daysSince === 1 ? 'yesterday' : `${daysSince} days ago`
+            return (
+              <Card key={dispute.id}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                  <div>
+                    <p style={{ fontWeight: '600', fontSize: '14px' }}>
+                      {dispute.application?.brief?.campaign_name || 'Dispute'}
+                    </p>
+                    <p style={{ color: T.muted, fontSize: '12px' }}>
+                      Raised by {dispute.raised_by?.name || 'User'} · {dateStr}
+                    </p>
+                  </div>
+                  <span style={{ background: `${statusCol}22`, color: statusCol,
+                    padding: '3px 8px', borderRadius: '4px', fontSize: '11px',
+                    fontWeight: '600', textTransform: 'uppercase' }}>{dispute.status}</span>
+                </div>
+                <div style={{ background: T.bg3, borderRadius: '8px', padding: '10px 12px', marginBottom: '10px' }}>
+                  <p style={{ color: T.muted, fontSize: '11px', marginBottom: '4px' }}>Issue</p>
+                  <p style={{ fontSize: '13px', lineHeight: '1.6', color: T.white }}>{dispute.description}</p>
+                </div>
+                {dispute.application?.proposed_rate && (
+                  <p style={{ color: T.muted, fontSize: '12px', marginBottom: '10px' }}>
+                    Campaign value: {dispute.application.proposed_rate}
+                  </p>
+                )}
+                {dispute.resolution_note && (
+                  <div style={{ background: `${T.green}11`, border: `1px solid ${T.green}33`,
+                    borderRadius: '8px', padding: '10px', marginBottom: '10px' }}>
+                    <p style={{ color: T.muted, fontSize: '11px', marginBottom: '4px' }}>Resolution</p>
+                    <p style={{ fontSize: '13px', color: T.white }}>{dispute.resolution_note}</p>
+                  </div>
+                )}
+                {dispute.status === 'open' && (
+                  resolvingId === dispute.id ? (
+                    <div>
+                      <textarea style={{ ...css.input, height: '70px', resize: 'none', marginBottom: '8px', display: 'block' }}
+                        placeholder="Describe your resolution or decision..."
+                        value={resolutionNote} onChange={e => setResolutionNote(e.target.value)} />
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button onClick={() => resolveDispute(dispute.id, resolutionNote)}
+                          disabled={!resolutionNote.trim()}
+                          style={{ flex: 1, background: T.green, color: T.white, border: 'none',
+                            borderRadius: '8px', padding: '10px', fontWeight: '600', fontSize: '13px',
+                            cursor: resolutionNote.trim() ? 'pointer' : 'default',
+                            opacity: resolutionNote.trim() ? 1 : 0.5, fontFamily: 'inherit' }}>
+                          Mark resolved
+                        </button>
+                        <button onClick={() => { setResolvingId(null); setResolutionNote('') }}
+                          style={{ background: 'none', border: `1px solid ${T.bg4}`, color: T.muted,
+                            borderRadius: '8px', padding: '10px 14px', fontSize: '13px',
+                            cursor: 'pointer', fontFamily: 'inherit' }}>Cancel</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button onClick={() => setResolvingId(dispute.id)}
+                        style={{ flex: 2, background: T.green, color: T.white, border: 'none',
+                          borderRadius: '8px', padding: '10px', fontWeight: '600', fontSize: '13px',
+                          cursor: 'pointer', fontFamily: 'inherit' }}>Resolve</button>
+                      <button onClick={() => dismissDispute(dispute.id)}
+                        style={{ flex: 1, background: 'none', color: T.muted,
+                          border: `1px solid ${T.bg4}`, borderRadius: '8px', padding: '10px',
+                          fontWeight: '600', fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit' }}>
+                        Dismiss
+                      </button>
+                    </div>
+                  )
+                )}
+              </Card>
+            )
+          })}
         </div>
       )}
     </div>

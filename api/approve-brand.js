@@ -64,12 +64,13 @@ export default async function handler(req, res) {
 
     // 4. Send welcome email
     const { subject, html } = brandApprovedEmail({ companyName })
-    await resend.emails.send({
+    const { data: emailData, error: emailError } = await resend.emails.send({
       from: 'RareSena <hello@raresena.com>',
       to: email,
       subject,
       html,
     })
+    if (emailError) console.error('Email send error:', emailError)
 
     return res.status(200).json({ success: true })
   } catch (err) {

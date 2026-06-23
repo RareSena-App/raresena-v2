@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
-import { useApp, STAGE_DATA, STAGES, CIRCLE_GROUPS, T, css,
+import { useApp, STAGE_DATA, STAGES, CIRCLE_GROUPS, STAGE_GROUP_PRESELECT, T, css,
   Btn, Card, GoldCTA, StageBadge, RebuildNav, PageHeader,
   EmptyState, today, getDaysSince, createStripeCheckout,
   STRIPE_MONTHLY_PRICE, STRIPE_ANNUAL_PRICE, supabase } from '../App.jsx'
@@ -505,6 +505,8 @@ export default function RebuildPortal({ onLogout }) {
           const isPast = sd.idx < STAGE_DATA[user.stage].idx
           const isLocked = !user.isPremium && !isCurrent
           const rm = ROADMAP_DATA[stage]
+          const allMilestonesComplete = isCurrent && user.isPremium &&
+            rm.milestones.every((_, i) => (user.milestonesCompleted || {})[`${stage}_${i}`])
           return (
             <div key={stage} style={{ background: isCurrent ? `${sd.col}18` : T.bg2,
               border: `1px solid ${isCurrent ? sd.col : T.bg4}`, borderRadius: '12px',
@@ -558,6 +560,22 @@ export default function RebuildPortal({ onLogout }) {
                       </div>
                     )
                   })}
+                  {allMilestonesComplete && (
+                    <div style={{ marginTop: '16px', padding: '14px 16px',
+                      background: `${T.green}11`, border: `1px solid ${T.green}44`,
+                      borderRadius: '10px', textAlign: 'center' }}>
+                      <p style={{ fontSize: '22px', marginBottom: '6px' }}>🏆</p>
+                      <p style={{ fontWeight: '700', fontSize: '14px', color: T.white, marginBottom: '4px' }}>
+                        All {stage} milestones complete
+                      </p>
+                      <p style={{ color: T.muted, fontSize: '12px', marginBottom: '12px', lineHeight: '1.5' }}>
+                        You have completed this stage. Claim your certificate and advance.
+                      </p>
+                      <Btn sm onClick={() => setScreen('stage-complete')}>
+                        Claim your certificate →
+                      </Btn>
+                    </div>
+                  )}
                   {user.isPremium && (
                     <div style={{ marginTop: '14px', paddingTop: '14px', borderTop: `1px solid ${T.bg4}` }}>
                       <p style={{ color: T.muted, fontSize: '12px', marginBottom: '10px' }}>Stage resources:</p>
@@ -731,6 +749,107 @@ export default function RebuildPortal({ onLogout }) {
       </button>
     </div>
   )
+
+  // ── STAGE COMPLETE ──
+  if (screen === 'stage-complete') {
+    const nextIdx = STAGE_DATA[user.stage].idx + 1
+    const nextStage = STAGES[nextIdx]
+    const completedDate = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+    const stageColor = STAGE_DATA[user.stage].col
+
+    function advanceStage() {
+      if (!nextStage) return
+      const preselect = STAGE_GROUP_PRESELECT[nextStage] || []
+      const existing = user.groups || []
+      const newGroups = [...new Set([...existing, nextStage, ...preselect])]
+      saveUser({ ...user, stage: nextStage, groups: newGroups })
+      setScreen('roadmap')
+    }
+
+    return (
+      <div style={{ ...css.screen, padding: '28px 20px 80px', minHeight: '100vh' }}>
+        <RebuildNav screen="roadmap" setScreen={setScreen} />
+        <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+          <div style={{ fontSize: '52px', marginBottom: '12px' }}>🏆</div>
+          <h2 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '6px' }}>
+            Stage Complete
+          </h2>
+          <p style={{ color: T.muted, fontSize: '14px' }}>
+            You have completed the {user.stage} stage of your rebuild.
+          </p>
+        </div>
+
+        <div style={{ background: T.bg2, border: `2px solid ${stageColor}`,
+          borderRadius: '16px', padding: '28px 24px', marginBottom: '20px',
+          textAlign: 'center', position: 'relative' }}>
+          <div style={{ position: 'absolute', top: '-1px', left: '50%',
+            transform: 'translateX(-50%)',
+            background: stageColor, padding: '4px 18px',
+            borderRadius: '0 0 8px 8px', fontSize: '10px', fontWeight: '800',
+            color: T.white, letterSpacing: '0.1em', whiteSpace: 'nowrap' }}>
+            CERTIFICATE OF COMPLETION
+          </div>
+          <div style={{ marginTop: '16px' }}>
+            <p style={{ color: T.muted, fontSize: '12px', marginBottom: '10px' }}>This certifies that</p>
+            <p style={{ fontSize: '22px', fontWeight: '800', color: T.white, marginBottom: '10px' }}>
+              {user.name}
+            </p>
+            <p style={{ color: T.muted, fontSize: '12px', marginBottom: '12px' }}>has completed the</p>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center',
+              gap: '10px', marginBottom: '12px' }}>
+              <span style={{ fontSize: '30px' }}>{STAGE_DATA[user.stage].icon}</span>
+              <p style={{ fontSize: '26px', fontWeight: '800', color: stageColor }}>{user.stage}</p>
+            </div>
+            <p style={{ color: T.muted, fontSize: '13px', marginBottom: '16px' }}>
+              stage of the RareSena 5R Rebuild Programme
+            </p>
+            <p style={{ color: T.mutedDk, fontSize: '11px',
+              borderTop: `1px solid ${T.bg4}`, paddingTop: '12px' }}>
+              Completed {completedDate} · raresena.com
+            </p>
+          </div>
+        </div>
+
+        <button onClick={() => {
+          if (navigator.clipboard) {
+            navigator.clipboard.writeText(
+              `I just completed the ${user.stage} stage of the RareSena 5R Rebuild Programme. ${STAGE_DATA[user.stage].icon}\n\nMy rebuild is real. #RareSena #5RRebuild`
+            )
+          }
+        }} style={{ background: T.bg2, border: `1px solid ${T.bg4}`, borderRadius: '10px',
+          padding: '14px', width: '100%', color: T.muted, fontSize: '13px',
+          cursor: 'pointer', fontFamily: 'inherit', marginBottom: '16px' }}>
+          📋 Copy achievement to share
+        </button>
+
+        {nextStage ? (
+          <div>
+            <div style={{ background: T.goldDim, border: `1px solid ${T.gold}`,
+              borderRadius: '12px', padding: '16px', marginBottom: '16px', textAlign: 'center' }}>
+              <p style={{ color: T.muted, fontSize: '12px', marginBottom: '6px' }}>Next stage</p>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '20px' }}>{STAGE_DATA[nextStage].icon}</span>
+                <p style={{ fontSize: '18px', fontWeight: '700', color: T.gold }}>{nextStage}</p>
+              </div>
+              <p style={{ color: T.muted, fontSize: '12px', marginTop: '6px', lineHeight: '1.5' }}>
+                {STAGE_DATA[nextStage].tagline}
+              </p>
+            </div>
+            <Btn onClick={advanceStage}>Enter {nextStage} stage →</Btn>
+          </div>
+        ) : (
+          <div style={{ textAlign: 'center', padding: '20px' }}>
+            <p style={{ fontSize: '20px', fontWeight: '800', marginBottom: '10px' }}>
+              All 5 stages complete. 🌿
+            </p>
+            <p style={{ color: T.muted, fontSize: '14px', lineHeight: '1.7' }}>
+              You are not surviving. You are living — on your own terms.
+            </p>
+          </div>
+        )}
+      </div>
+    )
+  }
 
   return null
 }
