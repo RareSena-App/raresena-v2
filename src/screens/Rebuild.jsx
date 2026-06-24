@@ -503,7 +503,6 @@ export default function RebuildPortal({ onLogout }) {
           const sd = STAGE_DATA[stage]
           const isCurrent = stage === user.stage
           const isPast = sd.idx < STAGE_DATA[user.stage].idx
-          const isLocked = !user.isPremium && !isCurrent
           const rm = ROADMAP_DATA[stage]
           const allMilestonesComplete = isCurrent && user.isPremium &&
             rm.milestones.every((_, i) => (user.milestonesCompleted || {})[`${stage}_${i}`])
@@ -532,72 +531,59 @@ export default function RebuildPortal({ onLogout }) {
                     {sd.tagline.substring(0, 55)}...
                   </p>
                 </div>
-                {isLocked && <span style={{ color: T.mutedDk, fontSize: '18px' }}>🔒</span>}
               </div>
-              {isCurrent && (
-                <div style={{ padding: '0 16px 14px', borderTop: `1px solid ${sd.col}33` }}>
-                  <p style={{ color: T.muted, fontSize: '13px', marginTop: '12px', marginBottom: '12px', lineHeight: '1.6' }}>
-                    {sd.tagline}
-                  </p>
-                  {rm.milestones.map((m, mi) => {
-                    const mKey = `${stage}_${mi}`
-                    const done = user.isPremium && (user.milestonesCompleted || {})[mKey]
-                    return (
-                      <div key={mi} onClick={() => user.isPremium && toggleMilestone(mKey)}
-                        style={{ display: 'flex', gap: '10px', alignItems: 'flex-start',
-                          marginBottom: '10px', cursor: user.isPremium ? 'pointer' : 'default' }}>
-                        <div style={{ width: '20px', height: '20px', borderRadius: '50%',
-                          border: `1.5px solid ${done ? sd.col : user.isPremium ? sd.col : T.bg4}`,
-                          background: done ? sd.col : 'transparent',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          flexShrink: 0, marginTop: '2px' }}>
-                          {done && <span style={{ color: T.bg, fontSize: '10px' }}>✓</span>}
-                        </div>
-                        <p style={{ fontSize: '13px', lineHeight: '1.5',
-                          color: user.isPremium || mi === 0 ? T.white : T.mutedDk }}>
-                          {user.isPremium || mi === 0 ? m : `🔒 ${m}`}
-                        </p>
+              <div style={{ padding: '0 16px 14px', borderTop: `1px solid ${isCurrent ? sd.col : T.bg4}33` }}>
+                <p style={{ color: T.muted, fontSize: '13px', marginTop: '12px', marginBottom: '12px', lineHeight: '1.6' }}>
+                  {sd.tagline}
+                </p>
+                {rm.milestones.map((m, mi) => {
+                  const mKey = `${stage}_${mi}`
+                  const done = isCurrent && user.isPremium && (user.milestonesCompleted || {})[mKey]
+                  return (
+                    <div key={mi} onClick={() => isCurrent && user.isPremium && toggleMilestone(mKey)}
+                      style={{ display: 'flex', gap: '10px', alignItems: 'flex-start',
+                        marginBottom: '10px', cursor: isCurrent && user.isPremium ? 'pointer' : 'default' }}>
+                      <div style={{ width: '20px', height: '20px', borderRadius: '50%',
+                        border: `1.5px solid ${done ? sd.col : isCurrent ? sd.col : T.bg4}`,
+                        background: done ? sd.col : 'transparent',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        flexShrink: 0, marginTop: '2px' }}>
+                        {done && <span style={{ color: T.bg, fontSize: '10px' }}>✓</span>}
                       </div>
-                    )
-                  })}
-                  {allMilestonesComplete && (
-                    <div style={{ marginTop: '16px', padding: '14px 16px',
-                      background: `${T.green}11`, border: `1px solid ${T.green}44`,
-                      borderRadius: '10px', textAlign: 'center' }}>
-                      <p style={{ fontSize: '22px', marginBottom: '6px' }}>🏆</p>
-                      <p style={{ fontWeight: '700', fontSize: '14px', color: T.white, marginBottom: '4px' }}>
-                        All {stage} milestones complete
+                      <p style={{ fontSize: '13px', lineHeight: '1.5', color: T.white }}>
+                        {m}
                       </p>
-                      <p style={{ color: T.muted, fontSize: '12px', marginBottom: '12px', lineHeight: '1.5' }}>
-                        You have completed this stage. Claim your certificate and advance.
-                      </p>
-                      <Btn sm onClick={() => setScreen('stage-complete')}>
-                        Claim your certificate →
-                      </Btn>
                     </div>
-                  )}
-                  {user.isPremium && (
-                    <div style={{ marginTop: '14px', paddingTop: '14px', borderTop: `1px solid ${T.bg4}` }}>
-                      <p style={{ color: T.muted, fontSize: '12px', marginBottom: '10px' }}>Stage resources:</p>
-                      {rm.resources.map((r, ri) => (
-                        <a key={ri} href={r.url} target="_blank" rel="noopener noreferrer"
-                          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                            padding: '10px 0', borderBottom: `1px solid ${T.bg4}`, textDecoration: 'none' }}>
-                          <p style={{ fontSize: '13px', color: T.white }}>{r.title}</p>
-                          <span style={{ color: T.gold, fontSize: '13px', fontWeight: '600' }}>{r.price}</span>
-                        </a>
-                      ))}
-                    </div>
-                  )}
-                  {!user.isPremium && (
-                    <div style={{ marginTop: '12px' }}>
-                      <Btn sm onClick={() => setScreen('upgrade')}>
-                        Unlock all milestones — from £5.99/mo →
-                      </Btn>
-                    </div>
-                  )}
+                  )
+                })}
+                {allMilestonesComplete && (
+                  <div style={{ marginTop: '16px', padding: '14px 16px',
+                    background: `${T.green}11`, border: `1px solid ${T.green}44`,
+                    borderRadius: '10px', textAlign: 'center' }}>
+                    <p style={{ fontSize: '22px', marginBottom: '6px' }}>🏆</p>
+                    <p style={{ fontWeight: '700', fontSize: '14px', color: T.white, marginBottom: '4px' }}>
+                      All {stage} milestones complete
+                    </p>
+                    <p style={{ color: T.muted, fontSize: '12px', marginBottom: '12px', lineHeight: '1.5' }}>
+                      You have completed this stage. Claim your certificate and advance.
+                    </p>
+                    <Btn sm onClick={() => setScreen('stage-complete')}>
+                      Claim your certificate →
+                    </Btn>
+                  </div>
+                )}
+                <div style={{ marginTop: '14px', paddingTop: '14px', borderTop: `1px solid ${T.bg4}` }}>
+                  <p style={{ color: T.muted, fontSize: '12px', marginBottom: '10px' }}>Stage resources:</p>
+                  {rm.resources.map((r, ri) => (
+                    <a key={ri} href={r.url} target="_blank" rel="noopener noreferrer"
+                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                        padding: '10px 0', borderBottom: `1px solid ${T.bg4}`, textDecoration: 'none' }}>
+                      <p style={{ fontSize: '13px', color: T.white }}>{r.title}</p>
+                      <span style={{ color: T.gold, fontSize: '13px', fontWeight: '600' }}>{r.price}</span>
+                    </a>
+                  ))}
                 </div>
-              )}
+              </div>
             </div>
           )
         })}
