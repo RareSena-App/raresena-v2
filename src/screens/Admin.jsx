@@ -25,7 +25,7 @@ export default function AdminPanel({ onLogout }) {
     const [{ data: brands }, { data: posts }, { data: campaigns }] = await Promise.all([
       supabase.from('brand_enquiries').select('*')
         .eq('status', 'pending_approval').order('created_at', { ascending: false }),
-      supabase.from('circle_posts').select('*, rebuilders(name)')
+      supabase.from('circle_posts').select('*, rebuilders!circle_posts_user_id_fkey(name)')
         .eq('is_removed', false).order('created_at', { ascending: false }).limit(50),
       supabase.from('campaigns').select('*, brand_rebuilder:rebuilders!brand_user_id(name), creator_rebuilder:rebuilders!creator_user_id(name)')
         .eq('status', 'active'),

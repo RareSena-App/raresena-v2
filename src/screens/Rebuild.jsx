@@ -47,12 +47,13 @@ export default function RebuildPortal({ onLogout }) {
   const [showDay30Share, setShowDay30Share] = useState(false)
   const [day30PostText, setDay30PostText] = useState('30 days of rebuilding. I am building something real. 🌿')
   const [circlePosts, setCirclePosts] = useState([])
+  const [likedPostIds, setLikedPostIds] = useState(new Set())
   const [showPostComposer, setShowPostComposer] = useState(false)
   const [newPostText, setNewPostText] = useState('')
   const [postingGroup, setPostingGroup] = useState(null)
 
   useEffect(() => {
-    if (screen === 'circle') fetchCirclePosts()
+    if (screen === 'circle') { fetchCirclePosts(); fetchLikedPosts() }
   }, [screen])
 
   const { user, habits, saveUser, toggleHabit, addHabit, removeHabit, toggleMilestone } = useApp()
@@ -65,7 +66,7 @@ export default function RebuildPortal({ onLogout }) {
   async function fetchCirclePosts() {
     const { data } = await supabase
       .from('circle_posts')
-      .select('*, rebuilders(name, stage)')
+      .select('*, rebuilders!circle_posts_user_id_fkey(name, stage)')
       .eq('is_removed', false)
       .order('is_pinned', { ascending: false })
       .order('created_at', { ascending: false })
@@ -87,9 +88,17 @@ export default function RebuildPortal({ onLogout }) {
     fetchCirclePosts()
   }
 
-  async function handleLike(postId, currentLikes) {
-    await supabase.from('circle_posts').update({ likes: currentLikes + 1 }).eq('id', postId)
-    setCirclePosts(prev => prev.map(p => p.id === postId ? { ...p, likes: p.likes + 1 } : p))
+  async function fetchLikedPosts() {
+    const { data } = await supabase
+      .from('post_likes')
+      .select('post_id')
+      .eq('user_id', user.supabaseId)
+    setLikedPostIds(new Set((data || []).map(r => r.post_id)))
+  }
+
+  async function handleLike(postId) {
+    await supabase.rpc('toggle_like', { p_post_id: postId, p_user_id: user.supabaseId })
+    await Promise.all([fetchCirclePosts(), fetchLikedPosts()])
   }
 
   async function shareDay30ToCircle() {
@@ -364,7 +373,7 @@ export default function RebuildPortal({ onLogout }) {
     <div style={{ ...css.screen, ...css.padded }}>
       <RebuildNav screen="circle" setScreen={setScreen} />
       {activeGroup ? (
-        <GroupView group={activeGroup} user={user} posts={circlePosts} onBack={() => setActiveGroup(null)}
+        <GroupView group={activeGroup} user={user} posts={circlePosts} likedPostIds={likedPostIds} onBack={() => setActiveGroup(null)}
           onUpgrade={() => setScreen('upgrade')} onLike={handleLike} onPost={submitPost} />
       ) : (
         <>
@@ -441,8 +450,9 @@ export default function RebuildPortal({ onLogout }) {
             ) : (
               circlePosts.map(post => (
                 <PostCard key={post.id} post={post} user={user}
+                  liked={likedPostIds.has(post.id)}
                   onUpgrade={() => setScreen('upgrade')}
-                  onLike={() => handleLike(post.id, post.likes)} />
+                  onLike={() => handleLike(post.id)} />
               ))
             )}
           </div>
@@ -842,9 +852,49 @@ export default function RebuildPortal({ onLogout }) {
 
 // ── SHARED SUB-COMPONENTS ──────────────────────────────────────────────────────
 
-function PostCard({ post, user, onUpgrade, onLike }) {
+function PostCard({ post, user, onUpgrade, onLike, liked = false }) {
+  const [showReplies, setShowReplies] = useState(false)
+  const [replies, setReplies] = useState([])
+  const [replyCount, setReplyCount] = useState(0)
+  const [replyText, setReplyText] = useState('')
+  const [loadingReplies, setLoadingReplies] = useState(false)
   const stage = post.stage || 'Reset'
   const sd = STAGE_DATA[stage] || STAGE_DATA['Reset']
+
+  useEffect(() => {
+    supabase.from('post_replies').select('id', { count: 'exact', head: true })
+      .eq('post_id', post.id)
+      .then(({ count }) => setReplyCount(count || 0))
+  }, [post.id])
+
+  async function loadReplies() {
+    setLoadingReplies(true)
+    const { data } = await supabase
+      .from('post_replies')
+      .select('*, rebuilders!post_replies_user_id_fkey(name)')
+      .eq('post_id', post.id)
+      .order('created_at', { ascending: true })
+    setReplies(data || [])
+    setLoadingReplies(false)
+  }
+
+  async function submitReply() {
+    if (!replyText.trim()) return
+    await supabase.from('post_replies').insert({
+      post_id: post.id,
+      user_id: user.supabaseId,
+      content: replyText,
+    })
+    setReplyText('')
+    setReplyCount(c => c + 1)
+    loadReplies()
+  }
+
+  function toggleReplies() {
+    if (!showReplies) loadReplies()
+    setShowReplies(s => !s)
+  }
+
   return (
     <Card style={{ borderLeft: post.is_pinned ? `3px solid ${T.gold}` : undefined }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
@@ -868,16 +918,47 @@ function PostCard({ post, user, onUpgrade, onLike }) {
         {post.content}
       </p>
       <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-        <button onClick={onLike} style={{ background: 'none', border: 'none', color: T.muted,
-          fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit' }}>❤️ {post.likes || 0}</button>
-        {!user.isPremium && (
-          <button onClick={onUpgrade} style={{ background: 'none',
-            border: `1px solid ${T.bg4}`, color: T.muted, fontSize: '12px',
-            cursor: 'pointer', borderRadius: '4px', padding: '3px 10px', fontFamily: 'inherit' }}>
-            🔒 Premium to reply
-          </button>
-        )}
+        <button onClick={onLike} style={{ background: 'none', border: 'none',
+          color: liked ? T.red : T.muted,
+          fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit' }}>
+          {liked ? '❤️' : '🤍'} {post.likes || 0}
+        </button>
+        <button onClick={toggleReplies} style={{ background: 'none', border: 'none', color: T.muted,
+          fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit' }}>
+          💬 {replyCount > 0 ? replyCount : 'Reply'}
+        </button>
       </div>
+      {showReplies && (
+        <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: `1px solid ${T.bg4}` }}>
+          {loadingReplies ? (
+            <p style={{ color: T.muted, fontSize: '12px' }}>Loading...</p>
+          ) : replies.length === 0 ? (
+            <p style={{ color: T.muted, fontSize: '12px', marginBottom: '10px' }}>No replies yet. Be the first!</p>
+          ) : (
+            <div style={{ marginBottom: '12px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {replies.map(r => (
+                <div key={r.id} style={{ background: T.bg3, borderRadius: '8px', padding: '10px 12px' }}>
+                  <p style={{ fontWeight: '600', fontSize: '12px', color: T.white, marginBottom: '3px' }}>
+                    {r.rebuilders?.name || 'Rebuilder'}
+                  </p>
+                  <p style={{ fontSize: '13px', color: T.muted, lineHeight: '1.5' }}>{r.content}</p>
+                </div>
+              ))}
+            </div>
+          )}
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <input style={{ ...css.input, flex: 1, padding: '8px 12px', fontSize: '13px' }}
+              placeholder="Write a reply..."
+              value={replyText} onChange={e => setReplyText(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && submitReply()} />
+            <button onClick={submitReply} disabled={!replyText.trim()}
+              style={{ background: T.gold, border: 'none', borderRadius: '8px',
+                padding: '8px 14px', color: T.bg, fontWeight: '600', fontSize: '13px',
+                cursor: replyText.trim() ? 'pointer' : 'default', fontFamily: 'inherit',
+                opacity: replyText.trim() ? 1 : 0.5 }}>Send</button>
+          </div>
+        </div>
+      )}
     </Card>
   )
 }
@@ -890,7 +971,7 @@ function formatPost(p) {
   return { ...p, author: name, initials, time }
 }
 
-function GroupView({ group, user, posts, onBack, onUpgrade, onLike, onPost }) {
+function GroupView({ group, user, posts, likedPostIds = new Set(), onBack, onUpgrade, onLike, onPost }) {
   const [showComposer, setShowComposer] = useState(false)
   const [text, setText] = useState('')
   const groupPosts = posts.filter(p => p.group_name === group || p.groupName === group)
@@ -934,7 +1015,7 @@ function GroupView({ group, user, posts, onBack, onUpgrade, onLike, onPost }) {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           {groupPosts.map(post => (
             <PostCard key={post.id} post={post} user={user} onUpgrade={onUpgrade}
-              onLike={() => onLike(post.id, post.likes)} />
+              liked={likedPostIds.has(post.id)} onLike={() => onLike(post.id)} />
           ))}
         </div>
       )}
