@@ -73,7 +73,7 @@ export default function AdminPanel({ onLogout }) {
   }
 
   async function removePost(postId) {
-    await supabase.from('circle_posts').update({ is_removed: true }).eq('id', postId)
+    await supabase.rpc('remove_post', { p_post_id: postId })
     setAllPosts(prev => prev.filter(p => p.id !== postId))
   }
 
@@ -297,7 +297,8 @@ export default function AdminPanel({ onLogout }) {
                   style={{ flex: 1, background: T.red, color: T.white, border: 'none',
                     borderRadius: '8px', padding: '10px', fontWeight: '600', fontSize: '13px',
                     cursor: 'pointer', fontFamily: 'inherit' }}>Remove post</button>
-                <button style={{ flex: 1, background: 'none', color: T.muted,
+                <button onClick={() => setAllPosts(prev => prev.filter(p => p.id !== post.id))}
+                  style={{ flex: 1, background: 'none', color: T.muted,
                   border: `1px solid ${T.bg4}`, borderRadius: '8px', padding: '10px',
                   fontWeight: '600', fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit' }}>
                   Keep post

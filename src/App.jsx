@@ -291,21 +291,56 @@ function BottomNav({ nav, screen, setScreen, onSpecial, specialId }) {
   )
 }
 
+// ── STUDIO UPSELL ─────────────────────────────────────────────────────────────
+function StudioUpsell({ userData }) {
+  const [plan, setPlan] = useState('monthly')
+  const priceId = plan === 'monthly' ? STRIPE_CREATOR_MONTHLY : STRIPE_CREATOR_ONETIME
+  return (
+    <div style={{ padding: '40px 24px', textAlign: 'center' }}>
+      <p style={{ fontSize: '44px', marginBottom: '12px' }}>🎬</p>
+      <h2 style={{ fontSize: '22px', fontWeight: '800', marginBottom: '10px' }}>Rare Studio</h2>
+      <p style={{ color: T.muted, fontSize: '14px', lineHeight: '1.7', marginBottom: '24px' }}>
+        Get discovered by brands, access paid campaigns, and build your content career.
+      </p>
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', justifyContent: 'center' }}>
+        {[['monthly', 'Monthly', '£27/mo'], ['onetime', 'One-off', '£97']].map(([id, label, price]) => (
+          <button key={id} onClick={() => setPlan(id)}
+            style={{ flex: 1, maxWidth: '140px', padding: '12px', borderRadius: '10px', border: 'none',
+              background: plan === id ? T.gold : T.bg2,
+              color: plan === id ? T.bg : T.muted,
+              fontWeight: '600', fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit' }}>
+            <p style={{ fontWeight: '700' }}>{label}</p>
+            <p style={{ fontSize: '12px', marginTop: '2px' }}>{price}</p>
+          </button>
+        ))}
+      </div>
+      <button onClick={() => createStripeCheckout(priceId, userData.email)}
+        style={{ background: T.gold, color: T.bg, border: 'none', borderRadius: '10px',
+          padding: '14px 32px', fontWeight: '700', fontSize: '15px',
+          cursor: 'pointer', fontFamily: 'inherit', width: '100%', maxWidth: '280px' }}>
+        Become a creator →
+      </button>
+    </div>
+  )
+}
+
 // ── PORTAL TOGGLE (for users who are both rebuilder and creator) ───────────────
-function PortalToggle({ portal, setPortal }) {
+function PortalToggle({ portal, setPortal, isCreator }) {
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, right: 0,
       background: T.bg2, borderBottom: `1px solid ${T.bg4}`,
       display: 'flex', zIndex: 99, padding: '8px 20px' }}>
       <div style={{ display: 'flex', background: T.bg3,
         borderRadius: '8px', padding: '3px', gap: '2px', width: '100%' }}>
-        {[['rebuild', '🌿 Rebuild'], ['studio', '🎬 Rare Studio']].map(([id, label]) => (
+        {[['rebuild', '🌿 Rebuild', true], ['studio', '🎬 Rare Studio', isCreator]].map(([id, label, unlocked]) => (
           <button key={id} onClick={() => setPortal(id)}
             style={{ flex: 1, padding: '8px', borderRadius: '6px', border: 'none',
               background: portal === id ? T.gold : 'transparent',
-              color: portal === id ? T.bg : T.muted,
+              color: portal === id ? T.bg : unlocked ? T.muted : T.mutedDk,
               fontWeight: '600', fontSize: '13px', cursor: 'pointer',
-              fontFamily: 'inherit' }}>{label}</button>
+              fontFamily: 'inherit' }}>
+            {!unlocked && '🔒 '}{label}
+          </button>
         ))}
       </div>
     </div>
@@ -484,20 +519,16 @@ export default function App() {
   )
 
   if (appState === 'main' && userData) {
-    const isBoth = userData.isPremium && userData.isCreator
+    const isCreator = userData.isCreator
     return (
       <AppProvider initialUser={userData} initialHabits={habitsData}>
         <div style={{ background: T.bg, minHeight: '100vh', maxWidth: '480px', margin: '0 auto' }}>
-          {isBoth && <PortalToggle portal={portal} setPortal={setPortal} />}
-          <div style={isBoth ? { paddingTop: '56px' } : {}}>
-            {(!isBoth || portal === 'rebuild') && (
-              <RebuildPortal onLogout={handleLogout} />
-            )}
-            {isBoth && portal === 'studio' && (
-              <StudioPortal onLogout={handleLogout} />
-            )}
-            {!isBoth && userData.isCreator && !userData.isPremium && (
-              <StudioPortal onLogout={handleLogout} />
+          <PortalToggle portal={portal} setPortal={setPortal} isCreator={isCreator} />
+          <div style={{ paddingTop: '56px' }}>
+            {portal === 'rebuild' && <RebuildPortal onLogout={handleLogout} />}
+            {portal === 'studio' && isCreator && <StudioPortal onLogout={handleLogout} />}
+            {portal === 'studio' && !isCreator && (
+              <StudioUpsell userData={userData} />
             )}
           </div>
         </div>

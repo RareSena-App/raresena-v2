@@ -165,36 +165,52 @@ export default function RebuildPortal({ onLogout }) {
         </button>
       </div>
 
-      {/* Habits */}
-      <div style={{ marginTop: '20px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-          <p style={{ fontWeight: '600', fontSize: '15px' }}>Today's habits</p>
-          <span style={{ color: T.muted, fontSize: '13px' }}>{doneCount}/{todayHabits.length} done</span>
-        </div>
-        {todayHabits.length === 0 ? (
-          <EmptyState icon="⚡" title="No habits yet"
-            sub="The rebuild starts with one thing that holds every day."
-            cta="Add your first habit →" onCta={() => setScreen('habits')} />
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {todayHabits.slice(0, 3).map(habit => (
-              <div key={habit.id} onClick={() => toggleHabit(habit.id)}
-                style={{ background: habit.done ? `${d.col}22` : T.bg2,
-                  border: `1px solid ${habit.done ? d.col : T.bg4}`,
-                  borderRadius: '10px', padding: '14px 16px',
-                  display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
-                <div style={{ width: '22px', height: '22px', borderRadius: '50%',
-                  border: `2px solid ${habit.done ? d.col : T.mutedDk}`,
-                  background: habit.done ? d.col : 'transparent',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  {habit.done && <span style={{ color: T.bg, fontSize: '12px', fontWeight: '800' }}>✓</span>}
-                </div>
-                <p style={{ fontSize: '14px', color: habit.done ? T.white : T.muted,
-                  textDecoration: habit.done ? 'line-through' : 'none' }}>{habit.name}</p>
-              </div>
-            ))}
+      {/* Quick stats */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', marginTop: '20px' }}>
+        {[
+          ['📅', daysSince || 1, 'Days in rebuild'],
+          ['⚡', `${doneCount}/${todayHabits.length}`, 'Habits today'],
+          ['🗺️', `${STAGE_DATA[user.stage].idx + 1}/5`, 'Stage'],
+        ].map(([icon, val, label]) => (
+          <div key={label} style={{ background: T.bg2, border: `1px solid ${T.bg4}`,
+            borderRadius: '10px', padding: '12px', textAlign: 'center' }}>
+            <p style={{ fontSize: '18px', marginBottom: '4px' }}>{icon}</p>
+            <p style={{ fontSize: '16px', fontWeight: '700', color: T.gold }}>{val}</p>
+            <p style={{ color: T.muted, fontSize: '10px', marginTop: '2px' }}>{label}</p>
           </div>
-        )}
+        ))}
+      </div>
+
+      {/* Stage tagline */}
+      <div style={{ background: `${d.col}11`, border: `1px solid ${d.col}33`,
+        borderRadius: '12px', padding: '16px', marginTop: '16px' }}>
+        <p style={{ fontSize: '11px', color: d.col, fontWeight: '700', marginBottom: '6px', letterSpacing: '0.5px' }}>
+          YOUR CURRENT STAGE
+        </p>
+        <p style={{ fontSize: '14px', color: T.white, lineHeight: '1.6' }}>{d.tagline}</p>
+        <button onClick={() => setScreen('roadmap')}
+          style={{ background: 'none', border: 'none', color: d.col, fontSize: '13px',
+            cursor: 'pointer', fontFamily: 'inherit', marginTop: '8px', padding: 0 }}>
+          View your roadmap →
+        </button>
+      </div>
+
+      {/* Quick actions */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginTop: '16px' }}>
+        {[
+          ['💬', 'Rare Circle', 'Connect with rebuilders', () => setScreen('circle')],
+          ['🗺️', 'Roadmap', 'Your 5-stage journey', () => setScreen('roadmap')],
+          ['⚡', 'Habits', 'Track your daily habits', () => setScreen('habits')],
+          ['📞', 'Book Sena', 'Get personalised guidance', () => window.open('https://raresena.com/book', '_blank')],
+        ].map(([icon, title, sub, onClick]) => (
+          <div key={title} onClick={onClick}
+            style={{ background: T.bg2, border: `1px solid ${T.bg4}`, borderRadius: '12px',
+              padding: '14px', cursor: 'pointer' }}>
+            <p style={{ fontSize: '22px', marginBottom: '6px' }}>{icon}</p>
+            <p style={{ fontWeight: '600', fontSize: '13px', marginBottom: '2px' }}>{title}</p>
+            <p style={{ color: T.muted, fontSize: '11px' }}>{sub}</p>
+          </div>
+        ))}
       </div>
 
       {user.streak >= 3 && !user.isPremium && (
