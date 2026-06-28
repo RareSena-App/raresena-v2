@@ -304,7 +304,7 @@ function StudioUpsell({ userData }) {
         Get discovered by brands, access paid campaigns, and build your content career.
       </p>
       <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', justifyContent: 'center' }}>
-        {[['monthly', 'Monthly', '£27/mo'], ['onetime', 'One-off', '£97']].map(([id, label, price]) => (
+        {[['monthly', 'Monthly', '£19.99/mo'], ['onetime', 'One-off', '£199']].map(([id, label, price]) => (
           <button key={id} onClick={() => setPlan(id)}
             style={{ flex: 1, maxWidth: '140px', padding: '12px', borderRadius: '10px', border: 'none',
               background: plan === id ? T.gold : T.bg2,

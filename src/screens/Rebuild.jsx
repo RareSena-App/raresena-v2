@@ -34,7 +34,7 @@ const ROADMAP_DATA = {
   Rise: { milestones: ['Define your 90-day direction in one sentence', 'Identify and start your primary income stream', 'Build your professional network in the UK', 'Begin the Sovereignty Programme assessment', 'Complete one project that demonstrates your direction'],
     resources: [{ title: 'Sovereignty Programme', url: 'https://raresena.com/sovereignty', price: '£3,500' }, { title: 'RareStack', url: 'https://raresena.com/rarestack', price: 'Free / £39/mo' }] },
   Realize: { milestones: ['Document your full rebuild journey', 'Build one income stream that works without you daily', 'Mentor one person in an earlier stage', 'Complete your sovereignty plan', 'Define what you are giving back — and begin giving it'],
-    resources: [{ title: 'Sovereignty Programme — Graduate', url: 'https://raresena.com/sovereignty', price: '£3,000' }, { title: 'Rare Studio', url: 'https://raresena.com/studio', price: 'From £27/mo' }] },
+    resources: [{ title: 'Sovereignty Programme — Graduate', url: 'https://raresena.com/sovereignty', price: '£3,000' }, { title: 'Rare Studio', url: 'https://raresena.com/studio', price: 'From £19.99/mo' }] },
 }
 
 export default function RebuildPortal({ onLogout }) {
@@ -226,7 +226,7 @@ export default function RebuildPortal({ onLogout }) {
               <p style={{ color: T.muted, fontSize: '12px', marginTop: '4px' }}>Premium unlocks this</p>
             </div>
           </div>
-          <Btn sm onClick={() => setScreen('upgrade')}>See your full trajectory — from £5.99/mo →</Btn>
+          <Btn sm onClick={() => setScreen('upgrade')}>See your full trajectory — from £9.99/mo →</Btn>
         </Card>
       )}
 
@@ -381,7 +381,7 @@ export default function RebuildPortal({ onLogout }) {
               </p>
             </div>
           </div>
-          <Btn sm onClick={() => setScreen('upgrade')}>Unlock progress tracking — from £5.99/mo →</Btn>
+          <Btn sm onClick={() => setScreen('upgrade')}>Unlock progress tracking — from £9.99/mo →</Btn>
         </Card>
       )}
     </div>
@@ -645,7 +645,7 @@ export default function RebuildPortal({ onLogout }) {
         </p>
       </div>
       <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
-        {[['monthly', 'Monthly', '£5.99', 'per month', ''], ['annual', 'Annual', '£47.99', 'per year', 'SAVE £23.89']].map(([id, label, price, sub, badge]) => (
+        {[['monthly', 'Monthly', '£9.99', 'per month', ''], ['annual', 'Annual', '£99.99', 'per year', 'SAVE £19.89']].map(([id, label, price, sub, badge]) => (
           <button key={id} onClick={() => setPremiumPlan(id)}
             style={{ flex: 1, padding: '14px 12px', borderRadius: '8px',
               border: `1px solid ${premiumPlan === id ? T.gold : T.bg4}`,
