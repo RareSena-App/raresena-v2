@@ -689,7 +689,7 @@ export default function RebuildPortal({ onLogout }) {
             user.email
           )
         }}>
-          Start Rebuild Premium — £{premiumPlan === 'monthly' ? '5.99/mo' : '47.99/yr'} →
+          Start Rebuild Premium — £{premiumPlan === 'monthly' ? '9.99/mo' : '99.99/yr'} →
         </Btn>
         <p style={{ textAlign: 'center', color: T.mutedDk, fontSize: '12px' }}>
           Cancel anytime. Secure payment via Stripe.
