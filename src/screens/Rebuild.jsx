@@ -204,7 +204,7 @@ export default function RebuildPortal({ onLogout }) {
           ['💬', 'Rare Circle', 'Connect with rebuilders', () => setScreen('circle')],
           ['🗺️', 'Roadmap', 'Your 5-stage journey', () => setScreen('roadmap')],
           ['⚡', 'Habits', 'Track your daily habits', () => setScreen('habits')],
-          ['📞', 'Book Sena', 'Get personalised guidance', () => window.open('https://raresena.com/book', '_blank')],
+          ['📞', 'Book Sena', 'Get personalised guidance', () => window.open('https://raresena.com/book/', '_blank')],
         ].map(([icon, title, sub, onClick]) => (
           <div key={title} onClick={onClick}
             style={{ background: T.bg2, border: `1px solid ${T.bg4}`, borderRadius: '12px',
@@ -241,7 +241,7 @@ export default function RebuildPortal({ onLogout }) {
             The fastest next step is 45 minutes with Sena — mapping your specific situation,
             your specific route, your specific next action.
           </p>
-          <Btn onClick={() => window.open('https://raresena.com/book', '_blank')}>
+          <Btn onClick={() => window.open('https://raresena.com/book/', '_blank')}>
             Book your £100 consultation →
           </Btn>
         </div>
@@ -700,7 +700,7 @@ export default function RebuildPortal({ onLogout }) {
         <p style={{ color: T.muted, fontSize: '13px', lineHeight: '1.6', marginBottom: '14px' }}>
           £100 · 45 minutes · Your specific situation · Your specific next step.
         </p>
-        <Btn ghost onClick={() => window.open('https://raresena.com/book', '_blank')}>
+        <Btn ghost onClick={() => window.open('https://raresena.com/book/', '_blank')}>
           Book your £100 consultation →
         </Btn>
       </Card>
@@ -752,7 +752,7 @@ export default function RebuildPortal({ onLogout }) {
           )}
         </div>
       </Card>
-      {[['📞', 'Book a consultation', () => window.open('https://raresena.com/book', '_blank')],
+      {[['📞', 'Book a consultation', () => window.open('https://raresena.com/book/', '_blank')],
         ['🌐', 'Visit raresena.com', () => window.open('https://raresena.com', '_blank')],
         ['💌', 'Contact Sena', () => window.open('mailto:hello@raresena.com', '_blank')],
         ['🔒', 'Privacy policy', () => window.open('https://raresena.com/privacy', '_blank')],

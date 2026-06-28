@@ -246,7 +246,7 @@ export function RebuildNav({ screen, setScreen }) {
     { id: 'book', icon: '📞', label: 'Book Sena' },
   ]
   return <BottomNav nav={nav} screen={screen} setScreen={setScreen}
-    onSpecial={() => window.open('https://raresena.com/book', '_blank')} specialId="book" />
+    onSpecial={() => window.open('https://raresena.com/book/', '_blank')} specialId="book" />
 }
 
 export function StudioNav({ screen, setScreen }) {
