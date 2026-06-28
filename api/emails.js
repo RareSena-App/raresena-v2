@@ -51,6 +51,25 @@ export function brandDeclinedEmail({ companyName }) {
   }
 }
 
+export function rebuildWelcomeEmail({ name }) {
+  return {
+    subject: 'Welcome to Rebuild Premium — Your journey starts now',
+    html: wrapper(`
+      <h1 style="font-size:22px;font-weight:700;margin:0 0 16px;">You're in, ${name} 🌿</h1>
+      ${muted('Your Rebuild Premium membership is now active. You have full access to everything inside the app.')}
+      ${muted('Here\'s what\'s unlocked for you:')}
+      <ul style="color:#aaa;font-size:15px;line-height:1.9;margin:0 0 8px;padding-left:20px;">
+        <li>Full 5-stage roadmap with all milestones</li>
+        <li>Unlimited habit tracker with progress graphs</li>
+        <li>Full Rare Circle access — post, reply, connect</li>
+        <li>Stage resource library matched to your exact stage</li>
+        <li>Stage completion certificate</li>
+      </ul>
+      ${btn('Open your app →', APP_URL)}
+    `),
+  }
+}
+
 export function creatorWelcomeEmail({ name }) {
   return {
     subject: 'Welcome to Rare Studio — You\'re officially a creator',

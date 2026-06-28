@@ -4,7 +4,7 @@
 import Stripe from 'stripe'
 import { createClient } from '@supabase/supabase-js'
 import { Resend } from 'resend'
-import { creatorWelcomeEmail } from './emails.js'
+import { creatorWelcomeEmail, rebuildWelcomeEmail } from './emails.js'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
 const supabase = createClient(
@@ -85,6 +85,19 @@ export default async function handler(req, res) {
             updated_at: new Date().toISOString(),
           })
           .eq('email', customerEmail)
+
+        // Send Rebuild welcome email
+        const { data: rebuilder } = await supabase
+          .from('rebuilders').select('name').eq('email', customerEmail).single()
+        if (rebuilder?.name) {
+          const { subject, html } = rebuildWelcomeEmail({ name: rebuilder.name.split(' ')[0] })
+          await resend.emails.send({
+            from: 'RareSena <hello@raresena.com>',
+            to: customerEmail,
+            subject,
+            html,
+          })
+        }
       }
       break
     }
