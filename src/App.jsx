@@ -125,11 +125,12 @@ export function getStageFromAnswers(answers) {
   return result
 }
 
-export async function createStripeCheckout(priceId, email) {
+export async function createStripeCheckout(priceId, email, productType = 'rebuild_premium', membershipType = 'subscription') {
   const res = await fetch('/api/create-checkout', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ priceId, customerEmail: email,
+      productType, membershipType,
       successUrl: `${APP_URL}?payment=success`,
       cancelUrl: `${APP_URL}?payment=cancelled` }),
   })
@@ -314,7 +315,7 @@ function StudioUpsell({ userData }) {
           </button>
         ))}
       </div>
-      <button onClick={() => createStripeCheckout(priceId, userData.email)}
+      <button onClick={() => createStripeCheckout(priceId, userData.email, 'creator_membership', plan === 'monthly' ? 'subscription' : 'one_off')}
         style={{ background: T.gold, color: T.bg, border: 'none', borderRadius: '10px',
           padding: '14px 32px', fontWeight: '700', fontSize: '15px',
           cursor: 'pointer', fontFamily: 'inherit', width: '100%', maxWidth: '280px' }}>

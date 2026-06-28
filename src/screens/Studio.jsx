@@ -18,6 +18,10 @@ export default function StudioPortal({ onLogout }) {
   const [raiseDisputeBriefId, setRaiseDisputeBriefId] = useState(null)
   const [disputeText, setDisputeText] = useState('')
   const [disputeSent, setDisputeSent] = useState(false)
+  const [studioPosts, setStudioPosts] = useState([])
+  const [studioPostText, setStudioPostText] = useState('')
+  const [studioPostsLoading, setStudioPostsLoading] = useState(false)
+  const [studioLikedIds, setStudioLikedIds] = useState(new Set())
   const { user } = useApp()
 
   useEffect(() => {
@@ -26,6 +30,13 @@ export default function StudioPortal({ onLogout }) {
     fetchMyApplications()
     loadProfile()
   }, [user.supabaseId])
+
+  useEffect(() => {
+    if (screen === 'studio-community' && user.supabaseId) {
+      fetchStudioPosts()
+      fetchStudioLikedPosts()
+    }
+  }, [screen, user.supabaseId])
 
   async function fetchBriefs() {
     setBriefsLoading(true)
@@ -114,6 +125,49 @@ export default function StudioPortal({ onLogout }) {
       setDisputeSent(true)
       setTimeout(() => setDisputeSent(false), 3000)
     }
+  }
+
+  async function fetchStudioPosts() {
+    setStudioPostsLoading(true)
+    const { data } = await supabase
+      .from('circle_posts')
+      .select('*, rebuilders!circle_posts_user_id_fkey(name)')
+      .eq('group_name', 'studio')
+      .order('created_at', { ascending: false })
+    setStudioPosts(data || [])
+    setStudioPostsLoading(false)
+  }
+
+  async function fetchStudioLikedPosts() {
+    const { data } = await supabase.from('post_likes').select('post_id').eq('user_id', user.supabaseId)
+    setStudioLikedIds(new Set((data || []).map(r => r.post_id)))
+  }
+
+  async function submitStudioPost() {
+    if (!studioPostText.trim()) return
+    const { data, error } = await supabase.from('circle_posts').insert({
+      user_id: user.supabaseId,
+      group_name: 'studio',
+      content: studioPostText.trim(),
+      likes: 0,
+    }).select('*, rebuilders!circle_posts_user_id_fkey(name)')
+    if (!error && data?.[0]) {
+      setStudioPosts(prev => [data[0], ...prev])
+      setStudioPostText('')
+    }
+  }
+
+  async function toggleStudioLike(postId) {
+    const isLiked = studioLikedIds.has(postId)
+    setStudioLikedIds(prev => {
+      const next = new Set(prev)
+      isLiked ? next.delete(postId) : next.add(postId)
+      return next
+    })
+    setStudioPosts(prev => prev.map(p =>
+      p.id === postId ? { ...p, likes: (p.likes || 0) + (isLiked ? -1 : 1) } : p
+    ))
+    await supabase.rpc('toggle_like', { p_post_id: postId, p_user_id: user.supabaseId })
   }
 
   const appliedBriefIds = new Set(myApplications.map(a => a.brief_id))
@@ -454,9 +508,31 @@ export default function StudioPortal({ onLogout }) {
           This is your space — share wins, ask questions, learn from other creators in the Rare Studio network. Brands cannot see or access this community.
         </p>
       </div>
-      <EmptyState icon="💬" title="Be the first to post"
-        sub="Start a conversation with the Rare Studio creator community."
-        cta="Write a post →" onCta={() => {}} />
+
+      <Card style={{ marginBottom: '16px' }}>
+        <textarea
+          style={{ ...css.input, height: '80px', resize: 'none', marginBottom: '10px' }}
+          placeholder="Share a win, ask a question, or start a conversation..."
+          value={studioPostText}
+          onChange={e => setStudioPostText(e.target.value)}
+        />
+        <Btn onClick={submitStudioPost} disabled={!studioPostText.trim()}>
+          Post to community →
+        </Btn>
+      </Card>
+
+      {studioPostsLoading ? (
+        <p style={{ color: T.muted, textAlign: 'center', padding: '30px 0' }}>Loading...</p>
+      ) : studioPosts.length === 0 ? (
+        <EmptyState icon="💬" title="Be the first to post"
+          sub="Start a conversation with the Rare Studio creator community." />
+      ) : (
+        studioPosts.map(post => (
+          <StudioPostCard key={post.id} post={post} user={user}
+            liked={studioLikedIds.has(post.id)}
+            onLike={() => toggleStudioLike(post.id)} />
+        ))
+      )}
     </div>
   )
 
@@ -511,6 +587,108 @@ export default function StudioPortal({ onLogout }) {
   )
 
   return null
+}
+
+function StudioPostCard({ post, user, liked, onLike }) {
+  const [showReplies, setShowReplies] = useState(false)
+  const [replies, setReplies] = useState([])
+  const [replyCount, setReplyCount] = useState(0)
+  const [replyText, setReplyText] = useState('')
+
+  useEffect(() => {
+    supabase.from('post_replies').select('id', { count: 'exact', head: true }).eq('post_id', post.id)
+      .then(({ count }) => setReplyCount(count || 0))
+  }, [post.id])
+
+  async function loadReplies() {
+    const { data } = await supabase
+      .from('post_replies')
+      .select('*, rebuilders!post_replies_user_id_fkey(name)')
+      .eq('post_id', post.id)
+      .order('created_at', { ascending: true })
+    setReplies(data || [])
+  }
+
+  async function toggleReplies() {
+    if (!showReplies) await loadReplies()
+    setShowReplies(p => !p)
+  }
+
+  async function submitReply() {
+    if (!replyText.trim()) return
+    const { data, error } = await supabase.from('post_replies').insert({
+      post_id: post.id,
+      user_id: user.supabaseId,
+      content: replyText.trim(),
+    }).select('*, rebuilders!post_replies_user_id_fkey(name)')
+    if (!error && data?.[0]) {
+      setReplies(p => [...p, data[0]])
+      setReplyCount(p => p + 1)
+      setReplyText('')
+    }
+  }
+
+  const name = post.rebuilders?.name || 'Creator'
+  const date = post.created_at
+    ? new Date(post.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })
+    : ''
+
+  return (
+    <Card style={{ marginBottom: '10px' }}>
+      <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', marginBottom: '10px' }}>
+        <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: `${T.purple}33`,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          color: T.purple, fontWeight: '700', fontSize: '14px', flexShrink: 0 }}>{name[0]}</div>
+        <div style={{ flex: 1 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
+            <p style={{ fontWeight: '600', fontSize: '14px' }}>{name}</p>
+            <p style={{ color: T.muted, fontSize: '11px' }}>{date}</p>
+          </div>
+          <p style={{ color: T.fg, fontSize: '14px', lineHeight: '1.5', whiteSpace: 'pre-wrap' }}>{post.content}</p>
+        </div>
+      </div>
+      <div style={{ display: 'flex', gap: '12px', paddingTop: '8px', borderTop: `1px solid ${T.bg4}` }}>
+        <button onClick={onLike} style={{ background: 'none', border: 'none', cursor: 'pointer',
+          color: liked ? T.red : T.muted, fontSize: '13px', fontFamily: 'inherit', padding: 0 }}>
+          {liked ? '❤️' : '🤍'} {post.likes || 0}
+        </button>
+        <button onClick={toggleReplies} style={{ background: 'none', border: 'none', cursor: 'pointer',
+          color: T.muted, fontSize: '13px', fontFamily: 'inherit', padding: 0 }}>
+          💬 {replyCount} {showReplies ? '▲' : '▼'}
+        </button>
+      </div>
+      {showReplies && (
+        <div style={{ marginTop: '10px', paddingTop: '10px', borderTop: `1px solid ${T.bg4}` }}>
+          {replies.map(r => (
+            <div key={r.id} style={{ display: 'flex', gap: '8px', marginBottom: '8px', alignItems: 'flex-start' }}>
+              <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: `${T.gold}22`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: T.gold, fontWeight: '700', fontSize: '11px', flexShrink: 0 }}>
+                {(r.rebuilders?.name || 'C')[0]}
+              </div>
+              <div>
+                <p style={{ fontWeight: '600', fontSize: '12px' }}>{r.rebuilders?.name || 'Creator'}</p>
+                <p style={{ color: T.fg, fontSize: '13px', lineHeight: '1.4' }}>{r.content}</p>
+              </div>
+            </div>
+          ))}
+          <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+            <input style={{ ...css.input, flex: 1, padding: '8px 10px' }}
+              placeholder="Write a reply..."
+              value={replyText}
+              onChange={e => setReplyText(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && submitReply()} />
+            <button onClick={submitReply}
+              style={{ background: T.gold, border: 'none', borderRadius: '8px',
+                padding: '8px 14px', color: '#000', fontWeight: '700', fontSize: '13px',
+                cursor: 'pointer', fontFamily: 'inherit', flexShrink: 0 }}>
+              Post
+            </button>
+          </div>
+        </div>
+      )}
+    </Card>
+  )
 }
 
 function BriefCard({ brief, isApplied, onClick }) {

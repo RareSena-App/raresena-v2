@@ -51,6 +51,7 @@ export default function RebuildPortal({ onLogout }) {
   const [showPostComposer, setShowPostComposer] = useState(false)
   const [newPostText, setNewPostText] = useState('')
   const [postingGroup, setPostingGroup] = useState(null)
+  const [selectedTag, setSelectedTag] = useState(null)
 
   useEffect(() => {
     if (screen === 'circle') { fetchCirclePosts(); fetchLikedPosts() }
@@ -81,10 +82,12 @@ export default function RebuildPortal({ onLogout }) {
       content: newPostText,
       group_name: groupName || user.stage,
       stage: user.stage,
+      tag: selectedTag,
     })
     setNewPostText('')
     setShowPostComposer(false)
     setPostingGroup(null)
+    setSelectedTag(null)
     fetchCirclePosts()
   }
 
@@ -441,6 +444,17 @@ export default function RebuildPortal({ onLogout }) {
           {showPostComposer && (
             <div style={{ background: T.bg2, border: `1px solid ${T.bg4}`,
               borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', gap: '6px', marginBottom: '10px', flexWrap: 'wrap' }}>
+                {[['💬', 'General'], ['🏆', 'Win'], ['❓', 'Question'], ['💪', 'Accountability']].map(([icon, label]) => (
+                  <button key={label} onClick={() => setSelectedTag(selectedTag === label ? null : label)}
+                    style={{ padding: '4px 10px', borderRadius: '20px', border: 'none', cursor: 'pointer',
+                      fontSize: '12px', fontWeight: '600', fontFamily: 'inherit',
+                      background: selectedTag === label ? T.gold : T.bg3,
+                      color: selectedTag === label ? T.bg : T.muted }}>
+                    {icon} {label}
+                  </button>
+                ))}
+              </div>
               <textarea
                 style={{ ...css.input, minHeight: '80px', resize: 'none',
                   marginBottom: '10px', display: 'block' }}
@@ -451,7 +465,7 @@ export default function RebuildPortal({ onLogout }) {
               />
               <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                 <Btn sm onClick={() => submitPost(postingGroup)}>Post →</Btn>
-                <button onClick={() => { setShowPostComposer(false); setNewPostText('') }}
+                <button onClick={() => { setShowPostComposer(false); setNewPostText(''); setSelectedTag(null) }}
                   style={{ background: 'none', border: 'none', color: T.muted,
                     cursor: 'pointer', fontSize: '13px', fontFamily: 'inherit' }}>Cancel</button>
               </div>
@@ -920,11 +934,17 @@ function PostCard({ post, user, onUpgrade, onLike, liked = false }) {
           color: sd.col, flexShrink: 0 }}>{post.initials}</div>
         <div>
           <p style={{ fontWeight: '600', fontSize: '14px' }}>{post.author}</p>
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
             <span style={{ display: 'inline-block', padding: '2px 8px', borderRadius: '20px',
               fontSize: '11px', fontWeight: '600', background: `${sd.col}22`, color: sd.col }}>
               {stage}
             </span>
+            {post.tag && (
+              <span style={{ display: 'inline-block', padding: '2px 8px', borderRadius: '20px',
+                fontSize: '11px', fontWeight: '600', background: `${T.gold}22`, color: T.gold }}>
+                {post.tag === 'Win' ? '🏆' : post.tag === 'Question' ? '❓' : post.tag === 'Accountability' ? '💪' : '💬'} {post.tag}
+              </span>
+            )}
             <span style={{ color: T.mutedDk, fontSize: '11px' }}>{post.time}</span>
             {post.is_pinned && <span style={{ color: T.gold, fontSize: '11px' }}>📌 Pinned</span>}
           </div>
