@@ -372,6 +372,7 @@ function AppProvider({ children, initialUser, initialHabits }) {
         location: u.location || null,
         groups: u.groups || [],
         milestones_completed: u.milestonesCompleted || {},
+        visa_track: u.visaTrack || null,
         updated_at: new Date().toISOString(),
       })
     } catch (e) { console.error('Supabase sync error:', e) }

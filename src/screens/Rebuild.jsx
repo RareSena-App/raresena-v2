@@ -4,7 +4,7 @@ import { useApp, STAGE_DATA, STAGES, CIRCLE_GROUPS, STAGE_GROUP_PRESELECT, T, cs
   Btn, Card, GoldCTA, StageBadge, RebuildNav, PageHeader,
   EmptyState, today, getDaysSince, createStripeCheckout,
   STRIPE_MONTHLY_PRICE, STRIPE_ANNUAL_PRICE, supabase } from '../App.jsx'
-import { ROADMAP_TASKS, getStageTaskList, getWhatToDo, getTrackNote, STAGE_META } from '../data/roadmapTasks.js'
+import { ROADMAP_TASKS, getStageTaskList, getWhatToDo, getTrackNote, STAGE_META, VISA_TRACKS } from '../data/roadmapTasks.js'
 
 // Sample circle posts
 const SAMPLE_POSTS = [
@@ -55,11 +55,36 @@ export default function RebuildPortal({ onLogout }) {
   const [selectedTag, setSelectedTag] = useState(null)
   const [activeTask, setActiveTask] = useState(null)
   const [taskCompletions, setTaskCompletions] = useState({})
+  const [showTrackSelector, setShowTrackSelector] = useState(false)
+  const [notifPrefs, setNotifPrefs] = useState({
+    visa_reminders: true, habit_checkins: true, streak_alerts: true,
+    stage_celebrations: true, inactivity_nudges: true,
+    circle_activity: true, announcements: true,
+  })
 
   useEffect(() => {
     if (screen === 'circle') { fetchCirclePosts(); fetchLikedPosts() }
     if (screen === 'roadmap') loadRoadmapProgress()
+    if (screen === 'settings') loadNotifPrefs()
   }, [screen])
+
+  async function loadNotifPrefs() {
+    const { data } = await supabase
+      .from('notification_prefs')
+      .select('*')
+      .eq('user_id', user.supabaseId)
+      .single()
+    if (data) setNotifPrefs(data)
+  }
+
+  async function toggleNotifPref(key) {
+    const updated = { ...notifPrefs, [key]: !notifPrefs[key] }
+    setNotifPrefs(updated)
+    await supabase.from('notification_prefs').upsert({
+      user_id: user.supabaseId,
+      ...updated,
+    }, { onConflict: 'user_id' })
+  }
 
   async function loadRoadmapProgress() {
     const { data } = await supabase
@@ -852,6 +877,59 @@ export default function RebuildPortal({ onLogout }) {
           )}
         </div>
       </Card>
+
+      {/* Visa Track */}
+      <Card style={{ marginBottom: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          marginBottom: showTrackSelector ? '16px' : 0 }}>
+          <div>
+            <p style={{ fontWeight: '600', fontSize: '14px', marginBottom: '2px' }}>🛂 Visa track</p>
+            <p style={{ color: T.muted, fontSize: '13px' }}>
+              {user.visaTrack
+                ? `Track ${user.visaTrack} — ${VISA_TRACKS.find(t => t.id === user.visaTrack)?.label || ''}`
+                : 'Not set'}
+            </p>
+          </div>
+          <button onClick={() => setShowTrackSelector(v => !v)}
+            style={{ background: T.bg3, border: `1px solid ${T.bg4}`, borderRadius: '6px',
+              padding: '7px 12px', color: T.muted, fontSize: '12px', fontWeight: '600',
+              cursor: 'pointer', fontFamily: 'inherit' }}>
+            {showTrackSelector ? 'Cancel' : 'Change'}
+          </button>
+        </div>
+        {showTrackSelector && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <p style={{ color: T.mutedDk, fontSize: '12px', marginBottom: '4px' }}>
+              Switching track updates uncompleted tasks only — completed tasks are unchanged.
+            </p>
+            {VISA_TRACKS.map(track => {
+              const selected = user.visaTrack === track.id
+              return (
+                <button key={track.id}
+                  onClick={() => {
+                    saveUser({ ...user, visaTrack: track.id })
+                    setShowTrackSelector(false)
+                  }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '12px',
+                    background: selected ? T.goldDim : T.bg3,
+                    border: `1px solid ${selected ? T.gold : T.bg4}`,
+                    borderRadius: '8px', padding: '10px 14px',
+                    cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit' }}>
+                  <div style={{ width: '16px', height: '16px', borderRadius: '50%',
+                    border: `2px solid ${selected ? T.gold : T.mutedDk}`,
+                    background: selected ? T.gold : 'transparent', flexShrink: 0 }} />
+                  <div>
+                    <p style={{ fontSize: '13px', fontWeight: '600',
+                      color: selected ? T.white : T.muted, margin: 0 }}>{track.label}</p>
+                    <p style={{ fontSize: '11px', color: T.mutedDk, margin: '2px 0 0' }}>{track.desc}</p>
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+        )}
+      </Card>
+
       {[['📞', 'Book a consultation', () => window.open('https://raresena.com/book/', '_blank')],
         ['🌐', 'Visit raresena.com', () => window.open('https://raresena.com', '_blank')],
         ['💌', 'Contact Sena', () => window.open('mailto:hello@raresena.com', '_blank')],
@@ -867,6 +945,41 @@ export default function RebuildPortal({ onLogout }) {
           <span style={{ color: T.mutedDk, fontSize: '16px' }}>›</span>
         </button>
       ))}
+      {/* Notification Preferences */}
+      <p style={{ color: T.muted, fontSize: '12px', fontWeight: '600',
+        letterSpacing: '0.06em', textTransform: 'uppercase',
+        marginTop: '24px', marginBottom: '10px' }}>Email notifications</p>
+      <Card style={{ marginBottom: '16px', padding: '4px 0' }}>
+        {[
+          ['visa_reminders', '🛂', 'Visa deadline reminders', 'At 6mo, 3mo, 1mo, 2wk, 1wk before expiry'],
+          ['habit_checkins', '⚡', 'Daily habit check-in', 'Reminder at your chosen time each day'],
+          ['streak_alerts', '🔥', 'Streak alerts', 'Milestone and at-risk streak notifications'],
+          ['stage_celebrations', '🏆', 'Stage completions', 'Email when you complete a stage'],
+          ['inactivity_nudges', '💬', 'Inactivity nudges', 'After 7 days of no task activity'],
+          ['circle_activity', '💬', 'Rare Circle activity', 'When someone replies to your post'],
+          ['announcements', '📢', 'Announcements', 'Messages from Sena to the community'],
+        ].map(([key, icon, label, desc]) => (
+          <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '12px',
+            padding: '13px 16px', borderBottom: `1px solid ${T.bg4}` }}>
+            <span style={{ fontSize: '16px', flexShrink: 0 }}>{icon}</span>
+            <div style={{ flex: 1 }}>
+              <p style={{ fontSize: '13px', fontWeight: '600', color: T.white, marginBottom: '1px' }}>{label}</p>
+              <p style={{ fontSize: '11px', color: T.mutedDk }}>{desc}</p>
+            </div>
+            <button onClick={() => toggleNotifPref(key)}
+              style={{ width: '42px', height: '24px', borderRadius: '12px', border: 'none',
+                background: notifPrefs[key] ? T.gold : T.bg4,
+                cursor: 'pointer', position: 'relative', flexShrink: 0,
+                transition: 'background 0.2s' }}>
+              <div style={{ width: '18px', height: '18px', borderRadius: '50%',
+                background: T.white, position: 'absolute', top: '3px',
+                left: notifPrefs[key] ? '21px' : '3px',
+                transition: 'left 0.2s' }} />
+            </button>
+          </div>
+        ))}
+      </Card>
+
       <button onClick={onLogout}
         style={{ background: 'none', border: `1px solid ${T.red}33`, borderRadius: '10px',
           padding: '14px 16px', color: T.red, fontSize: '14px',

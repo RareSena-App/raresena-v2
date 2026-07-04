@@ -3,6 +3,17 @@
 // whatToDo can be an array (same for all tracks) or an object keyed by track ID (A-H)
 // completionPrompt types: 'text_response' | 'field_entry' | 'checklist' | 'reflection' | 'upload_link'
 
+export const VISA_TRACKS = [
+  { id: 'A', label: 'Skilled Worker', desc: 'Employer-sponsored work visa (Tier 2 / Skilled Worker)' },
+  { id: 'B', label: 'International Student', desc: 'Student visa — studying at a UK institution' },
+  { id: 'C', label: 'Family / Spouse', desc: 'Joining a partner or family member in the UK' },
+  { id: 'D', label: 'BN(O) — Hong Konger', desc: 'British National (Overseas) 5-year route to settlement' },
+  { id: 'E', label: 'Refugee / Asylum Seeker', desc: 'Granted refugee status or currently awaiting decision' },
+  { id: 'F', label: 'Global Talent', desc: 'Endorsed by a recognised UK body in your field' },
+  { id: 'G', label: 'Innovator Founder', desc: 'Building a business endorsed by a UK endorsing body' },
+  { id: 'H', label: 'Self-Sponsored (own company)', desc: 'Skilled Worker visa via your own sponsor licence' },
+]
+
 export const STAGE_META = {
   1: {
     title: 'RESET',
