@@ -4,6 +4,17 @@ import { supabase, QUESTIONS, STAGES, STAGE_DATA, CIRCLE_GROUPS,
   STAGE_GROUP_PRESELECT, getStageFromAnswers, T, css, Btn, Card, APP_URL } from '../App.jsx'
 import LoginFlow from './Login.jsx'
 
+const VISA_TRACKS = [
+  { id: 'A', label: 'Skilled Worker', desc: 'Employer-sponsored work visa (Tier 2 / Skilled Worker)' },
+  { id: 'B', label: 'International Student', desc: 'Student visa — studying at a UK institution' },
+  { id: 'C', label: 'Family / Spouse', desc: 'Joining a partner or family member in the UK' },
+  { id: 'D', label: 'BN(O) — Hong Konger', desc: 'British National (Overseas) 5-year route to settlement' },
+  { id: 'E', label: 'Refugee / Asylum Seeker', desc: 'Granted refugee status or currently awaiting decision' },
+  { id: 'F', label: 'Global Talent', desc: 'Endorsed by a recognised UK body in your field' },
+  { id: 'G', label: 'Innovator Founder', desc: 'Building a business endorsed by a UK endorsing body' },
+  { id: 'H', label: 'Self-Sponsored (own company)', desc: 'Skilled Worker visa via your own sponsor licence' },
+]
+
 const STARTER_HABITS = [
   { id: 'h1', name: 'Morning journal (3 sentences)', completedDates: [], createdAt: new Date().toISOString() },
   { id: 'h2', name: 'Evening walk (20 minutes)', completedDates: [], createdAt: new Date().toISOString() },
@@ -16,6 +27,7 @@ export default function OnboardingFlow({ onComplete }) {
   const [email, setEmail] = useState('')
   const [answers, setAnswers] = useState([])
   const [stage, setStage] = useState(null)
+  const [visaTrack, setVisaTrack] = useState('')
   const [location, setLocation] = useState('')
   const [selectedGroups, setSelectedGroups] = useState([])
   const [loading, setLoading] = useState(false)
@@ -67,6 +79,7 @@ export default function OnboardingFlow({ onComplete }) {
 
       await supabase.from('rebuilders').upsert({
         id: userId, email, name, stage,
+        visa_track: visaTrack || null,
         is_premium: false, is_creator: false, account_type: 'rebuilder',
         streak: 0, join_date: now,
         location: location || null, groups: allGroups,
@@ -242,8 +255,54 @@ export default function OnboardingFlow({ onComplete }) {
     )
   }
 
-  // ── STEP 9: LOCATION ──
+  // ── STEP 9: VISA TRACK ──
   if (step === 9) return (
+    <div style={{ ...css.screen, padding: '28px 20px 48px', minHeight: '100vh' }}>
+      <Toaster position="bottom-center" toastOptions={{ style: { background: '#222220', color: '#fff', fontSize: '13px' } }} />
+      <div style={{ fontSize: '32px', marginBottom: '12px', textAlign: 'center' }}>🛂</div>
+      <h2 style={{ fontSize: '20px', fontWeight: '700', marginBottom: '6px', textAlign: 'center' }}>
+        What's your visa route?
+      </h2>
+      <p style={{ color: T.muted, fontSize: '13px', marginBottom: '24px',
+        lineHeight: '1.6', textAlign: 'center' }}>
+        Your roadmap adapts to your specific immigration situation.
+      </p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '24px' }}>
+        {VISA_TRACKS.map(track => {
+          const selected = visaTrack === track.id
+          return (
+            <button key={track.id} onClick={() => setVisaTrack(track.id)}
+              style={{ background: selected ? T.goldDim : T.bg2,
+                border: `1px solid ${selected ? T.gold : T.bg4}`,
+                borderRadius: '10px', padding: '12px 16px',
+                display: 'flex', alignItems: 'center', gap: '12px',
+                cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit' }}>
+              <div style={{ width: '20px', height: '20px', borderRadius: '50%',
+                border: `2px solid ${selected ? T.gold : T.mutedDk}`,
+                background: selected ? T.gold : 'transparent',
+                flexShrink: 0 }} />
+              <div>
+                <p style={{ fontSize: '14px', fontWeight: '600',
+                  color: selected ? T.white : T.muted, margin: 0 }}>
+                  {track.label}
+                </p>
+                <p style={{ fontSize: '12px', color: selected ? T.goldLt : T.mutedDk,
+                  margin: '2px 0 0' }}>
+                  {track.desc}
+                </p>
+              </div>
+            </button>
+          )
+        })}
+      </div>
+      <Btn onClick={() => setStep(10)} disabled={!visaTrack}>Continue →</Btn>
+      <Btn ghost onClick={() => setStep(10)} style={{ marginTop: '8px' }}>Not sure — skip for now</Btn>
+      <Back onClick={() => setStep(8)} />
+    </div>
+  )
+
+  // ── STEP 10: LOCATION ──
+  if (step === 10) return (
     <div style={{ ...css.screen, padding: '56px 24px 40px', minHeight: '100vh' }}>
       <div style={{ fontSize: '32px', marginBottom: '16px', textAlign: 'center' }}>📍</div>
       <h2 style={{ fontSize: '20px', fontWeight: '700', marginBottom: '8px', textAlign: 'center' }}>
@@ -255,16 +314,17 @@ export default function OnboardingFlow({ onComplete }) {
       </p>
       <input style={css.input} type="text" placeholder="e.g. Manchester, London, Birmingham"
         value={location} onChange={e => setLocation(e.target.value)}
-        onKeyDown={e => e.key === 'Enter' && location.trim() && setStep(10)} autoFocus />
+        onKeyDown={e => e.key === 'Enter' && location.trim() && setStep(11)} autoFocus />
       <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        <Btn onClick={() => setStep(10)} disabled={!location.trim()}>Continue →</Btn>
-        <Btn ghost onClick={() => setStep(10)}>Skip for now</Btn>
+        <Btn onClick={() => setStep(11)} disabled={!location.trim()}>Continue →</Btn>
+        <Btn ghost onClick={() => setStep(11)}>Skip for now</Btn>
       </div>
+      <Back onClick={() => setStep(9)} />
     </div>
   )
 
-  // ── STEP 10: GROUP SELECTION ──
-  if (step === 10) return (
+  // ── STEP 11: GROUP SELECTION ──
+  if (step === 11) return (
     <div style={{ ...css.screen, padding: '28px 20px 48px', minHeight: '100vh' }}>
       <h2 style={{ fontSize: '20px', fontWeight: '700', marginBottom: '6px' }}>
         Choose your communities
@@ -312,7 +372,7 @@ export default function OnboardingFlow({ onComplete }) {
       <Btn onClick={completeOnboarding} disabled={loading}>
         {loading ? 'Setting up your rebuild...' : 'Enter my rebuild →'}
       </Btn>
-      <Back onClick={() => setStep(2)} />
+      <Back onClick={() => setStep(10)} />
       <Toaster position="bottom-center" toastOptions={{ style: { background: '#222220', color: '#fff', fontSize: '13px' } }} />
     </div>
   )

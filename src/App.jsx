@@ -477,6 +477,7 @@ export default function App() {
       joinDate: data.join_date, location: data.location,
       groups: data.groups || [], milestonesCompleted: data.milestones_completed || {},
       stripeCustomerId: data.stripe_customer_id,
+      visaTrack: data.visa_track || null,
     }
   }
 

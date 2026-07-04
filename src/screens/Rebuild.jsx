@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { useApp, STAGE_DATA, STAGES, CIRCLE_GROUPS, STAGE_GROUP_PRESELECT, T, css,
   Btn, Card, GoldCTA, StageBadge, RebuildNav, PageHeader,
   EmptyState, today, getDaysSince, createStripeCheckout,
   STRIPE_MONTHLY_PRICE, STRIPE_ANNUAL_PRICE, supabase } from '../App.jsx'
+import { ROADMAP_TASKS, getStageTaskList, getWhatToDo, getTrackNote, STAGE_META } from '../data/roadmapTasks.js'
 
 // Sample circle posts
 const SAMPLE_POSTS = [
@@ -52,10 +53,79 @@ export default function RebuildPortal({ onLogout }) {
   const [newPostText, setNewPostText] = useState('')
   const [postingGroup, setPostingGroup] = useState(null)
   const [selectedTag, setSelectedTag] = useState(null)
+  const [activeTask, setActiveTask] = useState(null)
+  const [taskCompletions, setTaskCompletions] = useState({})
 
   useEffect(() => {
     if (screen === 'circle') { fetchCirclePosts(); fetchLikedPosts() }
+    if (screen === 'roadmap') loadRoadmapProgress()
   }, [screen])
+
+  async function loadRoadmapProgress() {
+    const { data } = await supabase
+      .from('task_completions')
+      .select('stage_number,task_number,is_complete,prompt_response')
+      .eq('user_id', user.supabaseId)
+    const map = {}
+    ;(data || []).forEach(r => {
+      map[`${r.stage_number}.${r.task_number}`] = {
+        isComplete: r.is_complete,
+        promptResponse: r.prompt_response,
+      }
+    })
+    setTaskCompletions(map)
+  }
+
+  async function saveTaskCompletion(taskKey, promptResponse) {
+    const [stageNum, taskNum] = taskKey.split('.').map(Number)
+    await supabase.from('task_completions').upsert({
+      user_id: user.supabaseId,
+      stage_number: stageNum,
+      task_number: taskNum,
+      visa_track: user.visaTrack || 'A',
+      prompt_response: JSON.stringify(promptResponse),
+      prompt_type: ROADMAP_TASKS[taskKey].completionPrompt.type,
+      is_complete: true,
+      completed_at: new Date().toISOString(),
+    }, { onConflict: 'user_id,stage_number,task_number' })
+
+    const updatedCompletions = {
+      ...taskCompletions,
+      [taskKey]: { isComplete: true, promptResponse },
+    }
+    setTaskCompletions(updatedCompletions)
+
+    const stageComplete = [1,2,3,4,5].every(n =>
+      updatedCompletions[`${stageNum}.${n}`]?.isComplete
+    )
+
+    if (stageComplete) {
+      await supabase.from('stage_progress').upsert({
+        user_id: user.supabaseId,
+        stage_number: stageNum,
+        visa_track: user.visaTrack || 'A',
+        is_complete: true,
+        is_unlocked: true,
+        completed_at: new Date().toISOString(),
+      }, { onConflict: 'user_id,stage_number' })
+      if (stageNum < 5) {
+        await supabase.from('stage_progress').upsert({
+          user_id: user.supabaseId,
+          stage_number: stageNum + 1,
+          visa_track: user.visaTrack || 'A',
+          is_unlocked: true,
+        }, { onConflict: 'user_id,stage_number' })
+      }
+      return { stageComplete: true }
+    }
+    return { stageComplete: false }
+  }
+
+  function isStageUnlocked(stageNum) {
+    const userStageNum = STAGE_DATA[user.stage].idx + 1
+    if (stageNum <= userStageNum) return true
+    return [1,2,3,4,5].every(n => taskCompletions[`${stageNum - 1}.${n}`]?.isComplete)
+  }
 
   const { user, habits, saveUser, toggleHabit, addHabit, removeHabit, toggleMilestone } = useApp()
   const d = STAGE_DATA[user.stage]
@@ -541,25 +611,28 @@ export default function RebuildPortal({ onLogout }) {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {STAGES.map(stage => {
           const sd = STAGE_DATA[stage]
+          const stageNum = sd.idx + 1
           const isCurrent = stage === user.stage
           const isPast = sd.idx < STAGE_DATA[user.stage].idx
-          const rm = ROADMAP_DATA[stage]
-          const allMilestonesComplete = isCurrent && user.isPremium &&
-            rm.milestones.every((_, i) => (user.milestonesCompleted || {})[`${stage}_${i}`])
+          const locked = !isStageUnlocked(stageNum)
+          const stageTasks = getStageTaskList(stageNum)
+          const completedCount = stageTasks.filter(t => taskCompletions[t.key]?.isComplete).length
+          const allDone = completedCount === 5
           return (
             <div key={stage} style={{ background: isCurrent ? `${sd.col}18` : T.bg2,
               border: `1px solid ${isCurrent ? sd.col : T.bg4}`, borderRadius: '12px',
               overflow: 'hidden' }}>
               <div style={{ padding: '14px 16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div style={{ width: '36px', height: '36px', borderRadius: '50%',
-                  background: isPast ? `${T.green}33` : isCurrent ? `${sd.col}33` : T.bg3,
+                  background: allDone ? `${T.green}33` : isCurrent ? `${sd.col}33` : T.bg3,
                   display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  {isPast ? <span style={{ color: T.green, fontSize: '16px' }}>✓</span>
+                  {allDone ? <span style={{ color: T.green, fontSize: '16px' }}>✓</span>
+                    : locked ? <span style={{ fontSize: '16px' }}>🔒</span>
                     : <span style={{ fontSize: '18px' }}>{sd.icon}</span>}
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <p style={{ fontWeight: '700', fontSize: '15px', color: isCurrent ? T.white : T.muted }}>
+                    <p style={{ fontWeight: '700', fontSize: '15px', color: locked ? T.mutedDk : T.white }}>
                       {stage}
                     </p>
                     {isCurrent && (
@@ -567,69 +640,96 @@ export default function RebuildPortal({ onLogout }) {
                         borderRadius: '4px', fontSize: '10px', fontWeight: '700' }}>YOU ARE HERE</span>
                     )}
                   </div>
-                  <p style={{ color: T.mutedDk, fontSize: '12px', marginTop: '2px', lineHeight: '1.4' }}>
-                    {sd.tagline.substring(0, 55)}...
+                  <p style={{ color: T.mutedDk, fontSize: '12px', marginTop: '2px' }}>
+                    {locked ? 'Complete the previous stage to unlock' : `${completedCount}/5 tasks complete`}
                   </p>
                 </div>
-              </div>
-              <div style={{ padding: '0 16px 14px', borderTop: `1px solid ${isCurrent ? sd.col : T.bg4}33` }}>
-                <p style={{ color: T.muted, fontSize: '13px', marginTop: '12px', marginBottom: '12px', lineHeight: '1.6' }}>
-                  {sd.tagline}
-                </p>
-                {rm.milestones.map((m, mi) => {
-                  const mKey = `${stage}_${mi}`
-                  const done = isCurrent && user.isPremium && (user.milestonesCompleted || {})[mKey]
-                  return (
-                    <div key={mi} onClick={() => isCurrent && user.isPremium && toggleMilestone(mKey)}
-                      style={{ display: 'flex', gap: '10px', alignItems: 'flex-start',
-                        marginBottom: '10px', cursor: isCurrent && user.isPremium ? 'pointer' : 'default' }}>
-                      <div style={{ width: '20px', height: '20px', borderRadius: '50%',
-                        border: `1.5px solid ${done ? sd.col : isCurrent ? sd.col : T.bg4}`,
-                        background: done ? sd.col : 'transparent',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        flexShrink: 0, marginTop: '2px' }}>
-                        {done && <span style={{ color: T.bg, fontSize: '10px' }}>✓</span>}
-                      </div>
-                      <p style={{ fontSize: '13px', lineHeight: '1.5', color: T.white }}>
-                        {m}
-                      </p>
-                    </div>
-                  )
-                })}
-                {allMilestonesComplete && (
-                  <div style={{ marginTop: '16px', padding: '14px 16px',
-                    background: `${T.green}11`, border: `1px solid ${T.green}44`,
-                    borderRadius: '10px', textAlign: 'center' }}>
-                    <p style={{ fontSize: '22px', marginBottom: '6px' }}>🏆</p>
-                    <p style={{ fontWeight: '700', fontSize: '14px', color: T.white, marginBottom: '4px' }}>
-                      All {stage} milestones complete
-                    </p>
-                    <p style={{ color: T.muted, fontSize: '12px', marginBottom: '12px', lineHeight: '1.5' }}>
-                      You have completed this stage. Claim your certificate and advance.
-                    </p>
-                    <Btn sm onClick={() => setScreen('stage-complete')}>
-                      Claim your certificate →
-                    </Btn>
+                {!locked && (
+                  <div style={{ width: '36px', height: '4px', background: T.bg4, borderRadius: '2px', position: 'relative' }}>
+                    <div style={{ width: `${(completedCount/5)*100}%`, height: '100%', background: allDone ? T.green : sd.col, borderRadius: '2px' }} />
                   </div>
                 )}
-                <div style={{ marginTop: '14px', paddingTop: '14px', borderTop: `1px solid ${T.bg4}` }}>
-                  <p style={{ color: T.muted, fontSize: '12px', marginBottom: '10px' }}>Stage resources:</p>
-                  {rm.resources.map((r, ri) => (
-                    <a key={ri} href={r.url} target="_blank" rel="noopener noreferrer"
-                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                        padding: '10px 0', borderBottom: `1px solid ${T.bg4}`, textDecoration: 'none' }}>
-                      <p style={{ fontSize: '13px', color: T.white }}>{r.title}</p>
-                      <span style={{ color: T.gold, fontSize: '13px', fontWeight: '600' }}>{r.price}</span>
-                    </a>
-                  ))}
-                </div>
               </div>
+              {!locked && (
+                <div style={{ padding: '0 16px 14px', borderTop: `1px solid ${isCurrent ? sd.col : T.bg4}33` }}>
+                  <p style={{ color: T.muted, fontSize: '13px', marginTop: '12px', marginBottom: '14px', lineHeight: '1.6', fontStyle: 'italic' }}>
+                    {sd.tagline}
+                  </p>
+                  {stageTasks.map(({ key, title, estimatedTime }) => {
+                    const isComplete = taskCompletions[key]?.isComplete
+                    return (
+                      <button key={key}
+                        onClick={() => { setActiveTask(key); setScreen('task-detail') }}
+                        style={{ display: 'flex', gap: '12px', alignItems: 'center',
+                          background: 'none', border: 'none', cursor: 'pointer',
+                          width: '100%', textAlign: 'left', marginBottom: '12px',
+                          padding: 0, fontFamily: 'inherit' }}>
+                        <div style={{ width: '22px', height: '22px', borderRadius: '50%',
+                          border: `1.5px solid ${isComplete ? T.gold : sd.col}`,
+                          background: isComplete ? T.gold : 'transparent',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          flexShrink: 0 }}>
+                          {isComplete && <span style={{ color: T.bg, fontSize: '10px', fontWeight: '800' }}>✓</span>}
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <p style={{ fontSize: '13px', color: isComplete ? T.muted : T.white, lineHeight: '1.4',
+                            textDecoration: isComplete ? 'line-through' : 'none' }}>{title}</p>
+                          <p style={{ fontSize: '11px', color: T.mutedDk, marginTop: '2px' }}>⏱ {estimatedTime}</p>
+                        </div>
+                        {!isComplete && <span style={{ color: T.mutedDk, fontSize: '14px' }}>›</span>}
+                      </button>
+                    )
+                  })}
+                  {allDone && (
+                    <div style={{ marginTop: '8px', padding: '12px 14px',
+                      background: `${T.green}11`, border: `1px solid ${T.green}44`,
+                      borderRadius: '10px', textAlign: 'center' }}>
+                      <p style={{ fontWeight: '700', fontSize: '13px', color: T.green, marginBottom: '4px' }}>
+                        🏆 {stage} stage complete
+                      </p>
+                      <Btn sm onClick={() => setScreen('stage-complete')}>
+                        Claim your certificate →
+                      </Btn>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )
         })}
       </div>
     </div>
   )
+
+  // ── TASK DETAIL ──
+  if (screen === 'task-detail' && activeTask && ROADMAP_TASKS[activeTask]) {
+    const task = ROADMAP_TASKS[activeTask]
+    const stageNum = task.stage
+    const stageName = STAGES[stageNum - 1]
+    const sd = STAGE_DATA[stageName]
+    const steps = getWhatToDo(task, user.visaTrack)
+    const trackNote = getTrackNote(task, user.visaTrack)
+    const alreadyComplete = taskCompletions[activeTask]?.isComplete
+    return (
+      <TaskDetailView
+        task={task}
+        taskKey={activeTask}
+        stageNum={stageNum}
+        stageName={stageName}
+        stageCol={sd.col}
+        steps={steps}
+        trackNote={trackNote}
+        alreadyComplete={alreadyComplete}
+        isPremium={user.isPremium}
+        onBack={() => setScreen('roadmap')}
+        onComplete={async (values) => {
+          const result = await saveTaskCompletion(activeTask, values)
+          return result
+        }}
+        onAdvanceStage={() => setScreen('stage-complete')}
+      />
+    )
+  }
 
   // ── UPGRADE ──
   if (screen === 'upgrade') return (
@@ -998,6 +1098,308 @@ function PostCard({ post, user, onUpgrade, onLike, liked = false }) {
     </Card>
   )
 }
+
+// ── TASK DETAIL VIEW ─────────────────────────────────────────────
+function TaskDetailView({ task, taskKey, stageNum, stageName, stageCol, steps, trackNote, alreadyComplete, isPremium, onBack, onComplete, onAdvanceStage }) {
+  const [promptValues, setPromptValues] = useState({})
+  const [submitting, setSubmitting] = useState(false)
+  const [justCompleted, setJustCompleted] = useState(false)
+
+  const p = task.completionPrompt
+
+  function setField(key, val) {
+    setPromptValues(prev => ({ ...prev, [key]: val }))
+  }
+
+  function isPromptComplete() {
+    if (p.type === 'auto') return true
+    if (alreadyComplete || justCompleted) return true
+    if (p.type === 'text_response' || p.type === 'reflection') {
+      return (promptValues.text || '').length >= (p.minChars || 20)
+    }
+    if (p.type === 'field_entry' || p.type === 'upload_link') {
+      return (p.fields || []).filter(f => f.required).every(f => (promptValues[f.key] || '').trim())
+    }
+    if (p.type === 'checklist') {
+      return (p.items || []).every(item =>
+        item.inputType === 'checkbox' ? promptValues[item.key] === true : (promptValues[item.key] || '').trim()
+      )
+    }
+    return false
+  }
+
+  async function handleComplete() {
+    if (!isPromptComplete() || submitting) return
+    setSubmitting(true)
+    const result = await onComplete(promptValues)
+    setSubmitting(false)
+    setJustCompleted(true)
+    if (result?.stageComplete) {
+      setTimeout(() => onAdvanceStage(), 1800)
+    } else {
+      setTimeout(() => onBack(), 1800)
+    }
+  }
+
+  if (justCompleted) {
+    return (
+      <div style={{ ...css.screen, display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center', padding: '32px 24px',
+        minHeight: '100vh', textAlign: 'center' }}>
+        <div style={{ fontSize: '64px', marginBottom: '20px' }}>✅</div>
+        <h2 style={{ fontSize: '22px', fontWeight: '800', marginBottom: '8px' }}>Task complete</h2>
+        <p style={{ color: T.muted, fontSize: '14px', lineHeight: '1.7', maxWidth: '280px', marginBottom: '6px' }}>
+          {task.title}
+        </p>
+        <p style={{ color: T.gold, fontSize: '13px' }}>Returning to your roadmap…</p>
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ ...css.screen, padding: 0, minHeight: '100vh' }}>
+      {/* Sticky header */}
+      <div style={{ padding: '14px 20px 12px', borderBottom: `1px solid ${T.bg4}`,
+        display: 'flex', alignItems: 'center', gap: '12px',
+        background: T.bg, position: 'sticky', top: 0, zIndex: 10 }}>
+        <button onClick={onBack} style={{ background: 'none', border: 'none',
+          color: T.muted, fontSize: '13px', cursor: 'pointer', fontFamily: 'inherit', padding: 0 }}>
+          ← Back
+        </button>
+        <div style={{ flex: 1 }}>
+          <p style={{ fontSize: '11px', color: stageCol, fontWeight: '700', letterSpacing: '0.06em' }}>
+            STAGE {stageNum} · {stageName.toUpperCase()} · TASK {task.taskNumber}
+          </p>
+        </div>
+        {(alreadyComplete || justCompleted) && (
+          <span style={{ background: `${T.green}22`, color: T.green, fontSize: '11px',
+            fontWeight: '700', padding: '3px 8px', borderRadius: '4px' }}>✓ DONE</span>
+        )}
+      </div>
+
+      <div style={{ padding: '24px 20px 100px' }}>
+        <h1 style={{ fontSize: '20px', fontWeight: '800', lineHeight: '1.3', marginBottom: '6px' }}>
+          {task.title}
+        </h1>
+        <p style={{ color: T.mutedDk, fontSize: '12px', marginBottom: '28px' }}>
+          ⏱ {task.estimatedTime}
+        </p>
+
+        {/* 1. WHY THIS MATTERS */}
+        {task.whyThisMatters && (
+          <TaskSection label="WHY THIS MATTERS" color={stageCol}>
+            <p style={{ color: T.muted, fontSize: '14px', lineHeight: '1.75' }}>
+              {task.whyThisMatters}
+            </p>
+          </TaskSection>
+        )}
+
+        {/* 2. WHAT TO DO */}
+        {steps && (
+          <TaskSection label="WHAT TO DO" color={stageCol}>
+            {steps.map((step, i) => (
+              <div key={i} style={{ display: 'flex', gap: '12px', marginBottom: '14px' }}>
+                <div style={{ width: '24px', height: '24px', borderRadius: '50%',
+                  background: `${stageCol}22`, flexShrink: 0,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ color: stageCol, fontSize: '11px', fontWeight: '800' }}>{i + 1}</span>
+                </div>
+                <p style={{ color: T.white, fontSize: '14px', lineHeight: '1.65', flex: 1 }}>{step}</p>
+              </div>
+            ))}
+            {trackNote && (
+              <div style={{ background: `${stageCol}11`, border: `1px solid ${stageCol}33`,
+                borderRadius: '8px', padding: '10px 14px', marginTop: '6px' }}>
+                <p style={{ color: stageCol, fontSize: '11px', fontWeight: '700',
+                  letterSpacing: '0.06em', marginBottom: '4px' }}>YOUR TRACK NOTE</p>
+                <p style={{ color: T.muted, fontSize: '13px', lineHeight: '1.6' }}>{trackNote}</p>
+              </div>
+            )}
+          </TaskSection>
+        )}
+
+        {/* 3. TOOLS & RESOURCES */}
+        {task.resources?.length > 0 && (
+          <TaskSection label="TOOLS & RESOURCES" color={stageCol}>
+            {task.resources.map((r, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px',
+                padding: '10px 0', borderBottom: `1px solid ${T.bg4}` }}>
+                <span style={{ fontSize: '14px' }}>
+                  {r.type === 'guide' ? '📖' : r.type === 'download' || r.type === 'template' ? '📄'
+                    : r.type === 'product' ? '🌿' : r.type === 'interactive' ? '⚡'
+                    : r.type === 'circle_link' ? '💬' : r.type === 'tracker' ? '📊' : '📌'}
+                </span>
+                <p style={{ flex: 1, fontSize: '13px', color: T.white, lineHeight: '1.4' }}>
+                  {r.title}
+                </p>
+              </div>
+            ))}
+          </TaskSection>
+        )}
+
+        {/* 4. WHAT TO EXPECT TO FEEL */}
+        {task.whatToExpectToFeel && (
+          <TaskSection label="WHAT TO EXPECT TO FEEL" color={stageCol}>
+            <p style={{ color: T.muted, fontSize: '14px', lineHeight: '1.75', fontStyle: 'italic' }}>
+              {task.whatToExpectToFeel}
+            </p>
+          </TaskSection>
+        )}
+
+        {/* 5. COMPLETION PROMPT */}
+        <TaskSection label="COMPLETION PROMPT" color={stageCol}>
+          {alreadyComplete ? (
+            <div style={{ background: `${T.green}11`, border: `1px solid ${T.green}44`,
+              borderRadius: '8px', padding: '14px', textAlign: 'center' }}>
+              <p style={{ color: T.green, fontSize: '14px', fontWeight: '600' }}>
+                ✓ You've already completed this task
+              </p>
+            </div>
+          ) : (
+            <CompletionPromptUI prompt={p} values={promptValues} setField={setField} stageCol={stageCol} />
+          )}
+        </TaskSection>
+
+        {/* 6. MARK AS DONE */}
+        {alreadyComplete ? (
+          <div style={{ background: `${T.green}11`, border: `1px solid ${T.green}44`,
+            borderRadius: '10px', padding: '16px', textAlign: 'center' }}>
+            <p style={{ color: T.green, fontWeight: '700', fontSize: '15px' }}>✓ Task complete</p>
+          </div>
+        ) : p.type === 'auto' ? (
+          <div style={{ background: T.bg3, border: `1px solid ${T.bg4}`,
+            borderRadius: '10px', padding: '14px', textAlign: 'center' }}>
+            <p style={{ color: T.muted, fontSize: '13px', lineHeight: '1.6' }}>
+              This task completes automatically when the streak tracker reaches 30 consecutive days.
+            </p>
+          </div>
+        ) : !isPremium ? (
+          <Btn onClick={() => {}}>Upgrade to Rebuild Premium to complete tasks →</Btn>
+        ) : (
+          <Btn onClick={handleComplete} disabled={!isPromptComplete() || submitting}>
+            {submitting ? 'Saving…' : 'Mark this task complete →'}
+          </Btn>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function TaskSection({ label, color, children }) {
+  return (
+    <div style={{ marginBottom: '28px' }}>
+      <p style={{ fontSize: '11px', color, fontWeight: '700',
+        letterSpacing: '0.08em', marginBottom: '12px' }}>{label}</p>
+      {children}
+    </div>
+  )
+}
+
+function CompletionPromptUI({ prompt, values, setField, stageCol }) {
+  const p = prompt
+
+  if (p.type === 'text_response' || p.type === 'reflection') {
+    const minChars = p.minChars || 20
+    const current = values.text || ''
+    const met = current.length >= minChars
+    return (
+      <div>
+        <p style={{ color: T.white, fontSize: '14px', lineHeight: '1.7', marginBottom: '14px',
+          fontWeight: '500' }}>{p.prompt}</p>
+        <textarea
+          style={{ ...css.input, height: '120px', resize: 'none' }}
+          placeholder="Write your response here…"
+          value={current}
+          onChange={e => setField('text', e.target.value)}
+        />
+        {p.note && <p style={{ color: T.mutedDk, fontSize: '12px', marginTop: '6px' }}>{p.note}</p>}
+        <p style={{ color: met ? T.green : T.mutedDk, fontSize: '12px', marginTop: '6px' }}>
+          {current.length} / {minChars} characters minimum {met && '✓'}
+        </p>
+      </div>
+    )
+  }
+
+  if (p.type === 'field_entry' || p.type === 'upload_link') {
+    return (
+      <div>
+        <p style={{ color: T.white, fontSize: '14px', lineHeight: '1.7', marginBottom: '16px',
+          fontWeight: '500' }}>{p.prompt}</p>
+        {(p.fields || []).map(field => (
+          <div key={field.key} style={{ marginBottom: '14px' }}>
+            <p style={{ color: T.muted, fontSize: '12px', marginBottom: '6px' }}>
+              {field.label}{field.required ? ' *' : ' (optional)'}
+            </p>
+            <input
+              style={css.input}
+              type={field.inputType === 'date' ? 'date' : field.inputType === 'url' ? 'url' : 'text'}
+              placeholder={field.placeholder || ''}
+              value={values[field.key] || ''}
+              onChange={e => setField(field.key, e.target.value)}
+            />
+          </div>
+        ))}
+        {p.note && <p style={{ color: T.mutedDk, fontSize: '12px', marginTop: '4px' }}>{p.note}</p>}
+      </div>
+    )
+  }
+
+  if (p.type === 'checklist') {
+    const hasCheckboxes = (p.items || []).some(i => i.inputType === 'checkbox')
+    return (
+      <div>
+        <p style={{ color: T.white, fontSize: '14px', lineHeight: '1.7', marginBottom: '16px',
+          fontWeight: '500' }}>{p.prompt}</p>
+        {hasCheckboxes ? (
+          (p.items || []).map(item => {
+            const checked = values[item.key] === true
+            return (
+              <button key={item.key} onClick={() => setField(item.key, !checked)}
+                style={{ display: 'flex', gap: '12px', alignItems: 'flex-start',
+                  background: 'none', border: 'none', cursor: 'pointer',
+                  width: '100%', textAlign: 'left', marginBottom: '12px',
+                  padding: 0, fontFamily: 'inherit' }}>
+                <div style={{ width: '20px', height: '20px', borderRadius: '4px',
+                  border: `2px solid ${checked ? T.gold : T.mutedDk}`,
+                  background: checked ? T.gold : 'transparent',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  flexShrink: 0, marginTop: '2px' }}>
+                  {checked && <span style={{ color: T.bg, fontSize: '11px', fontWeight: '800' }}>✓</span>}
+                </div>
+                <span style={{ fontSize: '14px', color: T.white, lineHeight: '1.5' }}>{item.label}</span>
+              </button>
+            )
+          })
+        ) : (
+          (p.items || []).map((item, i) => (
+            <div key={item.key} style={{ marginBottom: '10px' }}>
+              <p style={{ color: T.muted, fontSize: '12px', marginBottom: '5px' }}>Habit {i + 1} *</p>
+              <input
+                style={{ ...css.input, fontSize: '13px' }}
+                placeholder={item.placeholder || `Name habit ${i + 1}`}
+                value={values[item.key] || ''}
+                onChange={e => setField(item.key, e.target.value)}
+              />
+            </div>
+          ))
+        )}
+      </div>
+    )
+  }
+
+  if (p.type === 'auto') {
+    return (
+      <div style={{ background: T.bg3, border: `1px solid ${T.bg4}`, borderRadius: '8px',
+        padding: '14px', textAlign: 'center' }}>
+        <p style={{ color: T.muted, fontSize: '14px', lineHeight: '1.6' }}>{p.prompt}</p>
+      </div>
+    )
+  }
+
+  return null
+}
+
+// ─────────────────────────────────────────────────────────────────
 
 function formatPost(p) {
   const name = p.rebuilders?.name || 'Rebuilder'
