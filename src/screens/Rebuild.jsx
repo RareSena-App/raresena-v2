@@ -63,12 +63,40 @@ export default function RebuildPortal({ onLogout }) {
     stage_celebrations: true, inactivity_nudges: true,
     circle_activity: true, announcements: true,
   })
+  const [emergencyFlags, setEmergencyFlags] = useState({ jobLoss: false, domesticConcern: false, sponsorRevoked: false })
+  const [task11Complete, setTask11Complete] = useState(null)
 
   useEffect(() => {
     if (screen === 'circle') { fetchCirclePosts(); fetchLikedPosts() }
     if (screen === 'roadmap') loadRoadmapProgress()
     if (screen === 'settings') loadNotifPrefs()
   }, [screen])
+
+  useEffect(() => { fetchEmergencyState() }, [])
+
+  async function fetchEmergencyState() {
+    const [{ data: rb }, { data: t11 }] = await Promise.all([
+      supabase.from('rebuilders')
+        .select('job_loss_reported_at, domestic_concern_flagged_at, sponsor_revocation_reported_at')
+        .eq('id', user.supabaseId).single(),
+      supabase.from('task_completions')
+        .select('is_complete').eq('user_id', user.supabaseId)
+        .eq('stage_number', 1).eq('task_number', 1).single(),
+    ])
+    setEmergencyFlags({
+      jobLoss: !!rb?.job_loss_reported_at,
+      domesticConcern: !!rb?.domestic_concern_flagged_at,
+      sponsorRevoked: !!rb?.sponsor_revocation_reported_at,
+    })
+    setTask11Complete(!!(t11?.is_complete))
+  }
+
+  async function setEmergencyFlag(column, value) {
+    await supabase.from('rebuilders')
+      .update({ [column]: value ? new Date().toISOString() : null })
+      .eq('id', user.supabaseId)
+    await fetchEmergencyState()
+  }
 
   async function loadNotifPrefs() {
     const { data } = await supabase
@@ -175,6 +203,103 @@ export default function RebuildPortal({ onLogout }) {
   const todayHabits = habits.map(h => ({ ...h, done: (h.completedDates || []).includes(today()) }))
   const doneCount = todayHabits.filter(h => h.done).length
 
+  const showTrackABanner = user.visaTrack === 'A' && emergencyFlags.jobLoss
+  const showTrackCBanner = user.visaTrack === 'C' && emergencyFlags.domesticConcern
+  const showTrackEBanner = user.visaTrack === 'E' && daysSince >= 14 && task11Complete === false
+  const showTrackHBanner = user.visaTrack === 'H' && emergencyFlags.sponsorRevoked
+
+  function renderEmergencyBanners() {
+    const result = []
+    const linkBtn = (label, url) => (
+      <button key={label} onClick={() => window.open(url, '_blank')}
+        style={{ background: '#E8974A18', border: '1px solid #E8974A55', borderRadius: '6px',
+          padding: '6px 12px', color: '#E8974A', fontSize: '12px', fontWeight: '600',
+          cursor: 'pointer', fontFamily: 'inherit' }}>{label} ›</button>
+    )
+    if (showTrackABanner) result.push(
+      <div key="a" style={{ background: '#E8974A0D', border: '1px solid #E8974A',
+        borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
+        <p style={{ color: '#E8974A', fontWeight: '700', fontSize: '13px', marginBottom: '6px' }}>⚠️ 60-day window started</p>
+        <p style={{ color: T.muted, fontSize: '13px', lineHeight: '1.6', marginBottom: '12px' }}>
+          Your visa is tied to your employer. Following a job loss, you have 60 days to find a new sponsor or change your route. Act now.
+        </p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
+          {linkBtn('Citizens Advice', 'https://www.citizensadvice.org.uk/immigration/')}
+          {linkBtn('Find a solicitor', 'https://solicitors.lawsociety.org.uk/')}
+          {linkBtn('Your eVisa', 'https://www.gov.uk/view-prove-immigration-status')}
+        </div>
+        <button onClick={() => setEmergencyFlag('job_loss_reported_at', false)}
+          style={{ background: 'none', border: 'none', color: T.mutedDk, fontSize: '12px',
+            cursor: 'pointer', fontFamily: 'inherit', padding: 0 }}>
+          Mark as resolved · dismiss
+        </button>
+      </div>
+    )
+    if (showTrackHBanner) result.push(
+      <div key="h" style={{ background: '#E8974A0D', border: '1px solid #E8974A',
+        borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
+        <p style={{ color: '#E8974A', fontWeight: '700', fontSize: '13px', marginBottom: '6px' }}>⚠️ Sponsor licence concern flagged</p>
+        <p style={{ color: T.muted, fontSize: '13px', lineHeight: '1.6', marginBottom: '12px' }}>
+          If your sponsor licence has been revoked or suspended, your 60-day curtailment window may apply. Get immigration legal advice immediately.
+        </p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
+          {linkBtn('Citizens Advice', 'https://www.citizensadvice.org.uk/immigration/')}
+          {linkBtn('Find a solicitor', 'https://solicitors.lawsociety.org.uk/')}
+          {linkBtn('Your eVisa', 'https://www.gov.uk/view-prove-immigration-status')}
+        </div>
+        <button onClick={() => setEmergencyFlag('sponsor_revocation_reported_at', false)}
+          style={{ background: 'none', border: 'none', color: T.mutedDk, fontSize: '12px',
+            cursor: 'pointer', fontFamily: 'inherit', padding: 0 }}>
+          Mark as resolved · dismiss
+        </button>
+      </div>
+    )
+    if (showTrackCBanner) result.push(
+      <div key="c" style={{ background: T.bg3, border: `1px solid ${T.bg4}`,
+        borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
+        <p style={{ color: T.white, fontWeight: '700', fontSize: '13px', marginBottom: '6px' }}>🤝 Confidential support available</p>
+        <p style={{ color: T.muted, fontSize: '13px', lineHeight: '1.6', marginBottom: '12px' }}>
+          If your home situation has changed, specialist support is available. You do not need to explain yourself to access it. This is private and not visible to anyone else.
+        </p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
+          <button key="sbs" onClick={() => window.open('https://southallblacksisters.org.uk/', '_blank')}
+            style={{ background: T.bg4, border: `1px solid ${T.bg4}`, borderRadius: '6px',
+              padding: '6px 12px', color: T.white, fontSize: '12px', fontWeight: '600',
+              cursor: 'pointer', fontFamily: 'inherit' }}>Southall Black Sisters ›</button>
+          <button key="nrpf" onClick={() => window.open('https://www.nrpfnetwork.org.uk/', '_blank')}
+            style={{ background: T.bg4, border: `1px solid ${T.bg4}`, borderRadius: '6px',
+              padding: '6px 12px', color: T.white, fontSize: '12px', fontWeight: '600',
+              cursor: 'pointer', fontFamily: 'inherit' }}>NRPF Network ›</button>
+          <button key="row" onClick={() => window.open('https://rightsofwomen.org.uk/', '_blank')}
+            style={{ background: T.bg4, border: `1px solid ${T.bg4}`, borderRadius: '6px',
+              padding: '6px 12px', color: T.white, fontSize: '12px', fontWeight: '600',
+              cursor: 'pointer', fontFamily: 'inherit' }}>Rights of Women ›</button>
+        </div>
+        <button onClick={() => setEmergencyFlag('domestic_concern_flagged_at', false)}
+          style={{ background: 'none', border: 'none', color: T.mutedDk, fontSize: '12px',
+            cursor: 'pointer', fontFamily: 'inherit', padding: 0 }}>
+          Dismiss
+        </button>
+      </div>
+    )
+    if (showTrackEBanner) result.push(
+      <div key="e" style={{ background: `${T.gold}0D`, border: `1px solid ${T.gold}`,
+        borderRadius: '12px', padding: '16px', marginBottom: '16px' }}>
+        <p style={{ color: T.gold, fontWeight: '700', fontSize: '13px', marginBottom: '6px' }}>⏱ Your 28-day window is running</p>
+        <p style={{ color: T.muted, fontSize: '13px', lineHeight: '1.6', marginBottom: '12px' }}>
+          Asylum support ends approximately 28 days after your grant letter. Complete Task 1.1 now to identify your key deadlines and next steps.
+        </p>
+        <button onClick={async () => { await loadRoadmapProgress(); setActiveTask('1.1'); setScreen('task-detail') }}
+          style={{ background: T.gold, color: T.bg, border: 'none', borderRadius: '8px',
+            padding: '10px 18px', fontWeight: '700', fontSize: '13px',
+            cursor: 'pointer', fontFamily: 'inherit' }}>
+          Complete Task 1.1 →
+        </button>
+      </div>
+    )
+    return result
+  }
+
   async function fetchCirclePosts() {
     const { data } = await supabase
       .from('circle_posts')
@@ -258,6 +383,8 @@ export default function RebuildPortal({ onLogout }) {
           borderRadius: '50%', width: '36px', height: '36px', fontSize: '16px', cursor: 'pointer' }}>⚙️</button>
       </div>
       <StageBadge stage={user.stage} />
+
+      {renderEmergencyBanners()}
 
       {/* Streak card */}
       <div style={{ background: `linear-gradient(135deg,${d.col}22,${T.bg2})`,
@@ -649,6 +776,7 @@ export default function RebuildPortal({ onLogout }) {
       <p style={{ color: T.muted, fontSize: '13px', marginBottom: '20px' }}>
         Five stages. One direction. Your pace.
       </p>
+      {renderEmergencyBanners()}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {STAGES.map(stage => {
           const sd = STAGE_DATA[stage]
@@ -946,6 +1074,62 @@ export default function RebuildPortal({ onLogout }) {
           </div>
         )}
       </Card>
+
+      {['A', 'C', 'H'].includes(user.visaTrack) && (<>
+        <p style={{ color: T.muted, fontSize: '12px', fontWeight: '600',
+          letterSpacing: '0.06em', textTransform: 'uppercase',
+          marginTop: '24px', marginBottom: '10px' }}>Situation flags</p>
+        <Card style={{ marginBottom: '16px' }}>
+          <p style={{ color: T.mutedDk, fontSize: '12px', marginBottom: '14px', lineHeight: '1.6' }}>
+            Use these to activate emergency guidance on your home screen. Private — not visible to others.
+          </p>
+          {user.visaTrack === 'A' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ flex: 1 }}>
+                <p style={{ fontSize: '13px', fontWeight: '600', color: T.white, marginBottom: '2px' }}>⚠️ Report a job loss</p>
+                <p style={{ fontSize: '11px', color: T.mutedDk }}>Activates the 60-day action plan on your home screen</p>
+              </div>
+              <button onClick={() => setEmergencyFlag('job_loss_reported_at', !emergencyFlags.jobLoss)}
+                style={{ width: '42px', height: '24px', borderRadius: '12px', border: 'none',
+                  background: emergencyFlags.jobLoss ? '#E8974A' : T.bg4,
+                  cursor: 'pointer', position: 'relative', flexShrink: 0, transition: 'background 0.2s' }}>
+                <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: T.white,
+                  position: 'absolute', top: '3px', left: emergencyFlags.jobLoss ? '21px' : '3px', transition: 'left 0.2s' }} />
+              </button>
+            </div>
+          )}
+          {user.visaTrack === 'C' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ flex: 1 }}>
+                <p style={{ fontSize: '13px', fontWeight: '600', color: T.white, marginBottom: '2px' }}>🤝 Flag a change in my situation</p>
+                <p style={{ fontSize: '11px', color: T.mutedDk }}>Activates confidential support resources — private</p>
+              </div>
+              <button onClick={() => setEmergencyFlag('domestic_concern_flagged_at', !emergencyFlags.domesticConcern)}
+                style={{ width: '42px', height: '24px', borderRadius: '12px', border: 'none',
+                  background: emergencyFlags.domesticConcern ? T.gold : T.bg4,
+                  cursor: 'pointer', position: 'relative', flexShrink: 0, transition: 'background 0.2s' }}>
+                <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: T.white,
+                  position: 'absolute', top: '3px', left: emergencyFlags.domesticConcern ? '21px' : '3px', transition: 'left 0.2s' }} />
+              </button>
+            </div>
+          )}
+          {user.visaTrack === 'H' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ flex: 1 }}>
+                <p style={{ fontSize: '13px', fontWeight: '600', color: T.white, marginBottom: '2px' }}>⚠️ Report a sponsor licence concern</p>
+                <p style={{ fontSize: '11px', color: T.mutedDk }}>Activates the 60-day action plan — get legal advice now</p>
+              </div>
+              <button onClick={() => setEmergencyFlag('sponsor_revocation_reported_at', !emergencyFlags.sponsorRevoked)}
+                style={{ width: '42px', height: '24px', borderRadius: '12px', border: 'none',
+                  background: emergencyFlags.sponsorRevoked ? '#E8974A' : T.bg4,
+                  cursor: 'pointer', position: 'relative', flexShrink: 0, transition: 'background 0.2s' }}>
+                <div style={{ width: '18px', height: '18px', borderRadius: '50%', background: T.white,
+                  position: 'absolute', top: '3px', left: emergencyFlags.sponsorRevoked ? '21px' : '3px', transition: 'left 0.2s' }} />
+              </button>
+            </div>
+          )}
+        </Card>
+      </>)}
 
       {[['📞', 'Book a consultation', () => window.open('https://raresena.com/book/', '_blank')],
         ['🌐', 'Visit raresena.com', () => window.open('https://raresena.com', '_blank')],
