@@ -141,6 +141,12 @@ export default function RebuildPortal({ onLogout }) {
           is_unlocked: true,
         }, { onConflict: 'user_id,stage_number' })
       }
+      // Fire stage celebration email (non-blocking)
+      fetch('/api/notify-stage-complete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: user.supabaseId, stage_number: stageNum }),
+      }).catch(() => {})
       return { stageComplete: true }
     }
     return { stageComplete: false }

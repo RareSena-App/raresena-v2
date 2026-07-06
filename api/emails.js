@@ -1,4 +1,5 @@
 const APP_URL = process.env.VITE_APP_URL || 'https://app.raresena.com'
+const ROADMAP_URL = `${APP_URL}/#roadmap`
 
 function wrapper(content) {
   return `
@@ -66,6 +67,67 @@ export function rebuildWelcomeEmail({ name }) {
         <li>Stage completion certificate</li>
       </ul>
       ${btn('Open your app →', APP_URL)}
+    `),
+  }
+}
+
+export function habitCheckinEmail({ name }) {
+  return {
+    subject: 'Your daily habits are waiting — 5 minutes is all it takes',
+    html: wrapper(`
+      <h1 style="font-size:22px;font-weight:700;margin:0 0 16px;">Good morning, ${name}</h1>
+      ${muted('Your five core habits are waiting. Each one keeps the architecture of your rebuild standing.')}
+      ${muted('It takes five minutes. Open the app, log your habits, and keep the streak alive.')}
+      ${btn('Log your habits →', ROADMAP_URL)}
+    `),
+  }
+}
+
+export function streakAlertEmail({ name, streakDays }) {
+  return {
+    subject: `Your ${streakDays}-day streak is at risk — log today before midnight`,
+    html: wrapper(`
+      <h1 style="font-size:22px;font-weight:700;margin:0 0 16px;">Don't break it, ${name}</h1>
+      ${muted(`You have a ${streakDays}-day habit streak. Today's habits haven't been logged yet.`)}
+      ${muted('Log before midnight to keep it alive. One log is all it takes.')}
+      ${btn('Log your habits now →', ROADMAP_URL)}
+    `),
+  }
+}
+
+export function inactivityNudgeEmail({ name, stageName }) {
+  return {
+    subject: "It's been a week — your rebuild is waiting",
+    html: wrapper(`
+      <h1 style="font-size:22px;font-weight:700;margin:0 0 16px;">Still here, ${name}</h1>
+      ${muted(`You haven't been in the app for a week. Your ${stageName} stage tasks are still here — and so is your rebuild.`)}
+      ${muted('You do not have to have everything figured out to come back. You just have to come back.')}
+      ${btn('Pick up where you left off →', ROADMAP_URL)}
+    `),
+  }
+}
+
+export function stageCelebrationEmail({ name, stageName }) {
+  return {
+    subject: `Stage complete — you've finished ${stageName}`,
+    html: wrapper(`
+      <h1 style="font-size:22px;font-weight:700;margin:0 0 16px;">${stageName} complete, ${name} 🏆</h1>
+      ${muted(`You have finished every task in the ${stageName} stage. That is not a small thing.`)}
+      ${muted('Your certificate is ready to claim in the app. The next stage is now unlocked.')}
+      ${btn('Claim your certificate →', ROADMAP_URL)}
+    `),
+  }
+}
+
+export function visaReminderEmail({ name, monthsLeft }) {
+  const urgency = monthsLeft <= 1 ? 'in one month — act now' : `in ${monthsLeft} months`
+  return {
+    subject: `Visa reminder — your expiry date is ${urgency}`,
+    html: wrapper(`
+      <h1 style="font-size:22px;font-weight:700;margin:0 0 16px;">Visa deadline reminder, ${name}</h1>
+      ${muted(`Your visa expires in approximately ${monthsLeft} month${monthsLeft === 1 ? '' : 's'}. This is your scheduled reminder.`)}
+      ${muted('Log into the app to review your visa task and your next required actions.')}
+      ${btn('Review your visa task →', ROADMAP_URL)}
     `),
   }
 }
