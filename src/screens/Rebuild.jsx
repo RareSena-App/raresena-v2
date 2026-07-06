@@ -5,6 +5,7 @@ import { useApp, STAGE_DATA, STAGES, CIRCLE_GROUPS, STAGE_GROUP_PRESELECT, T, cs
   EmptyState, today, getDaysSince, createStripeCheckout,
   STRIPE_MONTHLY_PRICE, STRIPE_ANNUAL_PRICE, supabase } from '../App.jsx'
 import { ROADMAP_TASKS, getStageTaskList, getWhatToDo, getTrackNote, STAGE_META, VISA_TRACKS } from '../data/roadmapTasks.js'
+import { generateRebuildPDF } from '../utils/generateRebuildPDF.js'
 
 // Sample circle posts
 const SAMPLE_POSTS = [
@@ -55,6 +56,7 @@ export default function RebuildPortal({ onLogout }) {
   const [selectedTag, setSelectedTag] = useState(null)
   const [activeTask, setActiveTask] = useState(null)
   const [taskCompletions, setTaskCompletions] = useState({})
+  const [unlockedStages, setUnlockedStages] = useState({})
   const [showTrackSelector, setShowTrackSelector] = useState(false)
   const [notifPrefs, setNotifPrefs] = useState({
     visa_reminders: true, habit_checkins: true, streak_alerts: true,
@@ -87,18 +89,25 @@ export default function RebuildPortal({ onLogout }) {
   }
 
   async function loadRoadmapProgress() {
-    const { data } = await supabase
-      .from('task_completions')
-      .select('stage_number,task_number,is_complete,prompt_response')
-      .eq('user_id', user.supabaseId)
+    const [{ data: completions }, { data: progress }] = await Promise.all([
+      supabase.from('task_completions')
+        .select('stage_number,task_number,is_complete,prompt_response')
+        .eq('user_id', user.supabaseId),
+      supabase.from('stage_progress')
+        .select('stage_number,is_unlocked')
+        .eq('user_id', user.supabaseId),
+    ])
     const map = {}
-    ;(data || []).forEach(r => {
+    ;(completions || []).forEach(r => {
       map[`${r.stage_number}.${r.task_number}`] = {
         isComplete: r.is_complete,
         promptResponse: r.prompt_response,
       }
     })
+    const unlocks = {}
+    ;(progress || []).forEach(r => { unlocks[r.stage_number] = r.is_unlocked })
     setTaskCompletions(map)
+    setUnlockedStages(unlocks)
   }
 
   async function saveTaskCompletion(taskKey, promptResponse) {
@@ -155,6 +164,7 @@ export default function RebuildPortal({ onLogout }) {
   function isStageUnlocked(stageNum) {
     const userStageNum = STAGE_DATA[user.stage].idx + 1
     if (stageNum <= userStageNum) return true
+    if (unlockedStages[stageNum]) return true
     return [1,2,3,4,5].every(n => taskCompletions[`${stageNum - 1}.${n}`]?.isComplete)
   }
 
@@ -758,6 +768,7 @@ export default function RebuildPortal({ onLogout }) {
           return result
         }}
         onAdvanceStage={() => setScreen('stage-complete')}
+        onExportPDF={() => generateRebuildPDF(taskCompletions, user.name || 'Your')}
       />
     )
   }
@@ -1219,7 +1230,7 @@ function PostCard({ post, user, onUpgrade, onLike, liked = false }) {
 }
 
 // ── TASK DETAIL VIEW ─────────────────────────────────────────────
-function TaskDetailView({ task, taskKey, stageNum, stageName, stageCol, steps, trackNote, alreadyComplete, isPremium, onBack, onComplete, onAdvanceStage }) {
+function TaskDetailView({ task, taskKey, stageNum, stageName, stageCol, steps, trackNote, alreadyComplete, isPremium, onBack, onComplete, onAdvanceStage, onExportPDF }) {
   const [promptValues, setPromptValues] = useState({})
   const [submitting, setSubmitting] = useState(false)
   const [justCompleted, setJustCompleted] = useState(false)
@@ -1398,6 +1409,14 @@ function TaskDetailView({ task, taskKey, stageNum, stageName, stageCol, steps, t
           <Btn onClick={handleComplete} disabled={!isPromptComplete() || submitting}>
             {submitting ? 'Saving…' : 'Mark this task complete →'}
           </Btn>
+        )}
+        {taskKey === '5.1' && (alreadyComplete || justCompleted) && (
+          <button onClick={onExportPDF}
+            style={{ width: '100%', marginTop: '12px', padding: '14px', borderRadius: '10px',
+              border: `1px solid ${T.gold}`, background: 'transparent', color: T.gold,
+              fontSize: '15px', fontWeight: '700', cursor: 'pointer' }}>
+            Export Rebuild Record as PDF →
+          </button>
         )}
       </div>
     </div>
