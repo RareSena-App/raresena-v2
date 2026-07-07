@@ -189,6 +189,18 @@ export default function RebuildPortal({ onLogout }) {
     return { stageComplete: false }
   }
 
+  async function resetTaskCompletion(taskKey) {
+    const [stageNum, taskNum] = taskKey.split('.').map(Number)
+    await supabase.from('task_completions')
+      .update({ is_complete: false, prompt_response: null, completed_at: null })
+      .eq('user_id', user.supabaseId)
+      .eq('stage_number', stageNum)
+      .eq('task_number', taskNum)
+    const updated = { ...taskCompletions }
+    delete updated[taskKey]
+    setTaskCompletions(updated)
+  }
+
   function isStageUnlocked(stageNum) {
     const userStageNum = STAGE_DATA[user.stage].idx + 1
     if (stageNum <= userStageNum) return true
@@ -897,6 +909,7 @@ export default function RebuildPortal({ onLogout }) {
         }}
         onAdvanceStage={() => setScreen('stage-complete')}
         onExportPDF={() => generateRebuildPDF(taskCompletions, user.name || 'Your')}
+        onRedo={() => resetTaskCompletion(activeTask)}
       />
     )
   }
@@ -1414,7 +1427,7 @@ function PostCard({ post, user, onUpgrade, onLike, liked = false }) {
 }
 
 // ── TASK DETAIL VIEW ─────────────────────────────────────────────
-function TaskDetailView({ task, taskKey, stageNum, stageName, stageCol, steps, trackNote, alreadyComplete, isPremium, onBack, onComplete, onAdvanceStage, onExportPDF }) {
+function TaskDetailView({ task, taskKey, stageNum, stageName, stageCol, steps, trackNote, alreadyComplete, isPremium, onBack, onComplete, onAdvanceStage, onExportPDF, onRedo }) {
   const [promptValues, setPromptValues] = useState({})
   const [submitting, setSubmitting] = useState(false)
   const [justCompleted, setJustCompleted] = useState(false)
@@ -1576,9 +1589,17 @@ function TaskDetailView({ task, taskKey, stageNum, stageName, stageCol, steps, t
 
         {/* 6. MARK AS DONE */}
         {alreadyComplete ? (
-          <div style={{ background: `${T.green}11`, border: `1px solid ${T.green}44`,
-            borderRadius: '10px', padding: '16px', textAlign: 'center' }}>
-            <p style={{ color: T.green, fontWeight: '700', fontSize: '15px' }}>✓ Task complete</p>
+          <div>
+            <div style={{ background: `${T.green}11`, border: `1px solid ${T.green}44`,
+              borderRadius: '10px', padding: '16px', textAlign: 'center', marginBottom: '10px' }}>
+              <p style={{ color: T.green, fontWeight: '700', fontSize: '15px' }}>✓ Task complete</p>
+            </div>
+            <button onClick={onRedo}
+              style={{ width: '100%', padding: '13px', borderRadius: '10px',
+                border: `1px solid ${T.bg4}`, background: 'transparent', color: T.mutedDk,
+                fontSize: '13px', fontWeight: '600', cursor: 'pointer', fontFamily: 'inherit' }}>
+              Redo this task →
+            </button>
           </div>
         ) : p.type === 'auto' ? (
           <div style={{ background: T.bg3, border: `1px solid ${T.bg4}`,
