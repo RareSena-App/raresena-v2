@@ -6,6 +6,10 @@ import { useApp, STAGE_DATA, STAGES, CIRCLE_GROUPS, STAGE_GROUP_PRESELECT, T, cs
   STRIPE_MONTHLY_PRICE, STRIPE_ANNUAL_PRICE, supabase } from '../App.jsx'
 import { ROADMAP_TASKS, getStageTaskList, getWhatToDo, getTrackNote, STAGE_META, VISA_TRACKS } from '../data/roadmapTasks.js'
 import { generateRebuildPDF } from '../utils/generateRebuildPDF.js'
+import VisaCountdownTracker from '../components/VisaCountdownTracker.jsx'
+import CreditScoreTracker from '../components/CreditScoreTracker.jsx'
+import ApplicationPipelineTracker from '../components/ApplicationPipelineTracker.jsx'
+import ILREvidenceChecklist from '../components/ILREvidenceChecklist.jsx'
 
 // Sample circle posts
 const SAMPLE_POSTS = [
@@ -1542,6 +1546,28 @@ function TaskDetailView({ task, taskKey, stageNum, stageName, stageCol, steps, t
                 <p style={{ color: T.muted, fontSize: '13px', lineHeight: '1.6' }}>{trackNote}</p>
               </div>
             )}
+          </TaskSection>
+        )}
+
+        {/* 2b. INTERACTIVE TRACKER */}
+        {taskKey === '1.1' && (
+          <TaskSection label="VISA & ILR COUNTDOWN TRACKER" color={stageCol}>
+            <VisaCountdownTracker />
+          </TaskSection>
+        )}
+        {taskKey === '1.2' && (
+          <TaskSection label="CREDIT SCORE TRACKER" color={stageCol}>
+            <CreditScoreTracker />
+          </TaskSection>
+        )}
+        {taskKey === '4.2' && (
+          <TaskSection label="APPLICATION PIPELINE & SPONSOR CHECK" color={stageCol}>
+            <ApplicationPipelineTracker />
+          </TaskSection>
+        )}
+        {taskKey === '5.4' && (
+          <TaskSection label="ILR EVIDENCE FILE CHECKLIST" color={stageCol}>
+            <ILREvidenceChecklist />
           </TaskSection>
         )}
 
