@@ -10,6 +10,7 @@ import VisaCountdownTracker from '../components/VisaCountdownTracker.jsx'
 import CreditScoreTracker from '../components/CreditScoreTracker.jsx'
 import ApplicationPipelineTracker from '../components/ApplicationPipelineTracker.jsx'
 import ILREvidenceChecklist from '../components/ILREvidenceChecklist.jsx'
+import GuideViewer from '../components/GuideViewer.jsx'
 
 // Sample circle posts
 const SAMPLE_POSTS = [
@@ -1435,6 +1436,7 @@ function TaskDetailView({ task, taskKey, stageNum, stageName, stageCol, steps, t
   const [promptValues, setPromptValues] = useState({})
   const [submitting, setSubmitting] = useState(false)
   const [justCompleted, setJustCompleted] = useState(false)
+  const [activeGuide, setActiveGuide] = useState(null)
 
   const p = task.completionPrompt
 
@@ -1489,6 +1491,7 @@ function TaskDetailView({ task, taskKey, stageNum, stageName, stageCol, steps, t
 
   return (
     <div style={{ ...css.screen, padding: 0, minHeight: '100vh' }}>
+      <GuideViewer guideFile={activeGuide} onClose={() => setActiveGuide(null)} />
       {/* Sticky header */}
       <div style={{ padding: '14px 20px 12px', borderBottom: `1px solid ${T.bg4}`,
         display: 'flex', alignItems: 'center', gap: '12px',
@@ -1574,19 +1577,24 @@ function TaskDetailView({ task, taskKey, stageNum, stageName, stageCol, steps, t
         {/* 3. TOOLS & RESOURCES */}
         {task.resources?.length > 0 && (
           <TaskSection label="TOOLS & RESOURCES" color={stageCol}>
-            {task.resources.map((r, i) => (
-              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px',
-                padding: '10px 0', borderBottom: `1px solid ${T.bg4}` }}>
-                <span style={{ fontSize: '14px' }}>
-                  {r.type === 'guide' ? '📖' : r.type === 'download' || r.type === 'template' ? '📄'
-                    : r.type === 'product' ? '🌿' : r.type === 'interactive' ? '⚡'
-                    : r.type === 'circle_link' ? '💬' : r.type === 'tracker' ? '📊' : '📌'}
-                </span>
-                <p style={{ flex: 1, fontSize: '13px', color: T.white, lineHeight: '1.4' }}>
-                  {r.title}
-                </p>
-              </div>
-            ))}
+            {task.resources.map((r, i) => {
+              const isGuide = r.type === 'guide' && r.guideFile
+              const icon = r.type === 'guide' ? '📖' : r.type === 'download' || r.type === 'template' ? '📄'
+                : r.type === 'product' ? '🌿' : r.type === 'interactive' ? '⚡'
+                : r.type === 'circle_link' ? '💬' : r.type === 'tracker' ? '📊' : '📌'
+              return (
+                <div key={i} onClick={isGuide ? () => setActiveGuide(r.guideFile) : undefined}
+                  style={{ display: 'flex', alignItems: 'center', gap: '12px',
+                    padding: '10px 0', borderBottom: `1px solid ${T.bg4}`,
+                    cursor: isGuide ? 'pointer' : 'default' }}>
+                  <span style={{ fontSize: '14px' }}>{icon}</span>
+                  <p style={{ flex: 1, fontSize: '13px', color: isGuide ? T.gold : T.white, lineHeight: '1.4' }}>
+                    {r.title}
+                  </p>
+                  {isGuide && <span style={{ fontSize: '12px', color: T.gold }}>→</span>}
+                </div>
+              )
+            })}
           </TaskSection>
         )}
 

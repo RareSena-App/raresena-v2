@@ -78,8 +78,9 @@ export default function VisaCountdownTracker() {
 
   async function addAbsence() {
     if (!uid) return
+    const todayStr = new Date().toISOString().split('T')[0]
     const { data } = await supabase.from('visa_absences').insert({
-      user_id: uid, depart_date: '', return_date: '', reason: '',
+      user_id: uid, depart_date: todayStr, return_date: todayStr, reason: '',
     }).select().single()
     if (data) setAbsences(prev => [...prev, data])
   }

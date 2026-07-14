@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RareSena — Guide: The ILR Evidence File — What to Keep and How to Organise It</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f0;color:#222;padding:24px;max-width:820px;margin:0 auto}
+.guide-badge{display:inline-flex;align-items:center;gap:6px;background:#B8962E;color:#fff;font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;margin-bottom:14px}
+.guide-header{background:#4A235A;border-radius:12px;padding:22px;color:#fff;margin-bottom:24px}
+.guide-title{font-size:22px;font-weight:700;margin-bottom:6px}
+.guide-sub{font-size:13px;opacity:.8;line-height:1.5}
+.section{margin-bottom:28px}
+.section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B8962E;margin-bottom:10px}
+.section-body{font-size:14px;line-height:1.75;color:#444}
+.callout{background:#fff8e6;border:1.5px solid #B8962E;border-radius:8px;padding:14px 16px;font-size:14px;line-height:1.65;color:#7a3300;margin-bottom:16px}
+.divider{height:1px;background:#e0e0dc;margin:24px 0}
+.folder-structure{background:#1e1e2e;border-radius:10px;padding:18px;font-family:monospace;font-size:13px;color:#cdd6f4;line-height:1.9;margin-bottom:16px;overflow-x:auto}
+.folder-structure .f{color:#B8962E}
+.folder-structure .c{color:#7f849c;font-style:italic}
+.evidence-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px}
+.evidence-table th{background:#4A235A;color:#fff;padding:9px 12px;text-align:left;font-weight:600}
+.evidence-table td{padding:9px 12px;border-bottom:1px solid #e0e0dc;color:#444;vertical-align:top;line-height:1.55}
+.evidence-table tr:nth-child(even) td{background:#f9f9f7}
+.warning{background:#fff0f0;border:1.5px solid #cc2222;border-radius:8px;padding:13px 15px;font-size:13px;color:#8b0000;line-height:1.6;margin-bottom:14px}
+.step-block{background:#fff;border:1px solid #e0e0dc;border-radius:10px;padding:16px;margin-bottom:12px;display:flex;gap:14px;align-items:flex-start}
+.step-num{min-width:30px;height:30px;background:#4A235A;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;margin-top:1px}
+.step-content h4{font-size:14px;font-weight:700;color:#4A235A;margin-bottom:5px}
+.step-content p{font-size:13px;color:#555;line-height:1.6}
+.fail-block{background:#fff;border:1px solid #e0e0dc;border-radius:10px;padding:14px 16px;margin-bottom:10px}
+.fail-title{font-size:13px;font-weight:700;color:#8b0000;margin-bottom:4px}
+.fail-body{font-size:13px;color:#555;line-height:1.6}
+.fail-fix{font-size:12px;color:#1a6b2e;margin-top:5px;font-weight:600}
+</style>
+</head>
+<body>
+<div class="guide-badge">📖 In-app guide — Stage 5 Realize · Task 5.4 (start it in Stage 1)</div>
+<div class="guide-header">
+  <div class="guide-title">The ILR evidence file — what to keep and how to organise it</div>
+  <div class="guide-sub">ILR applications fail on evidence more than eligibility. This is the file that makes yours unfailable — built over years, not panic-assembled at month 58</div>
+</div>
+
+<div class="section">
+  <div class="section-label">The principle</div>
+  <div class="section-body">When you apply for Indefinite Leave to Remain, the Home Office is testing a claim: that you have lawfully and continuously resided in the UK for your qualifying period, met your route's conditions throughout, and meet the application requirements. You will have lived that truth for five years — but living it is not the same as <em>proving</em> it. The applicants who suffer are rarely rule-breakers; they are people who cannot produce a tenancy agreement from 2023, whose old employer's payroll portal deleted their payslips, whose travel dates live only in memory. The fix costs nothing: a folder, a habit, and this guide. Companion tool: the app's <strong>ILR Evidence File Checklist</strong> tracks your completeness percentage; this guide explains the what, why, and how.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">The folder structure — set it up today</div>
+  <div class="folder-structure">
+<span class="f">📁 ILR-Evidence/</span><br>
+├── <span class="f">01-Identity-Immigration/</span> <span class="c">— passports (all), eVisa screenshots, every Home Office letter</span><br>
+├── <span class="f">02-Travel-Absences/</span> <span class="c">— absence log export, boarding passes/stamps for long trips</span><br>
+├── <span class="f">03-Employment-Income/</span><br>
+│   ├── <span class="f">2024/</span> <span class="c">— payslips (12), P60, contract</span><br>
+│   ├── <span class="f">2025/</span> <span class="c">— one sub-folder per year, filled monthly</span><br>
+│   └── <span class="f">2026/</span><br>
+├── <span class="f">04-Address-Residence/</span><br>
+│   ├── <span class="f">2024/</span> <span class="c">— tenancy, council tax, 2–3 utility bills, quarterly bank statements</span><br>
+│   └── <span class="f">…per year</span><br>
+├── <span class="f">05-Tax-HMRC/</span> <span class="c">— SA returns/SA302s if self-employed, tax account screenshots</span><br>
+├── <span class="f">06-Application-Requirements/</span> <span class="c">— Life in the UK pass, English evidence, fee savings plan</span><br>
+├── <span class="f">07-Family/</span> <span class="c">— marriage cert, children's documents, cohabitation evidence (Track C)</span><br>
+└── <span class="f">08-Route-Specific/</span> <span class="c">— sponsor letters (A/H), endorsement records (F/G), status grant (E)</span>
+  </div>
+  <div class="callout"><strong>Two copies, always:</strong> one cloud folder (Google Drive/OneDrive — named exactly as above) and one physical folder for originals and anything with a wet signature. Feed both monthly. A document you cannot find in five minutes does not exist.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">What each route needs most — the emphasis table</div>
+  <table class="evidence-table">
+    <tr><th>Track</th><th>Evidence that decides YOUR application</th></tr>
+    <tr><td><strong>A — Skilled Worker</strong></td><td>Salary continuity: every payslip, every P60, contracts and change letters proving you always met threshold and role. Sponsor change letters if you moved employers.</td></tr>
+    <tr><td><strong>C — Family/Spouse</strong></td><td>Relationship subsistence across the whole period: joint tenancy/bills/accounts, correspondence to the same address spread across every year — not clustered in application month.</td></tr>
+    <tr><td><strong>D — BN(O)</strong></td><td>Continuous residence: address evidence per year plus meticulous absence records (home-country visits add up faster than people think).</td></tr>
+    <tr><td><strong>E — Refugee</strong></td><td>Status grant letter (the residence clock and route terms flow from it), plus standard residence evidence. Travel documents history if you travelled.</td></tr>
+    <tr><td><strong>F — Global Talent</strong></td><td>Evidence of earnings/activity in your endorsed field across the period — contracts, invoices, publications, roles. The 3-year route especially compresses the timeline: start on day one.</td></tr>
+    <tr><td><strong>G — Innovator Founder</strong></td><td>Business records proving ILR milestones (remember: any TWO of the four options — the £50,000 investment figure is one option, not a requirement): accounts, investment records, job-creation payroll, revenue records, contact-point meeting confirmations.</td></tr>
+    <tr><td><strong>H — Self-Sponsored</strong></td><td>Both sides: personal (payslips at threshold, role evidence) AND company (sponsor licence records, SMS reports, company accounts, board minutes). Home Office scrutiny on this route is elevated — over-document.</td></tr>
+  </table>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">The five classic evidence failures — and their fixes</div>
+  <div class="fail-block"><div class="fail-title">Failure 1: The vanished payslips</div><div class="fail-body">You left an employer; their portal access closed; three years of payslips gone. Reconstructing them later means begging an old HR department that may not respond.</div><div class="fail-fix">✓ Fix: download every payslip as PDF in the month it is issued. Two minutes, monthly, forever.</div></div>
+  <div class="fail-block"><div class="fail-title">Failure 2: The unlogged travel</div><div class="fail-body">The application asks for your complete travel history with dates. Memory fails; passport stamps are incomplete in the e-gates era; one wrong date contradicts Home Office records and undermines credibility.</div><div class="fail-fix">✓ Fix: the app's Visa & ILR Countdown Tracker absence log — enter every trip within a week of returning. Export it yearly to folder 02.</div></div>
+  <div class="fail-block"><div class="fail-title">Failure 3: The year with no address evidence</div><div class="fail-body">A year of living with family or an all-bills-included room leaves no council tax, no utilities, no tenancy in your name — a residence gap on paper.</div><div class="fail-fix">✓ Fix: build alternatives in real time — bank statements to that address, GP letters, official correspondence, a landlord/host letter. Redirect all official mail to wherever you actually live, always.</div></div>
+  <div class="fail-block"><div class="fail-title">Failure 4: The HMRC mismatch</div><div class="fail-body">Income declared to the Home Office differs from HMRC records — often from an innocent error years earlier. This triggers refusals on credibility grounds.</div><div class="fail-fix">✓ Fix: check your personal tax account (gov.uk) annually against your own records; correct discrepancies the year they happen, not at application.</div></div>
+  <div class="fail-block"><div class="fail-title">Failure 5: The last-minute requirements</div><div class="fail-body">Life in the UK test centres booked out; English test expired; £3,029 fee (check current rate) not saved — eligibility reached but application delayed months, sometimes into a visa expiry crunch.</div><div class="fail-fix">✓ Fix: sit the Life in the UK test any time from year 3 (it never expires); check your English evidence type early (a degree-taught-in-English confirmation via ENIC never expires either); make the fee a named Task 3.5 savings goal 18 months out.</div></div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">The maintenance ritual</div>
+  <div class="step-block"><div class="step-num">1</div><div class="step-content"><h4>Monthly (2 minutes)</h4><p>Payslip PDF into the year folder. Any Home Office/official letter scanned in. New trips logged.</p></div></div>
+  <div class="step-block"><div class="step-num">2</div><div class="step-content"><h4>Quarterly (10 minutes — attach to a Task 3.3 weekly review)</h4><p>One bank statement into the address folder. Checklist tool updated. Anything new (tenancy renewal, contract change) filed.</p></div></div>
+  <div class="step-block"><div class="step-num">3</div><div class="step-content"><h4>Annually (20 minutes)</h4><p>P60 in. HMRC account cross-checked. Absence log exported. New year sub-folders created. Completeness percentage reviewed against your ILR countdown.</p></div></div>
+  <div class="warning"><strong>And 2–3 months before applying:</strong> book a single review session with an OISC-regulated adviser to check the assembled file against your route's current requirements — rules change, and a one-off review costs a fraction of a refused application (the fee is not refunded on refusal). The Sovereignty Programme includes exactly this support.</div>
+</div>
+</body>
+</html>

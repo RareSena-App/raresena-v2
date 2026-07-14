@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RareSena — Project Brief Template</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f0;color:#222;padding:24px;max-width:820px;margin:0 auto}
+.guide-badge{display:inline-flex;align-items:center;gap:6px;background:#B8962E;color:#fff;font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;margin-bottom:14px}
+.guide-header{background:#7D3C0F;border-radius:12px;padding:22px;color:#fff;margin-bottom:24px}
+.guide-title{font-size:22px;font-weight:700;margin-bottom:6px}
+.guide-sub{font-size:13px;opacity:.8;line-height:1.5}
+.section{margin-bottom:24px}
+.section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B8962E;margin-bottom:10px}
+.section-body{font-size:14px;line-height:1.75;color:#444}
+.callout{background:#fff8e6;border:1.5px solid #B8962E;border-radius:8px;padding:14px 16px;font-size:14px;line-height:1.65;color:#7a3300;margin-bottom:16px}
+.divider{height:1px;background:#e0e0dc;margin:22px 0}
+.brief-form{background:#fff;border:1px solid #e0e0dc;border-radius:12px;padding:20px;margin-bottom:16px}
+.bf-section{margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid #f0f0ec}
+.bf-section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.bf-label{font-size:12px;font-weight:700;color:#7D3C0F;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.bf-help{font-size:12px;color:#999;margin-bottom:8px;line-height:1.5}
+.bf-input{width:100%;padding:10px 12px;border-radius:7px;border:1.5px solid #ccc;font-size:13px;color:#222;background:#fafafa;font-family:Arial,sans-serif}
+textarea.bf-input{resize:vertical;min-height:70px;line-height:1.55}
+.bf-input:focus{outline:none;border-color:#7D3C0F;background:#fff}
+.bf-example{font-size:12px;color:#B8962E;margin-top:5px;font-style:italic;line-height:1.5}
+.print-btn{width:100%;padding:12px;background:#7D3C0F;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:16px}
+.rules{background:#fff;border:1px solid #e0e0dc;border-radius:10px;padding:16px}
+.rule-item{display:flex;gap:10px;font-size:13px;color:#444;padding:8px 0;border-bottom:1px solid #f0f0ec;line-height:1.55}
+.rule-item:last-child{border-bottom:none}
+.rule-item span{color:#B8962E;font-weight:700;flex-shrink:0}
+@media print{.print-btn{display:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<div class="guide-badge">📖 In-app template — Stage 4 Rise · Task 4.5</div>
+<div class="guide-header">
+  <div class="guide-title">The RareSena Project Brief</div>
+  <div class="guide-sub">One page that turns an intention into a completed thing — fill it in, print it, pin it where you work</div>
+</div>
+
+<div class="section">
+  <div class="section-label">Why one page</div>
+  <div class="section-body">Projects die from vagueness, not difficulty. "Work on my portfolio" survives forever as an intention because it can never be finished — nothing defines what finished means. This brief exists to kill vagueness in seven questions. If you cannot answer all seven, you do not yet have a project — you have a wish. Answering them takes fifteen minutes and doubles the probability the thing gets done.</div>
+</div>
+
+<div class="section">
+  <div class="brief-form" id="brief">
+    <div class="bf-section">
+      <div class="bf-label">1. Project name</div>
+      <div class="bf-help">Name the finished thing, not the activity.</div>
+      <input type="text" class="bf-input" placeholder="The finished thing…" />
+      <div class="bf-example">✎ "UK-formatted CV, reviewed and in use" — not "CV work"</div>
+    </div>
+    <div class="bf-section">
+      <div class="bf-label">2. Done means…</div>
+      <div class="bf-help">The completion test. Someone else could verify it without asking you anything.</div>
+      <textarea class="bf-input" placeholder="It is done when…"></textarea>
+      <div class="bf-example">✎ "Done = CV reviewed by one professional in my sector, all Task 4.3 checklist items ticked, and 3 applications submitted using it."</div>
+    </div>
+    <div class="bf-section">
+      <div class="bf-label">3. Why this project — the direction link</div>
+      <div class="bf-help">One sentence connecting it to your 90-day direction from Task 4.1. If you cannot connect it, it is a distraction wearing a project costume.</div>
+      <textarea class="bf-input" placeholder="This moves my 90-day direction because…"></textarea>
+    </div>
+    <div class="bf-section">
+      <div class="bf-label">4. Completion date</div>
+      <div class="bf-help">A date, in your calendar, told to one other person.</div>
+      <input type="date" class="bf-input" style="max-width:220px" />
+    </div>
+    <div class="bf-section">
+      <div class="bf-label">5. The first action (this week) and the weekly slot</div>
+      <div class="bf-help">The very next physical action, and the recurring time block where this project lives (tie it to your Task 3.1 routine).</div>
+      <textarea class="bf-input" placeholder="First action:… / Weekly slot:…"></textarea>
+      <div class="bf-example">✎ "First action: draft work-experience bullets Saturday 9am. Weekly slot: Tuesday + Thursday 6:30–7:15am."</div>
+    </div>
+    <div class="bf-section">
+      <div class="bf-label">6. What could stop me — and the counter-move</div>
+      <div class="bf-help">Name the most likely failure mode now, while you are strong, and decide the response in advance.</div>
+      <textarea class="bf-input" placeholder="Likely obstacle:… / If that happens, I will…"></textarea>
+      <div class="bf-example">✎ "Obstacle: perfectionism loop on wording. Counter-move: 45-minute timer per section; done beats perfect; reviewer catches what matters."</div>
+    </div>
+    <div class="bf-section">
+      <div class="bf-label">7. Evidence and accountability</div>
+      <div class="bf-help">What proof will exist, and who sees it — post the commitment in Rare Circle Rise for the completion-rate boost of a public deadline.</div>
+      <textarea class="bf-input" placeholder="Evidence will be… / Accountability: I have told…"></textarea>
+    </div>
+  </div>
+  <button class="print-btn" onclick="window.print()">🖨 Print or save this brief as PDF</button>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">The four rules of the brief</div>
+  <div class="rules">
+    <div class="rule-item"><span>1.</span><div><strong>Shrink until frightening becomes doable.</strong> If the completion date is more than 6 weeks out, the project is too big for Stage 4 — cut scope until it fits. You can always run a second project.</div></div>
+    <div class="rule-item"><span>2.</span><div><strong>One project at a time.</strong> Two half-finished projects are worth less than one finished one — completion is the asset, not activity.</div></div>
+    <div class="rule-item"><span>3.</span><div><strong>The brief is allowed to change; the date is not.</strong> Scope can shrink mid-project. Moving the date needs a reason you would say out loud in Rare Circle.</div></div>
+    <div class="rule-item"><span>4.</span><div><strong>Review it in your weekly review.</strong> Task 3.3, dimension five — "one thing forward" — is where this brief gets its weekly heartbeat.</div></div>
+  </div>
+</div>
+</body>
+</html>

@@ -167,8 +167,8 @@ export const ROADMAP_TASKS = {
     },
     resources: [
       { type: 'template', title: 'Basic Budget Builder — income vs expenses for UK new arrivals' },
-      { type: 'guide', title: 'Breaking the banking catch-22: how to open a UK account with no credit history' },
-      { type: 'guide', title: 'Building UK credit from zero: the 6-step sequence' },
+      { type: 'guide', title: 'Breaking the banking catch-22: how to open a UK account with no credit history', guideFile: 'RareSena_Guide_Banking_Catchup22_UK.html' },
+      { type: 'guide', title: 'Building UK credit from zero: the 6-step sequence', guideFile: 'RareSena_Guide_UK_Credit_Building_6_Steps.html' },
     ],
     whatToExpectToFeel: 'Writing down numbers that feel frightening makes them more frightening for about five minutes — and then something shifts. The anxiety moves from diffuse to specific. A specific problem is something you can act on. Vague financial dread is not. If the numbers look very difficult right now, that is real information — not a verdict on you, and not a permanent state. It tells you exactly where the work needs to start. That is more useful than not knowing.',
     completionPrompt: {
@@ -198,8 +198,8 @@ export const ROADMAP_TASKS = {
       H: 'If your business address and home address are the same, ensure your Companies House registered address is compliant and that you understand how this affects your right-to-rent documentation for any future moves.',
     },
     resources: [
-      { type: 'guide', title: 'Renting in the UK as a new arrival: your rights and how to use them' },
-      { type: 'guide', title: 'How to check if your deposit is protected' },
+      { type: 'guide', title: 'Renting in the UK as a new arrival: your rights and how to use them', guideFile: 'RareSena_Guide_Renting_UK_New_Arrival_Rights.html' },
+      { type: 'guide', title: 'How to check if your deposit is protected', guideFile: 'RareSena_Guide_Deposit_Protection_Check.html' },
       { type: 'contacts', title: 'Emergency housing contacts: Shelter helpline, local council, Refugee Council' },
     ],
     whatToExpectToFeel: 'Housing in the UK as a new arrival involves navigating a market that was not designed to include you easily — and research confirms this is structural, not personal. The discrimination documented in this market is real. If you have experienced it, that is not a reflection of your worth, your capability, or your future here. It is a documented system problem. Knowing your rights does not solve everything — but it changes the power dynamic in every conversation with a landlord or letting agent. You are not asking for a favour. You are exercising rights.',
@@ -255,7 +255,7 @@ export const ROADMAP_TASKS = {
     resources: [
       { type: 'circle_link', title: 'Rare Circle — Reset group (Stage 1 members)', group: 'Reset' },
       { type: 'guide', title: 'How to introduce yourself in Rare Circle without oversharing' },
-      { type: 'guide', title: 'Finding diaspora communities near you in the UK' },
+      { type: 'guide', title: 'Finding diaspora communities near you in the UK', guideFile: 'RareSena_Guide_Finding_Diaspora_Communities.html' },
     ],
     whatToExpectToFeel: 'Reaching out when you are low is one of the hardest things to do — it requires admitting that you need something, and that runs against every instinct you have been using to hold yourself together since you arrived. Do it anyway. The research on loneliness and immigrant wellbeing is clear: connection is not a comfort — it is infrastructure. One message this week. That is all this task asks. You are not being needy. You are being strategic about your own recovery.',
     completionPrompt: {
@@ -307,7 +307,7 @@ export const ROADMAP_TASKS = {
       'Use the professional summary builder below to draft your UK professional summary — a paragraph that describes who you are, what you do, and what you are looking for, in UK language and conventions.',
     ],
     resources: [
-      { type: 'guide', title: 'Is my qualification recognised in the UK? The complete sector guide' },
+      { type: 'guide', title: 'Is my qualification recognised in the UK? The complete sector guide', guideFile: 'RareSena_Guide_Qualification_Recognition_Sector_Guide.html' },
       { type: 'external', title: 'UK ENIC Statement of Comparability application', url: 'https://www.enic.org.uk' },
       { type: 'interactive', title: 'UK professional summary builder' },
       { type: 'guide', title: 'UK CV conventions: what to include, exclude, and never say' },
@@ -507,8 +507,8 @@ export const ROADMAP_TASKS = {
     ],
     resources: [
       { type: 'template', title: 'Monthly income vs expenses tracker — pre-filled with UK categories' },
-      { type: 'guide', title: 'Reading your UK credit report: Experian, Equifax, TransUnion' },
-      { type: 'guide', title: 'How rent reporting tools build your credit score' },
+      { type: 'guide', title: 'Reading your UK credit report: Experian, Equifax, TransUnion', guideFile: 'RareSena_Guide_Reading_UK_Credit_Report.html' },
+      { type: 'guide', title: 'How rent reporting tools build your credit score', guideFile: 'RareSena_Guide_Rent_Reporting_Credit_Building.html' },
     ],
     whatToExpectToFeel: 'Setting a financial goal when money is tight can feel like cruelty — like being asked to dream about a destination when you are not sure you can afford the bus. Do it anyway. The goal is not a fantasy. It is a structural device. It changes the relationship between income and expenditure from passive to intentional. Even if the first month you can only save £10 toward the goal — £10 toward something is categorically different from £10 spent on nothing. Direction matters more than speed.',
     completionPrompt: {
@@ -561,7 +561,7 @@ export const ROADMAP_TASKS = {
     whyThisMatters: 'By Stage 4 you have a routine, a direction, and a financial tracking system. Now comes the question that determines whether the rebuild becomes sovereign or stays precarious: where is your income coming from, and is it building toward independence or deepening dependence?\n\nMost immigrants in the UK reach Stage 4 with one income source — usually employment or a single employer — and no plan for what happens if that source disappears. A Skilled Worker who loses their sponsor. A student who graduates and enters the 60-day clock. A spouse whose relationship changes. A refugee whose Universal Credit is reviewed.\n\nThis task is about identifying the primary income stream that is right for your visa track and your stage — and taking the first concrete action to activate or grow it. Not a plan. An action. This week.',
     whatToDo: null,
     resources: [
-      { type: 'guide', title: 'Income stream guide by visa track — what is permitted and what is not' },
+      { type: 'guide', title: 'Income stream guide by visa track — what is permitted and what is not', guideFile: 'RareSena_Guide_Income_Options_By_Visa_Type.html' },
       { type: 'circle_link', title: 'Rare Studio — creator pathway', group: 'Rise' },
       { type: 'guide', title: 'Employment pathway: Breaking Barriers, RefuAid, sector job boards' },
       { type: 'product', title: 'RareStack (£39/mo) — for business-builders', url: 'https://raresena.com' },
@@ -587,7 +587,7 @@ export const ROADMAP_TASKS = {
       'Log your contacts in the tracker below. Every meaningful professional contact logged is a relationship being managed deliberately rather than left to chance.',
     ],
     resources: [
-      { type: 'guide', title: 'Networking in the UK without pretending to be someone else' },
+      { type: 'guide', title: 'Networking in the UK without pretending to be someone else', guideFile: 'RareSena_Guide_Networking_UK_Authentically.html' },
       { type: 'checklist', title: 'LinkedIn profile checklist' },
       { type: 'guide', title: 'Directory of UK professional communities by sector' },
     ],
@@ -634,7 +634,7 @@ export const ROADMAP_TASKS = {
       'When complete, paste a link, upload evidence, or describe the completed project in the prompt below. That evidence is what marks this task done.',
     ],
     resources: [
-      { type: 'template', title: 'Project brief template' },
+      { type: 'guide', title: 'Project brief template', guideFile: 'RareSena_Guide_Project_Brief_Template.html' },
       { type: 'circle_link', title: 'Rare Circle — Rise group (accountability)', group: 'Rise' },
     ],
     whatToExpectToFeel: 'Completing something in Stage 4 — even one thing — creates a disproportionate shift in your sense of agency. Not because the project itself is transformative, but because completion breaks the cycle of planning without proving. After Task 4.5, you are no longer someone who is going to do something. You are someone who has done something. That shift is internal, and it is permanent. Nobody can take it from you.',
@@ -740,6 +740,7 @@ export const ROADMAP_TASKS = {
     ],
     resources: [
       { type: 'template', title: 'Sovereignty Plan framework — ILR timeline, financial targets, housing plan, legacy statement' },
+      { type: 'guide', title: 'The ILR evidence file — what to keep and how to organise it', guideFile: 'RareSena_Guide_ILR_Evidence_File.html' },
       { type: 'product', title: 'Sovereignty Programme – Graduate (£3,000)', url: 'https://raresena.com' },
     ],
     whatToExpectToFeel: 'Writing dates next to sovereignty milestones does something uncomfortable: it makes the distance visible. Your ILR date might be years away. The deposit fund might look impossibly far from today\'s balance. Let the distance be visible anyway — because the alternative is not a shorter distance, it is an unmapped one. Every immigrant who reached sovereignty crossed this same distance. The only difference between drifting toward it and building toward it is the plan you are holding right now.',
