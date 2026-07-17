@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RareSena — Nutrition Calculator: World Foods Edition</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f0;color:#222;padding:24px;max-width:860px;margin:0 auto}
+.tool-badge{display:inline-flex;align-items:center;gap:6px;background:#B8962E;color:#fff;font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;margin-bottom:14px}
+.tool-header{background:#2C5F2E;border-radius:12px;padding:22px;color:#fff;margin-bottom:18px}
+.tool-title{font-size:22px;font-weight:700;margin-bottom:6px}
+.tool-sub{font-size:13px;opacity:.85;line-height:1.5}
+.disclaimer{background:#fff;border:1.5px dashed #B8962E;border-radius:8px;padding:11px 14px;font-size:12px;color:#7a5a00;line-height:1.6;margin-bottom:22px}
+.section{margin-bottom:26px}
+.section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B8962E;margin-bottom:10px}
+.card{background:#fff;border:1px solid #e0e0dc;border-radius:12px;padding:18px;margin-bottom:14px}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:14px}
+.fg-item label{display:block;font-size:11px;font-weight:700;color:#2C5F2E;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.fg-item input,.fg-item select{width:100%;padding:9px 10px;border-radius:7px;border:1.5px solid #ccc;font-size:14px;background:#fafafa}
+.fg-item input:focus,.fg-item select:focus{outline:none;border-color:#2C5F2E;background:#fff}
+.calc-btn{width:100%;padding:12px;background:#2C5F2E;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer}
+.calc-btn:hover{background:#234d25}
+.results{display:none;margin-top:14px;background:#f0f7f0;border:1.5px solid #2C5F2E;border-radius:10px;padding:16px}
+.results.show{display:block}
+.res-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.res-item{text-align:center}
+.res-num{font-size:24px;font-weight:800;color:#2C5F2E}
+.res-lbl{font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.05em;margin-top:3px}
+.res-note{font-size:12px;color:#555;line-height:1.6;margin-top:12px;padding-top:10px;border-top:1px solid #cfe3cf}
+.filter-bar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px}
+.filter-bar input,.filter-bar select{padding:10px 12px;border-radius:8px;border:1.5px solid #ccc;font-size:13px;background:#fff;width:100%}
+.filter-bar input:focus,.filter-bar select:focus{outline:none;border-color:#2C5F2E}
+.cond-panel{display:none;background:#fdf9ef;border:1.5px solid #B8962E;border-radius:10px;padding:14px 16px;margin-bottom:14px}
+.cond-panel.show{display:block}
+.cp-title{font-size:14px;font-weight:700;color:#7a5a00;margin-bottom:6px}
+.cp-evidence{display:inline-block;font-size:10px;font-weight:700;padding:2px 9px;border-radius:9px;margin-left:8px;vertical-align:middle;text-transform:uppercase;letter-spacing:.04em}
+.ev-strong{background:#e6f4ea;color:#1a6b2e}
+.ev-emerging{background:#fdeedd;color:#9a5b00}
+.cp-body{font-size:13px;color:#6a5320;line-height:1.65}
+.cp-tips{margin-top:8px}
+.cp-tips li{font-size:12px;color:#6a5320;line-height:1.6;margin-left:18px;padding:2px 0}
+.count-line{font-size:12px;color:#888;margin-bottom:10px}
+.food-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:640px){.food-grid{grid-template-columns:1fr}.filter-bar{grid-template-columns:1fr}}
+.food-card{background:#fff;border:1px solid #e0e0dc;border-radius:10px;padding:13px 15px}
+.food-card.better{border-left:5px solid #2C5F2E}
+.food-card.watch{border-left:5px solid #d17f00}
+.fc-top{display:flex;justify-content:space-between;align-items:start;gap:8px}
+.fc-name{font-size:14px;font-weight:700;color:#1B2D5B}
+.fc-region{font-size:10px;font-weight:700;color:#fff;background:#7a8aa8;padding:2px 8px;border-radius:9px;white-space:nowrap}
+.fc-portion{font-size:11px;color:#999;margin:3px 0 7px}
+.fc-macros{display:flex;gap:12px;font-size:12px;color:#555}
+.fc-macros b{color:#2C5F2E}
+.fc-flag{margin-top:8px;font-size:11.5px;line-height:1.5;padding:6px 9px;border-radius:6px}
+.fc-flag.good{background:#e6f4ea;color:#1a6b2e}
+.fc-flag.warn{background:#fdeedd;color:#9a5b00}
+.fc-day{margin-top:7px;font-size:11.5px;color:#2C5F2E;background:#f0f7f0;border-radius:6px;padding:5px 9px;line-height:1.5}
+.fc-day b{font-weight:800}
+.gp-note{background:#eef3ff;border:1.5px solid #1B2D5B;border-radius:8px;padding:13px 15px;font-size:13px;color:#1B2D5B;line-height:1.65;margin-top:18px}
+.empty{font-size:13px;color:#888;padding:20px;text-align:center}
+</style>
+</head>
+<body>
+<div class="tool-badge">🧮 Interactive tool — Stage 3 Routine · works with Tasks 3.1 & 3.2</div>
+<div class="tool-header">
+  <div class="tool-title">Nutrition Calculator — World Foods Edition</div>
+  <div class="tool-sub">Your daily energy and full macro targets, calculated properly — and a nutrition database built around the food you actually eat: 77 staples across 7 world cuisines, personalised to your numbers, with health-condition filters mainstream apps don't offer</div>
+</div>
+<div class="disclaimer"><strong>Before you use this:</strong> this is an information and planning tool, not medical advice. It does not diagnose, treat, or replace guidance from your GP, dietitian, or specialist. If you have a diagnosed condition, use the filters as a learning aid alongside — never instead of — your care team's advice. NHS dietitian support is free via GP referral.</div>
+
+<div class="section">
+  <div class="section-label">Part 1 — Your daily numbers &amp; macros</div>
+  <div class="section-body" style="margin-bottom:12px;font-size:13px">Plain terms, once: <strong>calories (kcal)</strong> = the energy in food. <strong>Macros</strong> = the three building blocks every food is made of — <strong>protein</strong> (repairs and builds your body), <strong>carbs</strong> (carbohydrates — your fuel), and <strong>fat</strong> (hormones, warmth, flavour). <strong>g</strong> simply means <strong>grams</strong> — the weight of each one you need in a day.</div>
+  <div class="card">
+    <div class="form-grid">
+      <div class="fg-item"><label>Age</label><input type="number" id="age" min="16" max="100" placeholder="e.g. 32"></div>
+      <div class="fg-item"><label>Sex</label><select id="sex"><option value="f">Female</option><option value="m">Male</option></select></div>
+      <div class="fg-item"><label>Height (cm)</label><input type="number" id="height" min="120" max="230" placeholder="e.g. 168"></div>
+      <div class="fg-item"><label>Weight (kg)</label><input type="number" id="weight" min="35" max="250" placeholder="e.g. 70"></div>
+      <div class="fg-item" style="grid-column:1/-1"><label>Typical activity</label><select id="activity">
+        <option value="1.2">Mostly sitting (desk work, little exercise)</option>
+        <option value="1.375">Lightly active (walks, 1–2 sessions/week)</option>
+        <option value="1.55" selected>Moderately active (on feet a lot, or 3–5 sessions/week)</option>
+        <option value="1.725">Very active (physical job, or 6–7 sessions/week)</option>
+      </select></div>
+      <div class="fg-item" style="grid-column:1/-1"><label>Your goal right now</label><select id="goal">
+        <option value="maintain" selected>Steady rebuild — eat well, keep my weight where it is</option>
+        <option value="lose">Lose weight gently — at a pace I can keep up</option>
+        <option value="waist">Reduce belly fat &amp; protect against diabetes</option>
+        <option value="gain">Get stronger — build muscle</option>
+        <option value="energy">Have more energy — beat the constant tiredness</option>
+        <option value="postpartum">Recover after having a baby</option>
+        <option value="bf">Breastfeeding — feeding myself and a baby</option>
+      </select></div>
+    </div>
+    <button class="calc-btn" onclick="calc()">Calculate my daily targets</button>
+    <div class="results" id="results">
+      <div class="res-grid">
+        <div class="res-item"><div class="res-num" id="rKcal">—</div><div class="res-lbl" id="rKcalLbl">calories a day</div></div>
+        <div class="res-item"><div class="res-num" id="rProtein">—</div><div class="res-lbl">grams of protein a day</div></div>
+        <div class="res-item"><div class="res-num" id="rCarbs">—</div><div class="res-lbl">grams of carbs a day</div></div>
+        <div class="res-item"><div class="res-num" id="rFat">—</div><div class="res-lbl">grams of fat a day</div></div>
+        <div class="res-item"><div class="res-num" id="rWater">—</div><div class="res-lbl">glasses of water</div></div>
+      </div>
+      <div class="res-note" id="rNote"></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">Part 2 — The world foods database</div>
+  <div class="filter-bar">
+    <input type="text" id="search" placeholder="🔍 Search a food… (e.g. plantain, dal, pierogi)" oninput="render()">
+    <select id="region" onchange="render()"><option value="">All cuisines</option></select>
+    <select id="condition" onchange="render()">
+      <option value="">No health filter</option>
+      <optgroup label="General conditions">
+        <option value="t2d">Type 2 diabetes / prediabetes</option>
+        <option value="htn">High blood pressure</option>
+        <option value="chol">High cholesterol</option>
+        <option value="coeliac">Coeliac / gluten-free</option>
+        <option value="lactose">Lactose intolerance</option>
+        <option value="gout">Gout</option>
+      </optgroup>
+      <optgroup label="Women's health">
+        <option value="pcos">PCOS</option>
+        <option value="anaemia">Iron-deficiency anaemia</option>
+        <option value="endo">Endometriosis</option>
+        <option value="meno">Menopause — bone health</option>
+      </optgroup>
+    </select>
+  </div>
+  <div class="cond-panel" id="condPanel"></div>
+  <div class="count-line" style="margin-bottom:4px">Reading the cards: <strong>kcal</strong> = calories (energy) · <strong>g</strong> = grams · values are for the stated portion</div>
+  <div class="count-line" id="countLine"></div>
+  <div class="food-grid" id="foodGrid"></div>
+  <div class="gp-note"><strong>Two things worth knowing:</strong> ① Everyone in the UK can get free dietitian support — ask your GP for a referral; you do not need to manage a condition's diet alone. ② For women: period pain that disrupts your life, very heavy bleeding, or symptoms you've been told to "just live with" deserve a GP appointment. Conditions like endometriosis take years to diagnose partly because people are told their symptoms are normal. They are common — and they are treatable.</div>
+</div>
+
+<script>
+/* DEV NOTE — Supabase integration:
+   - FOODS array below → 'nutrition_foods' table (name, region, portion, kcal, protein_g, carbs_g, fat_g, tags text[])
+   - User profile (age/sex/height/weight/activity + selected condition) → 'user_nutrition_profile', one row per user
+   - localStorage below is the interim persistence; swap reads/writes for Supabase calls
+   - CONDITIONS config can stay client-side (it is presentation logic, not user data)
+   - Future: portion logging per user per day → 'nutrition_log' for trends alongside the Wellbeing tracker */
+// RareSena world-foods nutrition data — per stated portion, approximate values from standard nutrition references
+const FOODS = [
+// WEST AFRICAN
+{n:"Jollof rice",r:"West African",p:"1 cup (200g)",kcal:330,pr:7,cb:52,ft:10,tags:["modGL","modNa"]},
+{n:"Fufu (cassava)",r:"West African",p:"1 medium ball (200g)",kcal:270,pr:1,cb:66,ft:0.5,tags:["highGL"]},
+{n:"Eba (garri)",r:"West African",p:"1 serving (200g)",kcal:240,pr:1,cb:58,ft:0.5,tags:["highGL"]},
+{n:"Pounded yam",r:"West African",p:"1 serving (200g)",kcal:230,pr:3,cb:55,ft:0.3,tags:["highGL"]},
+{n:"Egusi soup",r:"West African",p:"1 bowl (250g)",kcal:380,pr:16,cb:9,ft:31,tags:["ironRich","modNa","highSatFat"]},
+{n:"Groundnut soup",r:"West African",p:"1 bowl (250g)",kcal:340,pr:15,cb:12,ft:26,tags:["modNa","highFibre"]},
+{n:"Okra soup",r:"West African",p:"1 bowl (250g)",kcal:160,pr:9,cb:8,ft:10,tags:["highFibre","lowGL","ironRich","calciumRich"]},
+{n:"Pepper soup (fish)",r:"West African",p:"1 bowl (300g)",kcal:170,pr:24,cb:4,ft:6,tags:["leanProtein","lowGL","omega3","modNa"]},
+{n:"Fried plantain (dodo)",r:"West African",p:"1 serving (100g)",kcal:250,pr:1.5,cb:36,ft:12,tags:["modGL"]},
+{n:"Boiled plantain",r:"West African",p:"1 medium (150g)",kcal:180,pr:2,cb:47,ft:0.3,tags:["modGL","highFibre"]},
+{n:"Moi moi (bean pudding)",r:"West African",p:"1 wrap (150g)",kcal:220,pr:12,cb:22,ft:9,tags:["highFibre","lowGL","ironRich","leanProtein"]},
+{n:"Akara (bean fritters)",r:"West African",p:"3 balls (120g)",kcal:280,pr:10,cb:24,ft:16,tags:["highFibre","modGL"]},
+{n:"Suya (spiced beef)",r:"West African",p:"1 skewer (100g)",kcal:230,pr:26,cb:4,ft:12,tags:["redMeat","modNa","purine","ironRich"]},
+{n:"Waakye (rice & beans)",r:"West African",p:"1 plate (250g)",kcal:340,pr:12,cb:62,ft:5,tags:["highFibre","modGL","ironRich"]},
+// SOUTH ASIAN
+{n:"Chapati / roti (wholemeal)",r:"South Asian",p:"1 medium (45g)",kcal:120,pr:4,cb:22,ft:2.5,tags:["gluten","modGL","highFibre"]},
+{n:"Naan",r:"South Asian",p:"1 (90g)",kcal:290,pr:8,cb:50,ft:6,tags:["gluten","highGL","modNa"]},
+{n:"Basmati rice (boiled)",r:"South Asian",p:"1 cup (180g)",kcal:230,pr:5,cb:50,ft:0.5,tags:["modGL"]},
+{n:"Dal (lentil curry)",r:"South Asian",p:"1 bowl (250g)",kcal:230,pr:13,cb:32,ft:6,tags:["highFibre","lowGL","ironRich","leanProtein"]},
+{n:"Chana masala",r:"South Asian",p:"1 bowl (250g)",kcal:270,pr:12,cb:38,ft:8,tags:["highFibre","lowGL","ironRich"]},
+{n:"Chicken curry (home-style)",r:"South Asian",p:"1 bowl (250g)",kcal:320,pr:28,cb:9,ft:19,tags:["modNa","leanProtein"]},
+{n:"Palak paneer",r:"South Asian",p:"1 bowl (250g)",kcal:340,pr:15,cb:11,ft:27,tags:["dairy","highSatFat","ironRich","calciumRich","lowGL"]},
+{n:"Samosa (fried)",r:"South Asian",p:"1 (100g)",kcal:260,pr:5,cb:28,ft:14,tags:["gluten","highSatFat","modGL","modNa"]},
+{n:"Chicken biryani",r:"South Asian",p:"1 plate (350g)",kcal:550,pr:26,cb:68,ft:19,tags:["highGL","modNa"]},
+{n:"Idli",r:"South Asian",p:"2 pieces (120g)",kcal:150,pr:5,cb:31,ft:0.5,tags:["modGL","lowNa"]},
+{n:"Dosa (plain)",r:"South Asian",p:"1 (110g)",kcal:210,pr:5,cb:33,ft:6,tags:["modGL"]},
+{n:"Paratha",r:"South Asian",p:"1 (100g)",kcal:320,pr:6,cb:42,ft:14,tags:["gluten","highSatFat","highGL"]},
+{n:"Tandoori chicken",r:"South Asian",p:"1 portion (150g)",kcal:230,pr:35,cb:4,ft:8,tags:["leanProtein","lowGL"]},
+{n:"Raita (yogurt side)",r:"South Asian",p:"1 bowl (100g)",kcal:60,pr:3,cb:6,ft:2.5,tags:["dairy","calciumRich","lowGL"]},
+// EAST & SOUTHEAST ASIAN
+{n:"Steamed jasmine rice",r:"East/SE Asian",p:"1 cup (180g)",kcal:240,pr:4,cb:53,ft:0.4,tags:["highGL"]},
+{n:"Egg fried rice",r:"East/SE Asian",p:"1 plate (300g)",kcal:500,pr:13,cb:72,ft:17,tags:["highGL","highNa","gluten"]},
+{n:"Pho (beef noodle soup)",r:"East/SE Asian",p:"1 bowl (500g)",kcal:410,pr:28,cb:55,ft:8,tags:["highNa","redMeat","modGL"]},
+{n:"Pad thai",r:"East/SE Asian",p:"1 plate (350g)",kcal:560,pr:20,cb:70,ft:22,tags:["highNa","highGL"]},
+{n:"Chicken adobo",r:"East/SE Asian",p:"1 serving (250g)",kcal:380,pr:32,cb:8,ft:24,tags:["highNa","leanProtein"]},
+{n:"Pancit (noodles)",r:"East/SE Asian",p:"1 plate (300g)",kcal:400,pr:16,cb:56,ft:12,tags:["highNa","gluten","modGL"]},
+{n:"Steamed dumplings",r:"East/SE Asian",p:"4 pieces (140g)",kcal:230,pr:11,cb:30,ft:7,tags:["gluten","modNa","modGL"]},
+{n:"Kimchi",r:"East/SE Asian",p:"1 serving (100g)",kcal:25,pr:2,cb:4,ft:0.5,tags:["highNa","highFibre","lowGL"]},
+{n:"Bibimbap",r:"East/SE Asian",p:"1 bowl (450g)",kcal:560,pr:22,cb:78,ft:17,tags:["modNa","modGL","ironRich"]},
+{n:"Miso soup",r:"East/SE Asian",p:"1 bowl (240g)",kcal:60,pr:4,cb:6,ft:2,tags:["highNa","lowGL"]},
+{n:"Congee (rice porridge)",r:"East/SE Asian",p:"1 bowl (300g)",kcal:180,pr:4,cb:39,ft:0.5,tags:["highGL"]},
+{n:"Vegetable spring rolls (fried)",r:"East/SE Asian",p:"2 (100g)",kcal:220,pr:4,cb:24,ft:12,tags:["gluten","modNa","modGL"]},
+// CARIBBEAN
+{n:"Rice and peas",r:"Caribbean",p:"1 cup (200g)",kcal:320,pr:8,cb:50,ft:10,tags:["modGL","highFibre","highSatFat"]},
+{n:"Jerk chicken",r:"Caribbean",p:"1 portion (150g)",kcal:260,pr:33,cb:5,ft:12,tags:["leanProtein","modNa","lowGL"]},
+{n:"Curry goat",r:"Caribbean",p:"1 serving (250g)",kcal:420,pr:36,cb:7,ft:27,tags:["redMeat","purine","ironRich","modNa","highSatFat"]},
+{n:"Ackee and saltfish",r:"Caribbean",p:"1 serving (200g)",kcal:340,pr:18,cb:8,ft:26,tags:["highNa","omega3"]},
+{n:"Callaloo (steamed)",r:"Caribbean",p:"1 serving (150g)",kcal:90,pr:5,cb:8,ft:5,tags:["ironRich","calciumRich","highFibre","lowGL"]},
+{n:"Fried dumplings",r:"Caribbean",p:"2 (120g)",kcal:350,pr:6,cb:44,ft:17,tags:["gluten","highGL","highSatFat"]},
+{n:"Roti wrap (curry chicken)",r:"Caribbean",p:"1 wrap (350g)",kcal:620,pr:30,cb:70,ft:25,tags:["gluten","highGL","modNa"]},
+{n:"Oxtail stew",r:"Caribbean",p:"1 serving (250g)",kcal:470,pr:34,cb:10,ft:32,tags:["redMeat","purine","highSatFat","modNa","ironRich"]},
+{n:"Festival (fried bread)",r:"Caribbean",p:"1 (80g)",kcal:270,pr:4,cb:38,ft:11,tags:["gluten","highGL"]},
+{n:"Boiled green banana",r:"Caribbean",p:"2 (200g)",kcal:180,pr:2,cb:46,ft:0.3,tags:["modGL","highFibre"]},
+// EASTERN EUROPEAN
+{n:"Pierogi (potato & cheese)",r:"Eastern European",p:"5 pieces (200g)",kcal:380,pr:11,cb:56,ft:12,tags:["gluten","dairy","highGL"]},
+{n:"Borscht (beet soup)",r:"Eastern European",p:"1 bowl (300g)",kcal:110,pr:4,cb:16,ft:3,tags:["highFibre","lowGL","modNa"]},
+{n:"Bigos (hunter's stew)",r:"Eastern European",p:"1 bowl (300g)",kcal:330,pr:20,cb:14,ft:22,tags:["redMeat","highNa","purine","highSatFat","highFibre"]},
+{n:"Kielbasa (sausage)",r:"Eastern European",p:"1 portion (100g)",kcal:310,pr:12,cb:2,ft:28,tags:["redMeat","highNa","highSatFat","purine"]},
+{n:"Golabki (cabbage rolls)",r:"Eastern European",p:"2 rolls (300g)",kcal:290,pr:16,cb:28,ft:13,tags:["redMeat","modNa","modGL"]},
+{n:"Rye bread",r:"Eastern European",p:"2 slices (80g)",kcal:200,pr:7,cb:38,ft:1.5,tags:["gluten","highFibre","modGL","modNa"]},
+{n:"Kasha (buckwheat)",r:"Eastern European",p:"1 cup (170g)",kcal:190,pr:6,cb:39,ft:1.5,tags:["highFibre","lowGL","ironRich"]},
+{n:"Pickled herring",r:"Eastern European",p:"1 portion (100g)",kcal:220,pr:14,cb:7,ft:15,tags:["omega3","highNa","purine"]},
+{n:"Smetana (sour cream)",r:"Eastern European",p:"2 tbsp (40g)",kcal:80,pr:1,cb:1.5,ft:8,tags:["dairy","highSatFat","lowGL"]},
+// MIDDLE EASTERN & NORTH AFRICAN
+{n:"Hummus",r:"Middle Eastern/N. African",p:"1 serving (100g)",kcal:170,pr:8,cb:14,ft:10,tags:["highFibre","lowGL","ironRich"]},
+{n:"Falafel",r:"Middle Eastern/N. African",p:"4 balls (100g)",kcal:330,pr:13,cb:31,ft:18,tags:["highFibre","modGL","ironRich"]},
+{n:"Tabbouleh",r:"Middle Eastern/N. African",p:"1 cup (160g)",kcal:180,pr:4,cb:24,ft:8,tags:["gluten","highFibre","lowGL"]},
+{n:"Chicken shawarma wrap",r:"Middle Eastern/N. African",p:"1 wrap (300g)",kcal:550,pr:32,cb:52,ft:23,tags:["gluten","highNa","modGL"]},
+{n:"Couscous (plain)",r:"Middle Eastern/N. African",p:"1 cup (160g)",kcal:180,pr:6,cb:37,ft:0.3,tags:["gluten","modGL"]},
+{n:"Lamb tagine",r:"Middle Eastern/N. African",p:"1 bowl (300g)",kcal:380,pr:28,cb:22,ft:20,tags:["redMeat","purine","ironRich","modNa"]},
+{n:"Ful medames (fava beans)",r:"Middle Eastern/N. African",p:"1 bowl (250g)",kcal:230,pr:13,cb:33,ft:5,tags:["highFibre","lowGL","ironRich","leanProtein"]},
+{n:"Pita bread",r:"Middle Eastern/N. African",p:"1 (60g)",kcal:165,pr:5.5,cb:33,ft:0.7,tags:["gluten","highGL"]},
+{n:"Baba ganoush",r:"Middle Eastern/N. African",p:"1 serving (100g)",kcal:130,pr:2,cb:8,ft:10,tags:["highFibre","lowGL"]},
+{n:"Beef kofta",r:"Middle Eastern/N. African",p:"2 skewers (140g)",kcal:320,pr:24,cb:4,ft:23,tags:["redMeat","purine","highSatFat","ironRich"]},
+// LATIN AMERICAN
+{n:"Black beans and rice",r:"Latin American",p:"1 cup (220g)",kcal:290,pr:11,cb:52,ft:4,tags:["highFibre","modGL","ironRich"]},
+{n:"Arepa (grilled)",r:"Latin American",p:"1 (100g)",kcal:220,pr:5,cb:40,ft:5,tags:["modGL"]},
+{n:"Corn tortillas",r:"Latin American",p:"2 (60g)",kcal:130,pr:3,cb:26,ft:1.5,tags:["modGL","highFibre"]},
+{n:"Ceviche",r:"Latin American",p:"1 serving (200g)",kcal:150,pr:24,cb:9,ft:2,tags:["leanProtein","lowGL","omega3"]},
+{n:"Beef empanada (baked)",r:"Latin American",p:"1 (120g)",kcal:300,pr:11,cb:29,ft:15,tags:["gluten","redMeat","modNa","highSatFat"]},
+{n:"Tamale",r:"Latin American",p:"1 (130g)",kcal:230,pr:7,cb:25,ft:11,tags:["modGL","modNa"]},
+{n:"Plantain chips",r:"Latin American",p:"1 handful (50g)",kcal:260,pr:1,cb:29,ft:16,tags:["highSatFat","modGL","modNa"]},
+{n:"Feijoada (bean & pork stew)",r:"Latin American",p:"1 bowl (300g)",kcal:420,pr:26,cb:30,ft:22,tags:["redMeat","highNa","purine","highFibre","ironRich","highSatFat"]}
+];
+
+
+const CONDITIONS = {
+ t2d:{name:"Type 2 diabetes / prediabetes",ev:"strong",evLabel:"Established guidance",
+  desc:"The lever is glycaemic load — how fast a food raises blood sugar. Refined starches eaten alone spike hardest; fibre, protein and fat slow the rise. Portion size matters as much as food choice, and no single food is banned.",
+  tips:["Pair starches with protein or beans — rice + dal, eba + okra soup with fish — the combination blunts the spike","Swap towards the wholegrain versions where they exist: brown rice, wholemeal chapati, kasha","Cooling-then-reheating rice and starchy foods increases resistant starch, lowering the effective glycaemic load"],
+  watch:["highGL"],watchReason:"High glycaemic load — raises blood sugar quickly; keep portions modest and pair with protein/fibre",
+  better:["lowGL","highFibre","leanProtein"],betterReason:"Gentler on blood sugar — good building block"},
+ htn:{name:"High blood pressure",ev:"strong",evLabel:"Established guidance",
+  desc:"Sodium is the main dietary lever. In many world cuisines the salt hides in specific places: stock cubes and seasoning powders, soy and fish sauces, cured and salted fish, pickled foods, processed meats.",
+  tips:["Halve the stock cubes/seasoning powder and rebuild flavour with garlic, ginger, fresh chilli, herbs and citrus — most dishes survive the swap unnoticed","Rinse canned beans; soak saltfish longer and change the water","Potassium helps counter sodium: beans, greens, plantain and bananas are allies"],
+  watch:["highNa","modNa"],watchReason:"Higher sodium — the main pressure lever; reduce added salt elsewhere in the day",
+  better:["highFibre","lowGL"],betterReason:"Naturally lower-sodium pattern"},
+ chol:{name:"High cholesterol",ev:"strong",evLabel:"Established guidance",
+  desc:"Saturated fat raises LDL more than dietary cholesterol does. In world cuisines the main sources are palm oil, coconut milk/oil, ghee, fatty red meat and fried foods. Soluble fibre actively lowers LDL.",
+  tips:["Beans, lentils, okra and oats actively pull LDL down — ful, dal, moi moi are medicine here","Trim visible fat; grill, steam or bake instead of deep-frying where the dish allows","Oily fish (herring, mackerel, sardines) twice a week supports the overall lipid picture"],
+  watch:["highSatFat"],watchReason:"Higher saturated fat — the main LDL driver; occasional rather than daily",
+  better:["omega3","highFibre","leanProtein"],betterReason:"Supports healthier cholesterol levels"},
+ coeliac:{name:"Coeliac / gluten-free",ev:"strong",evLabel:"Established guidance",
+  desc:"Gluten (wheat, barley, rye) must be strictly avoided in coeliac disease — including flour used in coatings, and cross-contamination in shared fryers. The good news: huge swathes of world cuisine are naturally gluten-free.",
+  tips:["Naturally safe staples: rice, cassava (fufu, garri), yam, plantain, corn (tortillas, arepas), buckwheat (real kasha), beans and lentils","Check soy sauce (wheat-based — use tamari), stock cubes, and anything battered or floured","Coeliac UK (coeliac.org.uk) has a scanning app for UK products"],
+  watch:["gluten"],watchReason:"Contains gluten — not suitable in coeliac disease",
+  better:["highFibre"],betterReason:"Naturally gluten-free as listed"},
+ lactose:{name:"Lactose intolerance",ev:"strong",evLabel:"Established guidance",
+  desc:"Very common — the majority of adults of African, Asian and Caribbean heritage digest lactose poorly. Severity varies: many tolerate fermented dairy (yogurt, aged cheese) and small portions even when milk causes trouble.",
+  tips:["Fermented dairy (live yogurt, aged cheeses) is often tolerated — the bacteria pre-digest much of the lactose","Lactose-free milk and lactase drops exist in every UK supermarket","If cutting dairy, protect calcium: greens like callaloo and okra, tinned fish with bones, fortified plant milks"],
+  watch:["dairy"],watchReason:"Contains dairy — tolerance varies; fermented forms often sit easier",
+  better:["calciumRich"],betterReason:"Non-dairy calcium sources matter when reducing dairy"},
+ gout:{name:"Gout",ev:"strong",evLabel:"Established guidance",
+  desc:"Flares are triggered by purine-rich foods — organ meats, some seafood, meat-heavy stews — plus alcohol (especially beer) and sugary drinks. Dairy and vitamin C are mildly protective; hydration matters.",
+  tips:["The biggest levers are often drinks: beer and sugary soft drinks raise flare risk more than most foods","Bean and lentil dishes are fine for most people with gout despite old myths — plant purines behave differently","During a flare, keep meat portions small and water intake high"],
+  watch:["purine"],watchReason:"Purine-rich — a flare trigger for many; keep portions modest, hydrate well",
+  better:["lowGL","highFibre","leanProtein"],betterReason:"Lower-purine pattern"},
+ pcos:{name:"PCOS",ev:"strong",evLabel:"Established guidance",
+  desc:"Insulin resistance drives many PCOS symptoms, so the dietary approach mirrors diabetes prevention: steady blood sugar through lower glycaemic load, fibre, and protein at each meal. PCOS is especially common among South Asian women — and mainstream tools rarely map this advice onto the actual food.",
+  tips:["Protein at breakfast changes the whole day's blood-sugar curve — eggs, beans, leftover dal all work","The rice/fufu/chapati you love is not banned: pair it, portion it, and choose wholegrain versions where they exist","Regular meals beat skipped ones — long gaps then large meals worsen the insulin pattern"],
+  watch:["highGL"],watchReason:"High glycaemic load — works against insulin resistance; pair and portion rather than ban",
+  better:["lowGL","highFibre","leanProtein"],betterReason:"Supports steadier insulin and energy"},
+ anaemia:{name:"Iron-deficiency anaemia",ev:"strong",evLabel:"Established guidance",
+  desc:"Extremely common in women — heavy periods, fibroids and pregnancy all drain iron. Food strategy is about absorption as much as intake: vitamin C alongside iron boosts uptake several-fold; tea and coffee with meals block it sharply.",
+  tips:["Pair iron foods with vitamin C: squeeze lemon over beans, peppers into stews, fruit after the meal","Keep tea and coffee at least an hour away from iron-rich meals — tannins block absorption hard","Cast-iron pots genuinely add iron to acidic stews. If supplements are prescribed, food strategy supports them, not replaces them"],
+  watch:[],watchReason:"",
+  better:["ironRich"],betterReason:"Iron-rich — pair with vitamin C, keep tea/coffee an hour away"},
+ endo:{name:"Endometriosis",ev:"emerging",evLabel:"Emerging evidence",
+  desc:"Honest framing: research on diet and endometriosis is still developing — nothing here is proven to treat it, and diet never replaces medical care. What early evidence suggests: anti-inflammatory eating patterns (omega-3s, fibre, vegetables) may help some women with symptoms, while diets heavy in red/processed meat and saturated fat may worsen them for some. Many women also find personal trigger foods — a symptom diary finds yours.",
+  tips:["Oily fish and plant omega-3s are the best-supported dietary angle so far","Fibre supports oestrogen clearance — beans, greens, wholegrains","Track symptoms against food for a month before cutting anything major — personal patterns beat generic lists. And push for proper medical care: diagnosis takes an average of 7–8 years partly because symptoms get dismissed"],
+  watch:["redMeat","highSatFat"],watchReason:"Red meat / saturated fat-heavy — some evidence links high intake to worse symptoms for some women",
+  better:["omega3","highFibre"],betterReason:"Anti-inflammatory pattern — the best-supported dietary angle so far"},
+ meno:{name:"Menopause — bone health",ev:"strong",evLabel:"Established guidance",
+  desc:"Falling oestrogen accelerates bone loss, so calcium, vitamin D and protein become priorities. UK-specific: sunlight is too weak October–March for vitamin D — supplementation (10µg/day) is official advice for everyone, and doubly relevant for darker skin tones, which synthesise less vitamin D at UK latitudes.",
+  tips:["Calcium targets: dairy, callaloo and dark greens, okra, tinned fish eaten with bones, fortified plant milks","Vitamin D supplement October–March (10µg) — food alone cannot cover the UK winter","Protein and resistance exercise protect bone and muscle together — the food and the movement are one strategy"],
+  watch:[],watchReason:"",
+  better:["calciumRich","leanProtein","omega3"],betterReason:"Supports bone and muscle through the transition"}
+};
+
+const regionSel=document.getElementById('region');
+[...new Set(FOODS.map(f=>f.r))].forEach(r=>{const o=document.createElement('option');o.value=r;o.textContent=r;regionSel.appendChild(o);});
+
+let TARGETS=null;
+const GOALS={
+ maintain:{mult:1.0,pperkg:1.2,add:0,label:'calories a day (keep steady)',note:'Enough food to fuel your rebuild — no cutting, no forcing. Protein keeps you full and repairs your body, fat carries flavour and hormones, carbs power your day.'},
+ lose:{mult:0.85,pperkg:1.6,add:0,label:'calories a day (gentle loss)',note:'A gentle reduction — about 15% below what your body burns. Protein is set HIGHER while losing weight so you lose fat, not muscle. Slow is not weak — slow is the version that lasts.'},
+ waist:{mult:0.90,pperkg:1.5,add:0,label:'calories a day (waist &amp; health)',note:'Belly fat is the health-critical kind — it drives diabetes risk, and people of South Asian, African and Caribbean heritage face that risk at smaller waist sizes than standard charts admit. A gentle 10% reduction, protein up, and pair this with the "Type 2 diabetes" filter below to see how your staple foods behave. A tape measure around the waist tracks this better than the bathroom scale.'},
+ gain:{mult:1.10,pperkg:1.6,add:0,label:'calories a day (build)',note:'A small surplus — about 10% extra — with protein raised, so the extra becomes strength rather than stored fat. Pair it with resistance work: bodyweight exercises at home count fully.'},
+ energy:{mult:1.0,pperkg:1.4,add:0,label:'calories a day (steady energy)',note:'Constant tiredness is rarely fixed by eating less — it is fixed by eating regularly (long gaps then big meals crash your energy), enough protein, and checking the medical basics: ask your GP to test iron, B12, vitamin D and thyroid, because in women low iron is the single most common hidden cause. The "Iron-deficiency anaemia" filter below shows which of your foods help.'},
+ postpartum:{mult:1.0,pperkg:1.5,add:0,label:'calories a day (recovery)',note:'Your body has done something enormous — the goal for now is rebuilding strength, not shrinking. Full maintenance calories with protein raised for tissue repair. No weight-loss pressure before your 6–8 week GP check, and gently after that only if YOU want it. If you are breastfeeding, choose the breastfeeding goal instead — it adds the extra energy feeding requires.'},
+ bf:{mult:1.0,pperkg:1.5,add:330,label:'calories a day (breastfeeding)',note:'Making milk costs real energy, so around 330 extra calories are added on top of your full needs — this is not the time for dieting, and cutting hard can affect your supply and your own recovery. Protein is raised, and hydration matters: a glass of water every time you feed is the easiest rule.'}
+};
+function calc(){
+  const age=+document.getElementById('age').value, sex=document.getElementById('sex').value,
+        h=+document.getElementById('height').value, w=+document.getElementById('weight').value,
+        act=+document.getElementById('activity').value, goal=document.getElementById('goal').value;
+  if(!age||!h||!w){alert('Please fill in age, height and weight.');return;}
+  const bmr = sex==='m' ? 10*w+6.25*h-5*age+5 : 10*w+6.25*h-5*age-161;
+  const g=GOALS[goal]||GOALS.maintain;
+  let kcal=Math.round(bmr*act*g.mult/10)*10+(g.add||0);
+  const floor=sex==='m'?1500:1200; let floored=false;
+  if(kcal<floor){kcal=floor;floored=true;}
+  const protein=Math.round(w*g.pperkg);
+  const fat=Math.round(kcal*0.30/9);
+  const carbs=Math.max(0,Math.round((kcal-protein*4-fat*9)/4));
+  document.getElementById('rKcal').textContent=kcal.toLocaleString();
+  document.getElementById('rKcalLbl').textContent=g.label;
+  document.getElementById('rProtein').textContent=protein;
+  document.getElementById('rCarbs').textContent=carbs;
+  document.getElementById('rFat').textContent=fat;
+  document.getElementById('rWater').textContent='6–8';
+  document.getElementById('rNote').textContent=(floored?'Note: the calculation came out below a safe everyday minimum, so it has been raised to '+floor+' kcal — at your size and activity, gentler targets plus more daily movement beat deeper cuts. ':'')+g.note+' These are guide-rails, not rules — one day over or under changes nothing; the month is what counts. If a health professional has given you different targets, theirs win. And if eating ever starts to feel like stress instead of strength, that is a conversation for your GP, not a discipline problem.';
+  document.getElementById('results').classList.add('show');
+  TARGETS={kcal,protein,carbs,fat};
+  try{localStorage.setItem('rs_nutrition_profile',JSON.stringify({age,sex,h,w,act,goal,kcal,protein,carbs,fat}))}catch(e){}
+  render();
+}
+
+function render(){
+  const q=document.getElementById('search').value.toLowerCase().trim();
+  const reg=regionSel.value;
+  const condKey=document.getElementById('condition').value;
+  const cond=condKey?CONDITIONS[condKey]:null;
+  const panel=document.getElementById('condPanel');
+  if(cond){
+    panel.classList.add('show');
+    panel.innerHTML='<div class="cp-title">'+cond.name+'<span class="cp-evidence '+(cond.ev==='strong'?'ev-strong':'ev-emerging')+'">'+cond.evLabel+'</span></div><div class="cp-body">'+cond.desc+'</div><ul class="cp-tips">'+cond.tips.map(t=>'<li>'+t+'</li>').join('')+'</ul>';
+    try{localStorage.setItem('rs_nutrition_condition',condKey)}catch(e){}
+  } else {panel.classList.remove('show');panel.innerHTML='';try{localStorage.removeItem('rs_nutrition_condition')}catch(e){}}
+  let list=FOODS.filter(f=>(!q||f.n.toLowerCase().includes(q))&&(!reg||f.r===reg));
+  // Sort: with a condition, better choices first, watch last
+  if(cond){
+    const score=f=>{const t=f.tags; if(cond.watch.some(x=>t.includes(x)))return 2; if(cond.better.some(x=>t.includes(x)))return 0; return 1;};
+    list=list.slice().sort((a,b)=>score(a)-score(b));
+  }
+  document.getElementById('countLine').textContent=list.length+' of '+FOODS.length+' foods'+(cond?' — sorted: better choices first':'');
+  const grid=document.getElementById('foodGrid');
+  if(!list.length){grid.innerHTML='<div class="empty">No foods match — try a different search or filter.</div>';return;}
+  grid.innerHTML=list.map(f=>{
+    let cls='',flag='';
+    if(cond){
+      const t=f.tags;
+      if(cond.watch.some(x=>t.includes(x))){cls='watch';flag='<div class="fc-flag warn">⚠ Watch portions — '+cond.watchReason+'</div>';}
+      else if(cond.better.some(x=>t.includes(x))){cls='better';flag='<div class="fc-flag good">✓ Better choice — '+cond.betterReason+'</div>';}
+    }
+    let day='';
+    if(TARGETS&&TARGETS.kcal){
+      const pk=Math.round(f.kcal/TARGETS.kcal*100), pp=Math.round(f.pr/TARGETS.protein*100);
+      day='<div class="fc-day">This portion = <b>'+pk+'%</b> of your day\u2019s energy \u00b7 <b>'+pp+'%</b> of your protein</div>';
+    }
+    return '<div class="food-card '+cls+'"><div class="fc-top"><div class="fc-name">'+f.n+'</div><div class="fc-region">'+f.r+'</div></div><div class="fc-portion">'+f.p+'</div><div class="fc-macros"><span><b>'+f.kcal+'</b> kcal</span><span><b>'+f.pr+'g</b> protein</span><span><b>'+f.cb+'g</b> carbs</span><span><b>'+f.ft+'g</b> fat</span></div>'+day+flag+'</div>';
+  }).join('');
+}
+
+// Restore saved state
+try{
+  const p=JSON.parse(localStorage.getItem('rs_nutrition_profile')||'null');
+  if(p){document.getElementById('age').value=p.age;document.getElementById('sex').value=p.sex;document.getElementById('height').value=p.h;document.getElementById('weight').value=p.w;document.getElementById('activity').value=p.act;if(p.goal)document.getElementById('goal').value=p.goal;calc();}
+  const c=localStorage.getItem('rs_nutrition_condition');
+  if(c&&CONDITIONS[c])document.getElementById('condition').value=c;
+}catch(e){}
+render();
+</script>
+</body>
+</html>

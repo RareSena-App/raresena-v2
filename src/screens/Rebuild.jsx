@@ -11,6 +11,16 @@ import CreditScoreTracker from '../components/CreditScoreTracker.jsx'
 import ApplicationPipelineTracker from '../components/ApplicationPipelineTracker.jsx'
 import ILREvidenceChecklist from '../components/ILREvidenceChecklist.jsx'
 import GuideViewer from '../components/GuideViewer.jsx'
+import HabitSelector from '../components/HabitSelector.jsx'
+import ValuesExercise from '../components/ValuesExercise.jsx'
+import ProfessionalSummaryBuilder from '../components/ProfessionalSummaryBuilder.jsx'
+import WeeklyReviewTemplate from '../components/WeeklyReviewTemplate.jsx'
+import NinetyDayDirectionWorksheet from '../components/NinetyDayDirectionWorksheet.jsx'
+import MorningRoutineBuilder from '../components/MorningRoutineBuilder.jsx'
+import HabitLibrary from '../components/HabitLibrary.jsx'
+import LinkedInNetworkBuilder from '../components/LinkedInNetworkBuilder.jsx'
+import JourneyDocumentation from '../components/JourneyDocumentation.jsx'
+import SovereigntyPlan from '../components/SovereigntyPlan.jsx'
 
 // Sample circle posts
 const SAMPLE_POSTS = [
@@ -915,6 +925,7 @@ export default function RebuildPortal({ onLogout }) {
         onAdvanceStage={() => setScreen('stage-complete')}
         onExportPDF={() => generateRebuildPDF(taskCompletions, user.name || 'Your')}
         onRedo={() => resetTaskCompletion(activeTask)}
+        onGoToCircle={(group) => { setActiveGroup(group); setScreen('circle') }}
       />
     )
   }
@@ -1432,7 +1443,7 @@ function PostCard({ post, user, onUpgrade, onLike, liked = false }) {
 }
 
 // ── TASK DETAIL VIEW ─────────────────────────────────────────────
-function TaskDetailView({ task, taskKey, stageNum, stageName, stageCol, steps, trackNote, alreadyComplete, isPremium, onBack, onComplete, onAdvanceStage, onExportPDF, onRedo }) {
+function TaskDetailView({ task, taskKey, stageNum, stageName, stageCol, steps, trackNote, alreadyComplete, isPremium, onBack, onComplete, onAdvanceStage, onExportPDF, onRedo, onGoToCircle }) {
   const [promptValues, setPromptValues] = useState({})
   const [submitting, setSubmitting] = useState(false)
   const [justCompleted, setJustCompleted] = useState(false)
@@ -1563,9 +1574,81 @@ function TaskDetailView({ task, taskKey, stageNum, stageName, stageCol, steps, t
             <CreditScoreTracker />
           </TaskSection>
         )}
+        {taskKey === '1.4' && (
+          <TaskSection label="CHOOSE YOUR ANCHOR HABIT" color={stageCol}>
+            <HabitSelector onSelect={(name, time) => {
+              setField('habit_name', name)
+              setField('habit_time', time)
+            }} />
+          </TaskSection>
+        )}
+        {taskKey === '2.1' && (
+          <TaskSection label="VALUES CARD SORT" color={stageCol}>
+            <ValuesExercise onComplete={(summary) => {
+              setField('text', summary)
+            }} />
+          </TaskSection>
+        )}
+        {taskKey === '2.2' && (
+          <TaskSection label="UK PROFESSIONAL SUMMARY BUILDER" color={stageCol}>
+            <ProfessionalSummaryBuilder onSave={(topSkill, ukBarrier) => {
+              setField('top_skill', topSkill)
+              setField('uk_barrier', ukBarrier)
+            }} />
+          </TaskSection>
+        )}
+        {taskKey === '3.1' && (
+          <TaskSection label="MORNING ROUTINE BUILDER" color={stageCol}>
+            <MorningRoutineBuilder onSave={(startTime, firstThree) => {
+              setField('start_time', startTime)
+              setField('first_three', firstThree)
+            }} />
+          </TaskSection>
+        )}
+        {taskKey === '3.2' && (
+          <TaskSection label="HABIT LIBRARY" color={stageCol}>
+            <HabitLibrary onSelect={(key, val) => setField(key, val)} />
+          </TaskSection>
+        )}
+        {taskKey === '3.3' && (
+          <TaskSection label="WEEKLY REVIEW TEMPLATE" color={stageCol}>
+            <WeeklyReviewTemplate onComplete={(summary) => {
+              setField('text', summary)
+            }} />
+          </TaskSection>
+        )}
+        {taskKey === '4.1' && (
+          <TaskSection label="90-DAY DIRECTION WORKSHEET" color={stageCol}>
+            <NinetyDayDirectionWorksheet onSave={(dir) => {
+              setField('direction', dir)
+            }} />
+          </TaskSection>
+        )}
         {taskKey === '4.2' && (
           <TaskSection label="APPLICATION PIPELINE & SPONSOR CHECK" color={stageCol}>
             <ApplicationPipelineTracker />
+          </TaskSection>
+        )}
+        {taskKey === '4.3' && (
+          <TaskSection label="LINKEDIN PROFILE & NETWORK BUILDER" color={stageCol}>
+            <LinkedInNetworkBuilder onSave={(checkedItems, count) => {
+              setField('linkedin_items', checkedItems)
+            }} />
+          </TaskSection>
+        )}
+        {taskKey === '5.1' && (
+          <TaskSection label="JOURNEY DOCUMENTATION" color={stageCol}>
+            <JourneyDocumentation onComplete={(summary) => {
+              setField('text', summary)
+            }} />
+          </TaskSection>
+        )}
+        {taskKey === '5.4' && (
+          <TaskSection label="SOVEREIGNTY PLAN" color={stageCol}>
+            <SovereigntyPlan onSave={(milestone, summary) => {
+              setField('milestone_1', milestone)
+              setField('sovereignty_summary', summary)
+            }} />
           </TaskSection>
         )}
         {taskKey === '5.4' && (
@@ -1579,19 +1662,22 @@ function TaskDetailView({ task, taskKey, stageNum, stageName, stageCol, steps, t
           <TaskSection label="TOOLS & RESOURCES" color={stageCol}>
             {task.resources.map((r, i) => {
               const isGuide = r.type === 'guide' && r.guideFile
+              const isCircle = r.type === 'circle_link' && r.group
               const icon = r.type === 'guide' ? '📖' : r.type === 'download' || r.type === 'template' ? '📄'
                 : r.type === 'product' ? '🌿' : r.type === 'interactive' ? '⚡'
                 : r.type === 'circle_link' ? '💬' : r.type === 'tracker' ? '📊' : '📌'
+              const isClickable = isGuide || isCircle
               return (
-                <div key={i} onClick={isGuide ? () => setActiveGuide(r.guideFile) : undefined}
+                <div key={i}
+                  onClick={isGuide ? () => setActiveGuide(r.guideFile) : isCircle ? () => onGoToCircle?.(r.group) : undefined}
                   style={{ display: 'flex', alignItems: 'center', gap: '12px',
                     padding: '10px 0', borderBottom: `1px solid ${T.bg4}`,
-                    cursor: isGuide ? 'pointer' : 'default' }}>
+                    cursor: isClickable ? 'pointer' : 'default' }}>
                   <span style={{ fontSize: '14px' }}>{icon}</span>
-                  <p style={{ flex: 1, fontSize: '13px', color: isGuide ? T.gold : T.white, lineHeight: '1.4' }}>
+                  <p style={{ flex: 1, fontSize: '13px', color: isClickable ? T.gold : T.white, lineHeight: '1.4' }}>
                     {r.title}
                   </p>
-                  {isGuide && <span style={{ fontSize: '12px', color: T.gold }}>→</span>}
+                  {isClickable && <span style={{ fontSize: '12px', color: T.gold }}>→</span>}
                 </div>
               )
             })}

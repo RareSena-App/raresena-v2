@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RareSena — Guide: UK CV Conventions — What to Include, Exclude, and Never Say</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f0;color:#222;padding:24px;max-width:820px;margin:0 auto}
+.guide-badge{display:inline-flex;align-items:center;gap:6px;background:#B8962E;color:#fff;font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;margin-bottom:14px}
+.guide-header{background:#1A3A5C;border-radius:12px;padding:22px;color:#fff;margin-bottom:24px}
+.guide-title{font-size:22px;font-weight:700;margin-bottom:6px}
+.guide-sub{font-size:13px;opacity:.8;line-height:1.5}
+.section{margin-bottom:28px}
+.section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B8962E;margin-bottom:10px}
+.section-body{font-size:14px;line-height:1.75;color:#444}
+.callout{background:#fff8e6;border:1.5px solid #B8962E;border-radius:8px;padding:14px 16px;font-size:14px;line-height:1.65;color:#7a3300;margin-bottom:16px}
+.divider{height:1px;background:#e0e0dc;margin:24px 0}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.col{background:#fff;border:1px solid #e0e0dc;border-radius:10px;padding:16px}
+.col-title{font-size:13px;font-weight:700;margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid}
+.col-title.inc{color:#1a6b2e;border-color:#1a6b2e}
+.col-title.exc{color:#8b0000;border-color:#8b0000}
+.col-item{font-size:13px;color:#444;padding:6px 0;border-bottom:1px solid #f0f0ec;line-height:1.55}
+.col-item:last-child{border-bottom:none}
+.col-item strong{color:#1A3A5C}
+.step-block{background:#fff;border:1px solid #e0e0dc;border-radius:10px;padding:16px;margin-bottom:12px}
+.sb-title{font-size:14px;font-weight:700;color:#1A3A5C;margin-bottom:6px}
+.sb-body{font-size:13px;color:#555;line-height:1.65}
+.script-box{background:#f0f4ff;border-left:4px solid #1A3A5C;padding:12px 16px;border-radius:0 8px 8px 0;font-size:13px;color:#1A3A5C;line-height:1.65;margin:10px 0;font-style:italic}
+.warning{background:#fff0f0;border:1.5px solid #cc2222;border-radius:8px;padding:13px 15px;font-size:13px;color:#8b0000;line-height:1.6;margin-bottom:14px}
+.trap-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px}
+.trap-table th{background:#1A3A5C;color:#fff;padding:9px 12px;text-align:left;font-weight:600}
+.trap-table td{padding:9px 12px;border-bottom:1px solid #e0e0dc;color:#444;vertical-align:top;line-height:1.55}
+.trap-table tr:nth-child(even) td{background:#f9f9f7}
+
+.audit-box{background:#fff;border:1px solid #e0e0dc;border-radius:12px;padding:18px;margin-bottom:14px}
+.audit-item{display:flex;gap:11px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #f0f0ec;cursor:pointer}
+.audit-item:last-of-type{border-bottom:none}
+.audit-item input{margin-top:3px;accent-color:#1A3A5C;width:16px;height:16px;flex-shrink:0;cursor:pointer}
+.audit-item label{font-size:13px;color:#444;line-height:1.55;cursor:pointer}
+.audit-score{margin-top:14px;background:#1A3A5C;color:#fff;border-radius:10px;padding:14px 16px;text-align:center}
+.as-num{font-size:26px;font-weight:800}
+.as-verdict{font-size:13px;opacity:.9;margin-top:4px;line-height:1.5}
+.builder{background:#fff;border:1px solid #e0e0dc;border-radius:12px;padding:18px;margin-bottom:14px}
+.b-row{margin-bottom:12px}
+.b-row label{display:block;font-size:11px;font-weight:700;color:#1A3A5C;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.b-row input,.b-row select{width:100%;padding:10px 12px;border-radius:7px;border:1.5px solid #ccc;font-size:13px;background:#fafafa;font-family:Arial,sans-serif}
+.b-row input:focus,.b-row select:focus{outline:none;border-color:#1A3A5C;background:#fff}
+.b-btn{width:100%;padding:11px;background:#1A3A5C;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:10px}
+.b-btn:hover{background:#142e4a}
+.b-output{display:none;background:#f0f4ff;border:1.5px solid #1A3A5C;border-radius:8px;padding:14px 16px}
+.b-output.show{display:block}
+.bo-text{font-size:14px;color:#1B2D5B;line-height:1.6;margin-bottom:10px}
+.bo-copy{padding:7px 16px;background:#B8962E;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer}
+
+</style>
+</head>
+<body>
+<div class="guide-badge">📖 In-app guide — Stage 2 Rediscover · Task 2.2 (and Stage 4 job pipeline)</div>
+<div class="guide-header">
+  <div class="guide-title">UK CV conventions — what to include, exclude, and never say</div>
+  <div class="guide-sub">The UK CV is a different document from the one that got you hired at home. This is the complete translation — format, content, language, and the immigrant-specific traps that get strong candidates silently rejected</div>
+</div>
+
+<div class="section">
+  <div class="section-label">Why your excellent CV might be failing here</div>
+  <div class="section-body">A CV that would win interviews in Lagos, Mumbai, Warsaw, Manila, or São Paulo can be quietly discarded in the UK — not because the experience is weaker, but because the document breaks conventions the reader does not even know they are enforcing. A photo reads as odd. A date of birth creates a discrimination-compliance problem. Ten pages of duties reads as unfocused. "Responsible for" throughout reads as passive. None of this is fair, and none of it is about your ability — it is formatting culture, and it is fully learnable in one afternoon. The rule underneath everything: <strong>a UK CV is an evidence document, not a biography.</strong> Two pages of proof that you produce results, aimed at one specific job.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">The master grid — include / exclude</div>
+  <div class="cols">
+    <div class="col">
+      <div class="col-title inc">✓ Include</div>
+      <div class="col-item"><strong>Name + contact line:</strong> email, phone, LinkedIn URL, city/region only ("Manchester, UK") — never full address</div>
+      <div class="col-item"><strong>Professional summary:</strong> 3–4 sentences at the top — who you are professionally, your strongest proof, what you are aiming at</div>
+      <div class="col-item"><strong>Work experience, reverse chronological:</strong> employer, role, dates (month + year), then 3–6 achievement bullets per recent role</div>
+      <div class="col-item"><strong>Quantified achievements:</strong> numbers, percentages, scale — "managed a team" is a duty; "led a team of 12 through a system migration completed 3 weeks early" is evidence</div>
+      <div class="col-item"><strong>Education + qualifications:</strong> degree, institution, year — with UK equivalence in brackets once you have your ENIC statement ("MSc equivalent — UK ENIC verified")</div>
+      <div class="col-item"><strong>Skills section:</strong> concrete and checkable — software, languages, certifications, methodologies</div>
+      <div class="col-item"><strong>UK context signals:</strong> right-to-work line if you choose to include it (see below), UK phone number, UK city</div>
+    </div>
+    <div class="col">
+      <div class="col-title exc">✗ Exclude — always</div>
+      <div class="col-item"><strong>Photo</strong> — UK CVs never carry photos; one signals unfamiliarity and creates bias-compliance discomfort</div>
+      <div class="col-item"><strong>Date of birth / age</strong> — age discrimination law makes this actively unwelcome</div>
+      <div class="col-item"><strong>Marital status, children, religion, nationality</strong> — standard in many countries; never in the UK</div>
+      <div class="col-item"><strong>Full home address</strong> — city is enough; full addresses are outdated and a privacy risk</div>
+      <div class="col-item"><strong>"References available on request"</strong> — assumed; the line wastes your scarcest resource (space)</div>
+      <div class="col-item"><strong>Salary history or expectations</strong> — negotiate later, never on the CV</div>
+      <div class="col-item"><strong>Every job you have ever had</strong> — pre-2010 roles compress to one line each or vanish; relevance beats completeness</div>
+      <div class="col-item"><strong>Objective statements about what YOU want</strong> — the summary is about what you offer, not what you seek</div>
+    </div>
+  </div>
+  <div class="callout"><strong>The two-page rule is real.</strong> UK recruiters spend 30–60 seconds on first screen, and two pages is the hard cultural norm (one page for early career, two for everyone else — three only in academia and medicine, where CVs follow their own conventions). If yours is longer, you are not being thorough; you are hiding your best evidence inside your weakest.</div>
+</div>
+
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Interactive — audit your current CV</div>
+  <div class="section-body" style="margin-bottom:12px">Open your CV beside this screen and tick every statement that is true of it right now. Be ruthless — the score only helps if it is honest.</div>
+  <div class="audit-box">
+    <div class="audit-item"><input type="checkbox" id="au0" onchange="auditScore()"><label for="au0">No photo anywhere on the document</label></div><div class="audit-item"><input type="checkbox" id="au1" onchange="auditScore()"><label for="au1">No date of birth, age, marital status, nationality, or religion</label></div><div class="audit-item"><input type="checkbox" id="au2" onchange="auditScore()"><label for="au2">Contact line shows city/region only — not my full home address</label></div><div class="audit-item"><input type="checkbox" id="au3" onchange="auditScore()"><label for="au3">It fits on two pages (one if early-career)</label></div><div class="audit-item"><input type="checkbox" id="au4" onchange="auditScore()"><label for="au4">A 3–4 sentence professional summary sits at the top</label></div><div class="audit-item"><input type="checkbox" id="au5" onchange="auditScore()"><label for="au5">Work experience runs reverse-chronological with month + year dates</label></div><div class="audit-item"><input type="checkbox" id="au6" onchange="auditScore()"><label for="au6">Every recent-role bullet leads with a result verb — zero “responsible for”</label></div><div class="audit-item"><input type="checkbox" id="au7" onchange="auditScore()"><label for="au7">At least half my bullets contain a number, percentage, or scale</label></div><div class="audit-item"><input type="checkbox" id="au8" onchange="auditScore()"><label for="au8">Overseas employers have a one-line context (size, ranking, market)</label></div><div class="audit-item"><input type="checkbox" id="au9" onchange="auditScore()"><label for="au9">My qualifications show UK equivalence (ENIC) where needed</label></div><div class="audit-item"><input type="checkbox" id="au10" onchange="auditScore()"><label for="au10">No “references available on request” line</label></div><div class="audit-item"><input type="checkbox" id="au11" onchange="auditScore()"><label for="au11">No salary history or expectations anywhere</label></div><div class="audit-item"><input type="checkbox" id="au12" onchange="auditScore()"><label for="au12">Skills section lists concrete, checkable items only</label></div><div class="audit-item"><input type="checkbox" id="au13" onchange="auditScore()"><label for="au13">Saved as PDF, filename Firstname-Lastname-CV.pdf</label></div><div class="audit-item"><input type="checkbox" id="au14" onchange="auditScore()"><label for="au14">UK English spelling throughout, proofed by a second reader</label></div>
+    <div class="audit-score"><div class="as-num" id="auditNum">0 / 15</div><div class="as-verdict" id="auditVerdict">Tick as you check — your convention score builds here.</div></div>
+  </div>
+</div>
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Language — the verbs that carry UK CVs</div>
+  <div class="step-block">
+    <div class="sb-title">Kill "responsible for" — lead every bullet with a result verb</div>
+    <div class="sb-body">The single highest-impact edit. UK CV culture reads "Responsible for managing budgets" as a job description; it reads "Reduced departmental costs by 18% while maintaining service levels" as a hire signal. Strong openers: delivered, increased, reduced, built, led, launched, negotiated, redesigned, saved, secured, trained, transformed.
+    <div class="script-box">Before: "Responsible for customer service and handling complaints."<br>After: "Resolved 40+ customer escalations weekly, raising satisfaction scores from 3.2 to 4.5 in six months."</div>
+    Modesty codes from home cultures ("assisted with", "was part of a team that") systematically undersell you here. If you did it, claim it plainly — plain claiming is not arrogance in UK convention; vagueness is the sin.</div>
+  </div>
+  <div class="step-block">
+    <div class="sb-title">Translate, don't transliterate, your experience</div>
+    <div class="sb-body">Employer names that mean nothing here need one line of scale context: "GTBank — one of West Africa's largest banks, 8,000+ staff". Convert currencies to GBP for impact figures ("managed a ₦2bn portfolio (~£1m)"). Map titles to UK equivalents where honest ("Assistant Manager (UK equivalent: Team Leader, 15 direct reports)"). You are not diminishing your history — you are making it legible in 30 seconds.</div>
+  </div>
+  <div class="step-block">
+    <div class="sb-title">Tailor per application — the 20-minute version</div>
+    <div class="sb-body">UK recruitment (human and ATS) matches your CV against the job advert's language. For each application: pull the 6–8 key phrases from the advert, make sure your genuine matching experience uses those exact words, and reorder bullets so the most relevant evidence leads. One master CV, tailored copies — never one generic CV fired at everything. This is the discipline your Task 4.3 application pipeline tracks.</div>
+  </div>
+</div>
+
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Interactive — build a result bullet</div>
+  <div class="section-body" style="margin-bottom:12px">Take one “responsible for” line from your current CV and rebuild it here. The formula: verb + what you did + measurable outcome.</div>
+  <div class="builder">
+    <div class="b-row"><label>1. Result verb</label><select id="bVerb"><option>Delivered</option><option>Increased</option><option>Reduced</option><option>Built</option><option>Led</option><option>Launched</option><option>Negotiated</option><option>Redesigned</option><option>Saved</option><option>Secured</option><option>Trained</option><option>Transformed</option><option>Resolved</option><option>Managed</option></select></div>
+    <div class="b-row"><label>2. What you did — specific, one clause</label><input type="text" id="bWhat" placeholder="e.g. the onboarding process for new branch staff"></div>
+    <div class="b-row"><label>3. The measurable outcome — number, %, scale, or timeframe</label><input type="text" id="bResult" placeholder="e.g. cutting training time from 6 weeks to 3"></div>
+    <button class="b-btn" onclick="buildBullet()">Assemble my bullet</button>
+    <div class="b-output" id="bOut"><div class="bo-text" id="bText"></div><button class="bo-copy" onclick="copyBullet()">Copy bullet</button></div>
+  </div>
+</div>
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Immigrant-specific traps — and the honest answers</div>
+  <table class="trap-table">
+    <tr><th>Trap</th><th>What to do</th></tr>
+    <tr><td><strong>The right-to-work question</strong></td><td>You are not obliged to state immigration status on a CV. If your status needs no sponsorship (Tracks C, D, E, F — or ILR), one line helps: "Full right to work in the UK — no sponsorship required." If you DO need sponsorship, leave it off the CV and address it at application-form stage honestly — never lie, but never lead with your hardest fact either.</td></tr>
+    <tr><td><strong>The overseas-experience discount</strong></td><td>Counter it with context lines (scale, rankings, revenue) and by front-loading any UK evidence you have — UK volunteering (permitted on every route), UK certifications, UK professional body membership. One line of UK evidence disproportionately reassures UK readers.</td></tr>
+    <tr><td><strong>The employment gap from migration</strong></td><td>Do not leave it silent — silence reads as concealment. One line, framed as action: "2024 — Relocated to the UK; completed ENIC qualification verification and [certification] while securing right to work." Gaps with narrative are normal; gaps without narrative are questions.</td></tr>
+    <tr><td><strong>Name-based bias</strong></td><td>It exists — studies consistently show identical CVs with minority-ethnic names receive fewer callbacks. You are NOT obliged to anglicise (see the Networking guide — keep your name). Practical mitigations that don't cost identity: LinkedIn URL prominently placed (profiles humanise), professional summary that leads with your strongest proof, and volume + referral strategies through Task 4.3 networks so no single screener controls your outcome.</td></tr>
+    <tr><td><strong>Qualification confusion</strong></td><td>Never assume the reader knows your home qualification. State the UK equivalence: "(UK ENIC: equivalent to UK Bachelor's degree)". £49.50 + VAT for the ENIC statement is the highest-ROI document in your job search — Task 2.2 covers getting it.</td></tr>
+  </table>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Format mechanics — the boring rules that matter</div>
+  <div class="section-body">PDF unless the advert says otherwise (Word can render differently on their machine). Filename: <strong>Firstname-Lastname-CV.pdf</strong> — never "CV_final_v3_NEW". One clean font (Calibri, Arial, or Georgia), 10.5–12pt, real margins, no tables or text boxes or graphics — ATS systems parse plain structure best and mangle designed layouts. No headers/footers carrying key information (some ATS strip them). Dates aligned consistently, month + year format. Spelling: UK English throughout ("organised", "programme", "labour") — and have one native-reader friend or your Rare Circle group proof it, because a single "recieved" undoes a page of evidence.</div>
+  <div class="warning"><strong>Never say — the five instant credibility killers:</strong> "Hardworking team player with excellent communication skills" (empty — show, never declare); any invented UK experience (verification is routine, and a caught lie is fatal plus potentially a fraud issue for sponsored workers); criticism of a previous employer; "seeking any position" (reads as desperation — aim the document); and salary figures. And one platform note: a UK CV and a LinkedIn profile are different documents — the profile can be fuller and warmer; keep them consistent but not identical, and make sure dates match exactly, because recruiters cross-check.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">The 60-minute rebuild sequence</div>
+  <div class="section-body">1) Strip your current CV to raw material: every role, every achievement you can evidence. 2) Write the summary last — it is the trailer, and you cannot cut a trailer before the film exists. 3) Convert every duty bullet to a result bullet with a number where truthful. 4) Apply the include/exclude grid ruthlessly. 5) Add context lines for overseas employers and ENIC equivalences. 6) Cut to two pages — if it hurts, it is working. 7) Send it to one professional in your sector for review (your Task 4.3 network, or Rare Circle). Then it enters the application pipeline — tailored per role, tracked in the app, improved by what gets responses.</div>
+</div>
+
+<script>
+const VERDICTS=[[15,"Fully conventional — this CV reads native. Send it."],[12,"Nearly there — fix the unticked items; they are quick wins."],[8,"Solid core, visible gaps — an afternoon of edits changes your response rate."],[4,"Your CV is likely costing you interviews on format alone. Work through the grid above, top to bottom."],[0,"Start with the 60-minute rebuild sequence at the end of this guide — you will feel the difference within a week of applications."]];
+function auditScore(){
+  const boxes=document.querySelectorAll('.audit-item input');
+  let n=0;boxes.forEach(b=>{if(b.checked)n++});
+  document.getElementById('auditNum').textContent=n+' / '+boxes.length;
+  let v=VERDICTS[VERDICTS.length-1][1];
+  for(const [min,txt] of VERDICTS){if(n>=min){v=txt;break;}}
+  document.getElementById('auditVerdict').textContent=v;
+  try{localStorage.setItem('rs_cv_audit',JSON.stringify([...boxes].map(b=>b.checked)))}catch(e){}
+}
+function buildBullet(){
+  const verb=document.getElementById('bVerb').value;
+  const what=document.getElementById('bWhat').value.trim();
+  const res=document.getElementById('bResult').value.trim();
+  if(!what){alert('Add what you did — one specific clause.');return;}
+  let out=verb+' '+what;
+  if(res)out+=(res.match(/^(by|from|to|in|within|across|resulting)/i)?', ':', ')+res;
+  out=out.replace(/\s+/g,' ').replace(/[.,]\s*$/,'')+'.';
+  document.getElementById('bText').textContent=out;
+  document.getElementById('bOut').classList.add('show');
+}
+function copyBullet(){
+  const t=document.getElementById('bText').textContent;
+  navigator.clipboard.writeText(t).then(()=>{
+    const btn=document.querySelector('.bo-copy');btn.textContent='Copied ✓';setTimeout(()=>btn.textContent='Copy bullet',1500);
+  });
+}
+try{
+  const saved=JSON.parse(localStorage.getItem('rs_cv_audit')||'null');
+  if(saved){document.querySelectorAll('.audit-item input').forEach((b,i)=>{b.checked=!!saved[i]});auditScore();}
+}catch(e){}
+</script>
+
+</body>
+</html>

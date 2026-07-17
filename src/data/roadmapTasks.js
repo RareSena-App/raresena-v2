@@ -128,9 +128,9 @@ export const ROADMAP_TASKS = {
       ],
     },
     resources: [
-      { type: 'guide', title: 'How to read your eVisa and find every key date' },
-      { type: 'download', title: 'Visa Deadline Tracker template' },
-      { type: 'guide', title: 'How to create your UKVI account (step-by-step)' },
+      { type: 'guide', title: 'How to read your eVisa and find every key date', guideFile: 'RareSena_Guide_Reading_Your_eVisa_Key_Dates.html' },
+      { type: 'tracker', title: 'Visa & ILR Countdown Tracker (interactive tool)' },
+      { type: 'guide', title: 'How to create your UKVI account (step-by-step)', guideFile: 'RareSena_Guide_Create_UKVI_Account_StepByStep.html' },
     ],
     whatToExpectToFeel: 'Reading through visa conditions can trigger a specific anxiety — the feeling that your entire life here rests on a document. That feeling is real and reasonable. The system was designed to be managed, not to be kind. What this task does is move you from passive anxiety to active knowledge. Knowing your dates does not remove the pressure — but it removes the thing that makes pressure dangerous: not knowing.',
     completionPrompt: {
@@ -310,7 +310,7 @@ export const ROADMAP_TASKS = {
       { type: 'guide', title: 'Is my qualification recognised in the UK? The complete sector guide', guideFile: 'RareSena_Guide_Qualification_Recognition_Sector_Guide.html' },
       { type: 'external', title: 'UK ENIC Statement of Comparability application', url: 'https://www.enic.org.uk' },
       { type: 'interactive', title: 'UK professional summary builder' },
-      { type: 'guide', title: 'UK CV conventions: what to include, exclude, and never say' },
+      { type: 'guide', title: 'UK CV conventions: what to include, exclude, and never say', guideFile: 'RareSena_Guide_UK_CV_Conventions.html' },
       { type: 'product', title: 'Stage Worksheets Bundle (£25)', url: 'https://raresena.com' },
     ],
     whatToExpectToFeel: 'Mapping your professional identity to a new market can bring up something close to grief. You built expertise over years. You were good at what you did. And now you are being asked to translate, re-qualify, and prove yourself again to a system that does not yet know you. That is not failure. That is the cost of arrival — and it is a cost that says nothing about your capability and everything about the system\'s lack of portability. The work you do in this task starts building the bridge.',
@@ -410,6 +410,7 @@ export const ROADMAP_TASKS = {
     ],
     resources: [
       { type: 'interactive', title: 'Morning routine builder — time slots, habit categories, custom items' },
+      { type: 'guide', title: 'Nutrition Calculator — World Foods Edition (interactive tool)', guideFile: 'RareSena_Tool_Nutrition_Calculator_World_Foods.html' },
       { type: 'product', title: 'Habit and Routine Planner (£12)', url: 'https://raresena.com' },
     ],
     whatToExpectToFeel: 'Designing a routine feels easier than running one. The first week often goes well — novelty carries you. The second week is when the system is actually tested, because the novelty is gone and real life has reasserted itself. If week two is hard, that is not a sign the routine is wrong. It is the system working as it should — showing you which parts need to flex and which parts need to hold. Adjust, do not abandon.',
@@ -438,6 +439,7 @@ export const ROADMAP_TASKS = {
     resources: [
       { type: 'interactive', title: 'Habit library — 30 pre-set habits by category with custom input' },
       { type: 'tracker', title: 'In-app streak tracker' },
+      { type: 'guide', title: 'Nutrition Calculator — World Foods Edition (interactive tool)', guideFile: 'RareSena_Tool_Nutrition_Calculator_World_Foods.html' },
       { type: 'product', title: 'Ultimate Planner (£19)', url: 'https://raresena.com' },
     ],
     whatToExpectToFeel: 'Five habits sounds like a lot when you are already carrying the weight of a rebuild. It is not five new burdens — it is five anchors. Each one addresses a part of your life that, without deliberate attention, tends to drift during rebuilding: your body, your finances, your relationships, your progress, and your mind. When all five are running, you will notice something that is hard to describe until you feel it: a quiet confidence that comes not from having solved everything, but from knowing that the fundamentals are being tended to every day.',
@@ -588,6 +590,7 @@ export const ROADMAP_TASKS = {
     ],
     resources: [
       { type: 'guide', title: 'Networking in the UK without pretending to be someone else', guideFile: 'RareSena_Guide_Networking_UK_Authentically.html' },
+      { type: 'guide', title: 'UK CV conventions: what to include, exclude, and never say', guideFile: 'RareSena_Guide_UK_CV_Conventions.html' },
       { type: 'checklist', title: 'LinkedIn profile checklist' },
       { type: 'guide', title: 'Directory of UK professional communities by sector' },
     ],
@@ -669,8 +672,8 @@ export const ROADMAP_TASKS = {
     whatToExpectToFeel: 'Reading your own Stage 1 responses from where you now stand is one of the most powerful moments in the entire rebuild — and it can be unexpectedly emotional. The person who wrote those early answers was carrying so much and knew so little about what was coming. You are allowed to feel grief for them and pride at the same time. Both are accurate. That distance between then and now — that is the rebuild, measured not in tasks completed but in who you became while completing them.',
     completionPrompt: {
       type: 'text_response',
-      prompt: 'In 3–5 sentences, describe where you were when you started Reset and where you are now. What is the most important thing the journey taught you?',
-      minChars: 80,
+      prompt: 'Looking at your full journey from Task 1.1 to now — what is the single biggest difference between the person who started and the person reading this?',
+      minChars: 60,
     },
   },
 
@@ -687,7 +690,7 @@ export const ROADMAP_TASKS = {
       'Complete the prompt when your stream is activated — meaning it exists in the world and can receive money, even if it has not yet.',
     ],
     resources: [
-      { type: 'guide', title: 'Digital product and passive income for immigrants: what is visa-compliant and how to build it' },
+      { type: 'guide', title: 'Income options by visa type — what is permitted and what is not', guideFile: 'RareSena_Guide_Income_Options_By_Visa_Type.html' },
       { type: 'product', title: 'Rare Studio membership (from £19.99/mo)', url: 'https://raresena.com' },
       { type: 'product', title: 'Sovereignty Programme – Graduate (£3,000)', url: 'https://raresena.com' },
     ],
@@ -745,14 +748,9 @@ export const ROADMAP_TASKS = {
     ],
     whatToExpectToFeel: 'Writing dates next to sovereignty milestones does something uncomfortable: it makes the distance visible. Your ILR date might be years away. The deposit fund might look impossibly far from today\'s balance. Let the distance be visible anyway — because the alternative is not a shorter distance, it is an unmapped one. Every immigrant who reached sovereignty crossed this same distance. The only difference between drifting toward it and building toward it is the plan you are holding right now.',
     completionPrompt: {
-      type: 'checklist',
-      prompt: 'Confirm all four elements of your sovereignty plan are complete.',
-      items: [
-        { key: 'ilr', label: 'ILR/settlement pathway identified and key dates noted', inputType: 'checkbox' },
-        { key: 'financial', label: 'Financial independence target set with a specific figure and date', inputType: 'checkbox' },
-        { key: 'housing', label: 'Housing plan documented — own, rent long-term, or other', inputType: 'checkbox' },
-        { key: 'legacy', label: 'Legacy statement written — what you are building beyond yourself', inputType: 'checkbox' },
-      ],
+      type: 'text_response',
+      prompt: 'Name your three most important sovereignty milestones with their target dates. Be specific — a general answer will not do.',
+      minChars: 60,
     },
   },
 
