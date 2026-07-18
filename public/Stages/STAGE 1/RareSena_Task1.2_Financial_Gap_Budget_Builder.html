@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RareSena — Task 1.2 — Financial Gap and Budget Builder</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f0;color:#222;padding:24px;max-width:820px;margin:0 auto}
+.stage-badge{display:inline-flex;align-items:center;gap:6px;background:#1B2D5B;color:#fff;font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;margin-bottom:14px}
+.task-header{border-left:5px solid #B8962E;padding:14px 18px;background:#fff;border-radius:0 10px 10px 0;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.task-title{font-size:20px;font-weight:700;color:#1B2D5B;margin-bottom:5px}
+.task-meta{font-size:13px;color:#888}
+.section{margin-bottom:24px}
+.section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B8962E;margin-bottom:9px}
+.section-body{font-size:14px;line-height:1.75;color:#444}
+.steps{counter-reset:step;list-style:none;padding:0}
+.steps li{counter-increment:step;display:flex;gap:12px;margin-bottom:14px;font-size:14px;line-height:1.65;color:#444}
+.steps li::before{content:counter(step);min-width:26px;height:26px;background:#B8962E;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
+.track-note{background:#eef3ff;border-left:4px solid #1B2D5B;padding:12px 16px;border-radius:0 8px 8px 0;font-size:13px;color:#1B2D5B;line-height:1.65;margin-bottom:16px}
+.track-note strong{display:block;margin-bottom:4px;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.feel-box{background:#fff8e6;border:1.5px solid #e6b800;border-radius:8px;padding:14px 16px;font-size:14px;line-height:1.65;color:#7a5a00}
+.divider{height:1px;background:#e0e0dc;margin:22px 0}
+.builder{background:#fff;border:1px solid #e0e0dc;border-radius:10px;padding:18px;margin-bottom:14px}
+.builder-title{font-size:14px;font-weight:700;color:#1B2D5B;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.row label{font-size:13px;color:#555;flex:1;min-width:0}
+.row input[type=number]{width:100px;padding:6px 10px;border-radius:6px;border:1px solid #ccc;font-size:13px;color:#222;text-align:right;background:#fafafa}
+.row input[type=number]:focus{outline:none;border-color:#1B2D5B}
+.add-row{font-size:12px;color:#1B2D5B;cursor:pointer;display:flex;align-items:center;gap:4px;margin-top:6px;font-weight:600}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:18px 0}
+.summary-card{background:#fff;border:1px solid #e0e0dc;border-radius:8px;padding:14px;text-align:center}
+.summary-label{font-size:11px;color:#999;margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em}
+.summary-value{font-size:22px;font-weight:700}
+.income-val{color:#1a6b2e}
+.expense-val{color:#8b0000}
+.surplus{color:#1a6b2e}
+.deficit{color:#8b0000}
+.resource-card{background:#fff;border:1px solid #e0e0dc;border-radius:8px;padding:13px 15px;margin-bottom:9px;display:flex;align-items:flex-start;gap:12px}
+.resource-icon{width:34px;height:34px;border-radius:7px;background:#1B2D5B;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:17px;color:#fff}
+.resource-name{font-size:13px;font-weight:700;color:#1B2D5B;margin-bottom:2px}
+.resource-desc{font-size:12px;color:#888;line-height:1.5}
+.tag{font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;background:#e8f0fe;color:#1B2D5B}
+.ext{font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;background:#e6f4ea;color:#1a6b2e}
+.prompt-box{background:#f0f4ff;border:1.5px solid #1B2D5B;border-radius:10px;padding:18px}
+.prompt-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1B2D5B;margin-bottom:8px}
+.pf{margin-bottom:12px}
+.pf label{font-size:12px;color:#555;display:block;margin-bottom:4px;font-weight:600}
+textarea{width:100%;padding:10px 12px;border-radius:7px;border:1.5px solid #ccc;font-size:13px;color:#222;background:#fff;resize:vertical;min-height:80px;font-family:Arial,sans-serif;line-height:1.55}
+textarea:focus{outline:none;border-color:#1B2D5B}
+.char-count{font-size:11px;color:#999;text-align:right;margin-top:3px}
+.done-btn{width:100%;padding:13px;background:#B8962E;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;margin-top:14px;opacity:.35;pointer-events:none;transition:opacity .2s}
+.done-btn.active{opacity:1;pointer-events:auto}
+.done-btn.active:hover{background:#a07a20}
+.warning{background:#fff0e6;border:1.5px solid #B8962E;border-radius:8px;padding:12px 15px;font-size:13px;color:#7a3300;line-height:1.6;margin-bottom:14px}
+</style>
+</head>
+<body>
+
+<div class="stage-badge">⚓ Stage 1 — Reset</div>
+
+<div class="task-header">
+  <div class="task-title">Task 1.2 — Identify your most pressing financial gap and one way to close it</div>
+  <div class="task-meta">⏱ 25–40 min &nbsp;·&nbsp; 💰 Clarity before action &nbsp;·&nbsp; All tracks</div>
+</div>
+
+<div class="section">
+  <div class="section-label">Why this matters</div>
+  <div class="section-body">Financial instability is the number one reason immigrants cannot focus on rebuilding. Not because they are bad with money — but because they are navigating a system that was not built for them, with no credit history, often no recourse to public funds, and sometimes no certainty about what they are even entitled to claim.<br><br>Until you know exactly where the gap is, you cannot close it. You cannot plan around something you have not named. This task forces clarity before action — because vague financial anxiety is far more paralysing than a specific number on a page. Name the number. Then name one action.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">What to do</div>
+  <ol class="steps">
+    <li>Use the budget builder below to list every income source you currently have — employment, partner contribution, savings drawdown, any benefits you are eligible for. Include everything, even irregular or uncertain amounts. Estimate where you have to.</li>
+    <li>List every essential monthly expense honestly. Rent, bills, food, transport, phone, childcare, any debt repayments. Do not leave things out because they feel embarrassing. The builder cannot help you if the numbers are not real.</li>
+    <li>Look at the gap or surplus the builder calculates. Then identify the single most precarious item — the one thing that, if it changed or disappeared tomorrow, would most destabilise your situation right now.</li>
+    <li>Name one specific action you will take this week to address it. Not a plan — one action. "I will open a Monzo account on Thursday." "I will call Citizens Advice on Monday about what I am entitled to on my visa." One thing. This week.</li>
+  </ol>
+
+  <div class="track-note">
+    <strong>Track-specific notes</strong>
+    <strong>Track A (Skilled Worker):</strong> If your employer pays you below the going rate for your occupation code, this may already be a compliance issue — not just a financial one. Check your CoS against your actual payslip.<br><br>
+    <strong>Track B (Student):</strong> Your income ceiling during term time is fixed by the 20-hour weekly work cap. Factor this into your calculations — you cannot simply work more to close a gap during term.<br><br>
+    <strong>Track C (Family / Spouse):</strong> If No Recourse to Public Funds (NRPF) applies to your visa, you cannot access most benefits even in serious hardship. Note this as a hard constraint. It changes what your safety net options are.<br><br>
+    <strong>Track D (BN(O)):</strong> You are entitled to access public funds and benefits on the same basis as a UK resident once you have settled status. If you have pre-settled status, some restrictions still apply — check your eVisa conditions.<br><br>
+    <strong>Track E (Refugee / Asylum):</strong> If awaiting a decision, asylum support is £49.18 per week (£7.02 per day). If you have just been granted status, note the exact date your asylum support ends — this is your financial cliff edge. Your Universal Credit application must be submitted before that date, not after.<br><br>
+    <strong>Track F (Global Talent):</strong> No employer tie and significant income flexibility — but no recourse to public funds typically applies. Your income calculation must account for any consultancy, self-employment, or employment income across all sources.<br><br>
+    <strong>Track G (Innovator Founder):</strong> Your business may not yet be generating revenue. Calculate your personal runway — how many months of personal expenses can you cover from existing funds while the business is pre-revenue? This is your most critical financial number right now.<br><br>
+    <strong>Track H (Self-Sponsored):</strong> Your company must pay you the minimum salary threshold (£41,700 as of July 2025) to maintain compliance. If the company cannot yet sustain this, you have a compliance risk as well as a financial one. These are linked.
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Budget builder — monthly snapshot</div>
+
+  <div class="builder">
+    <div class="builder-title">↑ Monthly income</div>
+    <div id="income-rows">
+      <div class="row"><label>Employment / salary (after tax)</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Self-employment / business income</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Partner / household contribution</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Benefits / tax credits (if eligible)</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Savings drawdown</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Other income (freelance, rental, etc.)</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+    </div>
+    <div class="add-row" onclick="addRow('income-rows', 'Additional income source')">+ Add income source</div>
+  </div>
+
+  <div class="builder">
+    <div class="builder-title">↓ Monthly essential expenses</div>
+    <div id="expense-rows">
+      <div class="row"><label>Rent / mortgage</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Council tax</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Gas and electricity</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Water</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Food and groceries</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Transport (travel card, fuel, etc.)</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Phone and broadband</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Childcare</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Debt repayments (credit cards, loans)</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Insurance (health, contents, etc.)</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Subscriptions and recurring payments</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Other essentials</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+    </div>
+    <div class="add-row" onclick="addRow('expense-rows', 'Additional expense')">+ Add expense</div>
+  </div>
+
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="summary-label">Total monthly income</div>
+      <div class="summary-value income-val" id="total-income">£0</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-label">Total monthly expenses</div>
+      <div class="summary-value expense-val" id="total-expense">£0</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-label">Monthly gap / surplus</div>
+      <div class="summary-value" id="gap-val">£0</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">What to expect to feel</div>
+  <div class="feel-box">Writing down numbers that feel frightening makes them more frightening for about five minutes — and then something shifts. The anxiety moves from diffuse to specific. A specific problem is something you can act on. Vague financial dread is not. If the numbers look very difficult right now, that is real information — not a verdict on you, and not a permanent state. It tells you exactly where the work needs to start. That is more useful than not knowing.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Tools and resources</div>
+
+  <div class="resource-card">
+    <div class="resource-icon">🏦</div>
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:start"><div class="resource-name">Guide: Breaking the banking catch-22 — open a UK account with no history</div><span class="tag">In-app</span></div>
+      <div class="resource-desc">How to open a UK bank account with no credit history, no proof of address, and no UK references. Covers accounts that accept ARC cards, eVisa documents, and pre-settled status. Includes Monzo, Starling, Suits Me, and Bloom Money.</div>
+    </div>
+  </div>
+
+  <div class="resource-card">
+    <div class="resource-icon">📈</div>
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:start"><div class="resource-name">Guide: Building UK credit from zero — the 6-step sequence</div><span class="tag">In-app</span></div>
+      <div class="resource-desc">Electoral roll registration, credit-builder card, direct debits, rent reporting tools, credit file monitoring — in the correct order. Takes 6–12 months to build a usable profile. Starts with step one, this week.</div>
+    </div>
+  </div>
+
+  <div class="resource-card">
+    <div class="resource-icon">🌐</div>
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:start"><div class="resource-name">Turn2us — benefits and grants eligibility checker</div><span class="ext">External</span></div>
+      <div class="resource-desc">turn2us.org.uk — enter your situation (including visa type) and it tells you which benefits and grants you may be eligible for. Works with NRPF filters. Free to use.</div>
+    </div>
+  </div>
+
+  <div class="resource-card">
+    <div class="resource-icon">🌐</div>
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:start"><div class="resource-name">Bloom Money — rotating savings for diaspora communities</div><span class="ext">External</span></div>
+      <div class="resource-desc">bloommoney.co — FCA-authorised rotating savings (ajo, susu, chit fund equivalent) for diaspora communities. Particularly relevant if you do not yet have a conventional UK banking relationship.</div>
+    </div>
+  </div>
+
+  <div class="resource-card">
+    <div class="resource-icon">🌐</div>
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:start"><div class="resource-name">Trussell Trust — find your nearest food bank</div><span class="ext">External</span></div>
+      <div class="resource-desc">trusselltrust.org — if you are in immediate food hardship, this is not a failure. It is a resource that exists for exactly this moment. Find your nearest food bank and use it without shame.</div>
+    </div>
+  </div>
+
+  <div class="resource-card">
+    <div class="resource-icon">🌐</div>
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:start"><div class="resource-name">Citizens Advice — money and debt support</div><span class="ext">External</span></div>
+      <div class="resource-desc">citizensadvice.org.uk · 0800 144 8848 — free, independent advice on your financial rights. Can advise on what you are entitled to on your specific visa type and what options exist if NRPF applies.</div>
+    </div>
+  </div>
+
+  <div class="resource-card">
+    <div class="resource-icon">🌐</div>
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:start"><div class="resource-name">StepChange — free debt advice</div><span class="ext">External</span></div>
+      <div class="resource-desc">stepchange.org · 0800 138 1111 — free, confidential debt advice. If you are in debt or at risk of falling into debt, this is the right first call. They work with your specific situation, not a generic script.</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="prompt-box">
+    <div class="prompt-label">✏ Completion prompt</div>
+    <p style="font-size:14px;color:#222;margin-bottom:14px;line-height:1.6">Answer both parts honestly. There is no wrong answer here — only the truth of where you are right now. Both fields must be completed before this task can be marked done.</p>
+    <div class="pf">
+      <label>What is your most pressing financial gap right now? (be specific — name the gap, the amount if possible, and why it is the most urgent)</label>
+      <textarea id="gap-desc" placeholder="e.g. My rent is £950/month and I am currently earning £600 after tax. The gap is £350 and I am covering it from savings that will run out in approximately 10 weeks. The most urgent thing is the rent shortfall, not the general tightness." oninput="checkPrompt()"></textarea>
+      <div class="char-count" id="char1">0 / 30 minimum characters</div>
+    </div>
+    <div class="pf">
+      <label>What is the one specific action you are taking this week to address it? (not a plan — one action, this week, with a day attached)</label>
+      <textarea id="gap-action" placeholder="e.g. I will call Citizens Advice on Tuesday morning to understand whether I am eligible for any emergency support given my visa conditions, and what my options are if the savings run out." oninput="checkPrompt()"></textarea>
+      <div class="char-count" id="char2">0 / 20 minimum characters</div>
+    </div>
+    <button class="done-btn" id="done-btn">✓ Mark task 1.2 complete</button>
+  </div>
+</div>
+
+<script>
+function calc(){
+  let inc=0,exp=0;
+  document.querySelectorAll('#income-rows input[type=number]').forEach(i=>inc+=parseFloat(i.value)||0);
+  document.querySelectorAll('#expense-rows input[type=number]').forEach(i=>exp+=parseFloat(i.value)||0);
+  const gap=inc-exp;
+  document.getElementById('total-income').textContent='£'+Math.round(inc).toLocaleString('en-GB');
+  document.getElementById('total-expense').textContent='£'+Math.round(exp).toLocaleString('en-GB');
+  const el=document.getElementById('gap-val');
+  if(gap>=0){el.textContent='+ £'+Math.round(gap).toLocaleString('en-GB');el.className='summary-value surplus';}
+  else{el.textContent='− £'+Math.round(Math.abs(gap)).toLocaleString('en-GB');el.className='summary-value deficit';}
+}
+function addRow(containerId,placeholder){
+  const c=document.getElementById(containerId);
+  const d=document.createElement('div');
+  d.className='row';
+  d.innerHTML='<input type="text" placeholder="'+placeholder+'" style="flex:1;padding:6px 10px;border-radius:6px;border:1px solid #ccc;font-size:13px;color:#222;background:#fafafa" /><input type="number" placeholder="0" min="0" oninput="calc()" style="width:100px;padding:6px 10px;border-radius:6px;border:1px solid #ccc;font-size:13px;color:#222;text-align:right;background:#fafafa" />';
+  c.appendChild(d);
+}
+function checkPrompt(){
+  const g=document.getElementById('gap-desc').value.trim();
+  const a=document.getElementById('gap-action').value.trim();
+  document.getElementById('char1').textContent=g.length+' / 30 minimum characters';
+  document.getElementById('char2').textContent=a.length+' / 20 minimum characters';
+  document.getElementById('done-btn').classList.toggle('active',g.length>=30&&a.length>=20);
+}
+</script>
+</body>
+</html>

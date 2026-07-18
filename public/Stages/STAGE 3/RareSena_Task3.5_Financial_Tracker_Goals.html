@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RareSena — Task 3.5 — Financial Tracking System and First Goal</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f0;color:#222;padding:24px;max-width:820px;margin:0 auto}
+.stage-badge{display:inline-flex;align-items:center;gap:6px;background:#2C5F2E;color:#fff;font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;margin-bottom:14px}
+.task-header{border-left:5px solid #B8962E;padding:14px 18px;background:#fff;border-radius:0 10px 10px 0;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.task-title{font-size:20px;font-weight:700;color:#2C5F2E;margin-bottom:5px}
+.task-meta{font-size:13px;color:#888}
+.section{margin-bottom:24px}
+.section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B8962E;margin-bottom:9px}
+.section-body{font-size:14px;line-height:1.75;color:#444}
+.steps{counter-reset:step;list-style:none;padding:0}
+.steps li{counter-increment:step;display:flex;gap:12px;margin-bottom:14px;font-size:14px;line-height:1.65;color:#444}
+.steps li::before{content:counter(step);min-width:26px;height:26px;background:#B8962E;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
+.divider{height:1px;background:#e0e0dc;margin:22px 0}
+.builder{background:#fff;border:1px solid #e0e0dc;border-radius:10px;padding:18px;margin-bottom:14px}
+.builder-title{font-size:14px;font-weight:700;color:#2C5F2E;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.row label{font-size:13px;color:#555;flex:1}
+.row input[type=number]{width:110px;padding:7px 10px;border-radius:6px;border:1px solid #ccc;font-size:13px;color:#222;text-align:right;background:#fafafa}
+.row input[type=number]:focus{outline:none;border-color:#2C5F2E}
+.add-row{font-size:12px;color:#2C5F2E;cursor:pointer;font-weight:700;margin-top:6px;display:inline-flex;align-items:center;gap:4px}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:16px 0}
+.summary-card{background:#f5f5f0;border:1px solid #e0e0dc;border-radius:8px;padding:13px;text-align:center}
+.summary-label{font-size:11px;color:#999;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+.summary-value{font-size:22px;font-weight:700}
+.surplus{color:#1a6b2e}
+.deficit{color:#8b0000}
+.neutral{color:#1B2D5B}
+.goal-builder{background:#1B2D5B;color:#fff;border-radius:12px;padding:20px;margin-bottom:14px}
+.gb-title{font-size:15px;font-weight:700;margin-bottom:6px}
+.gb-sub{font-size:13px;opacity:.8;line-height:1.6;margin-bottom:16px}
+.gb-field{margin-bottom:14px}
+.gb-field label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;opacity:.75;display:block;margin-bottom:5px}
+.gb-field input,.gb-field select,.gb-field textarea{width:100%;padding:9px 12px;border-radius:7px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;font-size:13px;font-family:Arial,sans-serif}
+.gb-field input::placeholder,.gb-field textarea::placeholder{color:rgba(255,255,255,.4)}
+.gb-field input:focus,.gb-field select:focus,.gb-field textarea:focus{outline:none;border-color:#B8962E}
+.gb-field select option{color:#222;background:#fff}
+.gb-field textarea{resize:vertical;min-height:60px;line-height:1.5}
+.goal-output{background:rgba(184,150,46,.2);border:1px solid rgba(184,150,46,.4);border-radius:8px;padding:14px;margin-top:14px;font-size:14px;line-height:1.7;min-height:60px;color:#fff}
+.milestone-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
+.milestone{background:rgba(255,255,255,.1);border-radius:8px;padding:10px;text-align:center}
+.milestone-val{font-size:16px;font-weight:700;color:#B8962E}
+.milestone-label{font-size:11px;opacity:.6;margin-top:3px}
+.progress-to-goal{margin-top:14px}
+.ptg-label{font-size:12px;opacity:.7;margin-bottom:6px}
+.ptg-bar{background:rgba(255,255,255,.15);border-radius:10px;height:10px;overflow:hidden}
+.ptg-fill{height:100%;border-radius:10px;background:#B8962E;transition:width .4s;width:0%}
+.ptg-pct{font-size:12px;color:#B8962E;margin-top:4px;font-weight:700}
+.savings-strategies{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.strategy-card{background:#fff;border:1px solid #e0e0dc;border-radius:8px;padding:12px}
+.strategy-title{font-size:13px;font-weight:700;color:#2C5F2E;margin-bottom:4px}
+.strategy-desc{font-size:12px;color:#666;line-height:1.5}
+.feel-box{background:#fff8e6;border:1.5px solid #e6b800;border-radius:8px;padding:14px 16px;font-size:14px;line-height:1.65;color:#7a5a00}
+.resource-card{background:#fff;border:1px solid #e0e0dc;border-radius:8px;padding:13px 15px;margin-bottom:9px}
+.resource-name{font-size:13px;font-weight:700;color:#2C5F2E;margin-bottom:2px}
+.resource-desc{font-size:12px;color:#888;line-height:1.5}
+.tag{font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;background:#e6f4e6;color:#1a4d1a}
+.ext{font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;background:#e6f4ea;color:#1a6b2e}
+.prompt-box{background:#f0f7f0;border:1.5px solid #2C5F2E;border-radius:10px;padding:18px}
+.prompt-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#2C5F2E;margin-bottom:8px}
+.pf{margin-bottom:12px}
+.pf label{font-size:12px;color:#555;display:block;margin-bottom:4px;font-weight:600}
+.pf input{width:100%;padding:9px 12px;border-radius:7px;border:1.5px solid #ccc;font-size:13px;color:#222;background:#fff}
+.pf input:focus{outline:none;border-color:#2C5F2E}
+.done-btn{width:100%;padding:13px;background:#B8962E;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;opacity:.35;pointer-events:none;transition:opacity .2s;margin-top:14px}
+.done-btn.active{opacity:1;pointer-events:auto}
+</style>
+</head>
+<body>
+
+<div class="stage-badge">⚙️ Stage 3 — Routine</div>
+<div class="task-header">
+  <div class="task-title">Task 3.5 — Create your financial tracking system and set your first goal</div>
+  <div class="task-meta">⏱ 30–45 min · Monthly maintenance · All tracks</div>
+</div>
+
+<div class="section">
+  <div class="section-label">Why this matters</div>
+  <div class="section-body">In Stage 1 you identified your most pressing financial gap and named one action to address it. That was triage — the emergency response. Stage 3 is where triage becomes system. A financial tracking system is not about spreadsheets or deprivation. It is about visibility. You cannot build toward financial sovereignty without knowing exactly what is coming in, what is going out, and what the distance is between where you are now and the first concrete financial goal.<br><br>This task has two parts: tracking and direction. The tracker gives you the monthly picture. The goal builder gives the picture a destination. Together they turn financial survival mode into financial intention — and financial intention is the first step toward the kind of independence that makes you unstoppable.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">What to do</div>
+  <ol class="steps">
+    <li>Complete the monthly tracker below — income, essential expenses, and discretionary spending. This is the operational picture: where the money actually is.</li>
+    <li>Use the goal builder to define your first financial goal — not "save more money" but a specific target, a specific date, and a specific plan for how you get there.</li>
+    <li>Set a monthly tracker reminder. The tracker is only useful if you update it every month. Pick a date — the first of the month, or the last Sunday — and set it now.</li>
+    <li>Complete the prompt with your three numbers: monthly income, monthly expenses, and your financial goal target. All three required.</li>
+  </ol>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Monthly financial tracker</div>
+
+  <div class="builder">
+    <div class="builder-title">↑ Monthly income</div>
+    <div id="income-rows">
+      <div class="row"><label>Employment / salary (after tax)</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Self-employment / business / freelance</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Partner / household contribution</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Benefits / tax credits (if eligible)</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Other income</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+    </div>
+    <div class="add-row" onclick="addRow('income-rows','Income source')">+ Add income source</div>
+  </div>
+
+  <div class="builder">
+    <div class="builder-title">↓ Monthly essential expenses</div>
+    <div id="essential-rows">
+      <div class="row"><label>Rent / mortgage</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Council tax</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Gas and electricity</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Water</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Food and groceries</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Transport</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Phone and broadband</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Childcare</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Debt repayments</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+    </div>
+    <div class="add-row" onclick="addRow('essential-rows','Expense')">+ Add expense</div>
+  </div>
+
+  <div class="builder">
+    <div class="builder-title">~ Monthly discretionary spending</div>
+    <div id="disc-rows">
+      <div class="row"><label>Eating out / takeaways</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Subscriptions and streaming</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Clothing and personal care</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Entertainment and social</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+      <div class="row"><label>Other discretionary</label><input type="number" placeholder="0" min="0" oninput="calc()" /></div>
+    </div>
+    <div class="add-row" onclick="addRow('disc-rows','Discretionary item')">+ Add item</div>
+  </div>
+
+  <div class="summary-grid">
+    <div class="summary-card"><div class="summary-label">Total monthly income</div><div class="summary-value surplus" id="total-inc">£0</div></div>
+    <div class="summary-card"><div class="summary-label">Total monthly outgoings</div><div class="summary-value deficit" id="total-out">£0</div></div>
+    <div class="summary-card"><div class="summary-label">Available to save / invest</div><div class="summary-value neutral" id="available">£0</div></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Set your first financial goal</div>
+  <div class="goal-builder">
+    <div class="gb-title">🎯 Your first financial goal</div>
+    <div class="gb-sub">Not a vague intention — a specific target, a specific date, and a specific weekly or monthly saving amount. The goal builder calculates what you need to set aside to get there.</div>
+
+    <div class="gb-field">
+      <label>What is your first financial goal?</label>
+      <select id="goal-type" onchange="buildGoal()">
+        <option value="">Select a goal type...</option>
+        <option value="emergency">Emergency fund — 3 months of essential expenses</option>
+        <option value="deposit">Rental deposit — one month's rent in savings</option>
+        <option value="credit">Credit building fund — open a credit-builder account</option>
+        <option value="enic">ENIC Statement of Comparability — £50–£100</option>
+        <option value="registration">Professional registration fee savings</option>
+        <option value="course">Course or qualification fee savings</option>
+        <option value="custom">Custom goal</option>
+      </select>
+    </div>
+
+    <div class="gb-field">
+      <label>Target amount (£)</label>
+      <input type="number" id="goal-amount" placeholder="e.g. 2400" oninput="buildGoal()" />
+    </div>
+
+    <div class="gb-field">
+      <label>Target date</label>
+      <input type="date" id="goal-date" oninput="buildGoal()" />
+    </div>
+
+    <div class="gb-field">
+      <label>What this goal means for your rebuild (one sentence)</label>
+      <textarea id="goal-meaning" placeholder="e.g. An emergency fund means that one unexpected bill, one bad week, or one delayed paycheck cannot destabilise everything I am building." rows="2" oninput="buildGoal()"></textarea>
+    </div>
+
+    <div class="goal-output" id="goal-output">Fill in the fields above to see your goal plan...</div>
+
+    <div class="milestone-row" id="milestone-row" style="display:none">
+      <div class="milestone"><div class="milestone-val" id="m-25">—</div><div class="milestone-label">25% milestone</div></div>
+      <div class="milestone"><div class="milestone-val" id="m-50">—</div><div class="milestone-label">50% milestone</div></div>
+      <div class="milestone"><div class="milestone-val" id="m-75">—</div><div class="milestone-label">75% milestone</div></div>
+    </div>
+
+    <div class="progress-to-goal" id="ptg" style="display:none">
+      <div class="ptg-label">Current progress toward goal</div>
+      <div class="ptg-bar"><div class="ptg-fill" id="ptg-fill"></div></div>
+      <div class="ptg-pct" id="ptg-pct">£0 saved of £0 target</div>
+      <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+        <label style="font-size:12px;color:rgba(255,255,255,.7)">Current savings toward this goal (£)</label>
+        <input type="number" id="current-savings" placeholder="0" style="width:100px;padding:6px 10px;border-radius:6px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;font-size:13px" oninput="updateProgress()" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Savings strategies that work on a UK rebuild budget</div>
+  <div class="savings-strategies">
+    <div class="strategy-card"><div class="strategy-title">The 1% rule</div><div class="strategy-desc">Save 1% of your income the moment it arrives. Not what is left at the end of the month — 1% off the top, automatically transferred. On £1,500/month that is £15. Tiny but consistent.</div></div>
+    <div class="strategy-card"><div class="strategy-title">Round-up saving</div><div class="strategy-desc">Monzo, Starling, and Chase all offer round-up features. Every transaction rounds up to the nearest pound and the difference goes to savings. Painless and automatic.</div></div>
+    <div class="strategy-card"><div class="strategy-title">No-spend days</div><div class="strategy-desc">Designate 2–3 days per week as no-spend days. No discretionary purchases at all. Track them in your weekly review. Even £5 not spent is £5 toward your goal.</div></div>
+    <div class="strategy-card"><div class="strategy-title">Bill audit once per quarter</div><div class="strategy-desc">Every three months, review every direct debit and subscription. Cancel anything unused. Switch energy tariff. Downgrade mobile plan if possible. Small reductions compound significantly.</div></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">What to expect to feel</div>
+  <div class="feel-box">Setting a financial goal when money is tight can feel like cruelty — like being asked to dream about a destination when you are not sure you can afford the bus. Do it anyway. The goal is not a fantasy. It is a structural device. It changes the relationship between income and expenditure from passive to intentional. Even if the first month you can only save £10 toward the goal — £10 toward something is categorically different from £10 spent on nothing. Direction matters more than speed.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Tools and resources</div>
+  <div class="resource-card">
+    <div style="display:flex;justify-content:space-between;align-items:start"><div class="resource-name">Guide: Reading your UK credit report — Experian, Equifax, TransUnion</div><span class="tag">In-app</span></div>
+    <div class="resource-desc">How to access all three free UK credit reports, what to look for, how to dispute errors, and how to track your score trajectory month by month.</div>
+  </div>
+  <div class="resource-card">
+    <div style="display:flex;justify-content:space-between;align-items:start"><div class="resource-name">Guide: How rent reporting tools build your credit score</div><span class="tag">In-app</span></div>
+    <div class="resource-desc">CreditLadder, Canopy, and similar tools report your monthly rent to credit agencies — turning your biggest monthly expense into a positive credit signal. Setup takes 15 minutes.</div>
+  </div>
+  <div class="resource-card">
+    <div style="display:flex;justify-content:space-between;align-items:start"><div class="resource-name">MoneyHelper — free UK financial guidance</div><span style="font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;background:#e6f4ea;color:#1a6b2e">External</span></div>
+    <div class="resource-desc">moneyhelper.org.uk — government-backed financial guidance service. Budget planner, pension calculator, debt advice, and benefits checker all in one place. Free and independent.</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="prompt-box">
+    <div class="prompt-label">✏ Completion prompt</div>
+    <p style="font-size:14px;color:#222;margin-bottom:12px;line-height:1.6">Enter your three numbers. All three required before this task can be marked done.</p>
+    <div class="pf">
+      <label>Monthly income total</label>
+      <input type="text" id="p-income" placeholder="e.g. £1,650" oninput="checkPrompt()" />
+    </div>
+    <div class="pf">
+      <label>Monthly essential expenses total</label>
+      <input type="text" id="p-expenses" placeholder="e.g. £1,280" oninput="checkPrompt()" />
+    </div>
+    <div class="pf">
+      <label>Your first financial goal — target amount and date</label>
+      <input type="text" id="p-goal" placeholder="e.g. £2,400 emergency fund by March 2026 — saving £75/month" oninput="checkPrompt()" />
+    </div>
+    <button class="done-btn" id="done-btn">✓ Mark task 3.5 complete</button>
+  </div>
+</div>
+
+<script>
+function calc(){
+  let inc=0,ess=0,disc=0;
+  document.querySelectorAll('#income-rows input[type=number]').forEach(i=>inc+=parseFloat(i.value)||0);
+  document.querySelectorAll('#essential-rows input[type=number]').forEach(i=>ess+=parseFloat(i.value)||0);
+  document.querySelectorAll('#disc-rows input[type=number]').forEach(i=>disc+=parseFloat(i.value)||0);
+  const out=ess+disc;
+  const avail=inc-out;
+  document.getElementById('total-inc').textContent='£'+Math.round(inc).toLocaleString('en-GB');
+  document.getElementById('total-out').textContent='£'+Math.round(out).toLocaleString('en-GB');
+  const av=document.getElementById('available');
+  av.textContent=(avail>=0?'£':'−£')+Math.abs(Math.round(avail)).toLocaleString('en-GB');
+  av.className='summary-value '+(avail>=0?'surplus':'deficit');
+}
+function addRow(id,placeholder){
+  const c=document.getElementById(id);
+  const d=document.createElement('div');
+  d.className='row';
+  d.innerHTML='<input type="text" placeholder="'+placeholder+'" style="flex:1;padding:7px 10px;border-radius:6px;border:1px solid #ccc;font-size:13px;color:#222;background:#fafafa" /><input type="number" placeholder="0" min="0" oninput="calc()" style="width:110px;padding:7px 10px;border-radius:6px;border:1px solid #ccc;font-size:13px;color:#222;text-align:right;background:#fafafa" />';
+  c.appendChild(d);
+}
+function buildGoal(){
+  const type=document.getElementById('goal-type').value;
+  const amount=parseFloat(document.getElementById('goal-amount').value)||0;
+  const dateVal=document.getElementById('goal-date').value;
+  const meaning=document.getElementById('goal-meaning').value.trim();
+  const out=document.getElementById('goal-output');
+  if(!type||!amount||!dateVal){out.textContent='Fill in all fields to see your goal plan...';return;}
+  const target=new Date(dateVal);
+  const now=new Date();
+  const monthsLeft=Math.max(1,Math.round((target-now)/(1000*60*60*24*30.44)));
+  const perMonth=Math.ceil(amount/monthsLeft);
+  const perWeek=Math.ceil(amount/(monthsLeft*4.33));
+  let text=`Goal: £${amount.toLocaleString('en-GB')} by ${target.toLocaleDateString('en-GB',{month:'long',year:'numeric'})}\n`;
+  text+=`Time remaining: ${monthsLeft} months\n`;
+  text+=`You need to save: £${perMonth.toLocaleString('en-GB')}/month or £${perWeek.toLocaleString('en-GB')}/week\n`;
+  if(meaning)text+=`\nWhy this matters: ${meaning}`;
+  out.textContent=text;
+  document.getElementById('m-25').textContent='£'+Math.round(amount*.25).toLocaleString('en-GB');
+  document.getElementById('m-50').textContent='£'+Math.round(amount*.5).toLocaleString('en-GB');
+  document.getElementById('m-75').textContent='£'+Math.round(amount*.75).toLocaleString('en-GB');
+  document.getElementById('milestone-row').style.display='grid';
+  document.getElementById('ptg').style.display='block';
+  updateProgress();
+}
+function updateProgress(){
+  const amount=parseFloat(document.getElementById('goal-amount').value)||0;
+  const current=parseFloat(document.getElementById('current-savings')&&document.getElementById('current-savings').value)||0;
+  if(!amount)return;
+  const pct=Math.min(100,Math.round(current/amount*100));
+  document.getElementById('ptg-fill').style.width=pct+'%';
+  document.getElementById('ptg-pct').textContent='£'+current.toLocaleString('en-GB')+' saved of £'+amount.toLocaleString('en-GB')+' target ('+pct+'%)';
+}
+function checkPrompt(){
+  const i=document.getElementById('p-income').value.trim();
+  const e=document.getElementById('p-expenses').value.trim();
+  const g=document.getElementById('p-goal').value.trim();
+  document.getElementById('done-btn').classList.toggle('active',i.length>1&&e.length>1&&g.length>5);
+}
+</script>
+</body>
+</html>

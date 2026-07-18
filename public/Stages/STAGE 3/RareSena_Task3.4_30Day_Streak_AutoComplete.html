@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RareSena — Task 3.4 — 30 Consecutive Days Streak</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f0;color:#222;padding:24px;max-width:820px;margin:0 auto}
+.stage-badge{display:inline-flex;align-items:center;gap:6px;background:#2C5F2E;color:#fff;font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;margin-bottom:14px}
+.task-header{border-left:5px solid #B8962E;padding:14px 18px;background:#fff;border-radius:0 10px 10px 0;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.task-title{font-size:20px;font-weight:700;color:#2C5F2E;margin-bottom:5px}
+.task-meta{font-size:13px;color:#888}
+.section{margin-bottom:24px}
+.section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B8962E;margin-bottom:9px}
+.section-body{font-size:14px;line-height:1.75;color:#444}
+.divider{height:1px;background:#e0e0dc;margin:22px 0}
+.streak-hero{background:#2C5F2E;border-radius:14px;padding:28px;color:#fff;text-align:center;margin-bottom:20px}
+.sh-number{font-size:72px;font-weight:700;color:#B8962E;line-height:1}
+.sh-label{font-size:16px;opacity:.8;margin-top:4px}
+.sh-habit{font-size:14px;opacity:.6;margin-top:8px;font-style:italic}
+.milestone-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.mc{background:#fff;border:2px solid #e0e0dc;border-radius:10px;padding:14px;text-align:center;transition:all .2s}
+.mc.reached{border-color:#2C5F2E;background:#e6f4e6}
+.mc.current-milestone{border-color:#B8962E;background:#fff8e6}
+.mc-num{font-size:24px;font-weight:700;color:#2C5F2E}
+.mc.reached .mc-num{color:#1a4d1a}
+.mc-label{font-size:11px;color:#888;margin-top:3px;line-height:1.3}
+.mc.reached .mc-label{color:#1a4d1a}
+.mc-check{font-size:18px;margin-top:4px}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:16px}
+.cal-header{font-size:10px;font-weight:700;color:#aaa;text-align:center;padding:4px 0;text-transform:uppercase}
+.cal-day{aspect-ratio:1;border-radius:6px;background:#f0f0ec;display:flex;align-items:center;justify-content:center;font-size:11px;color:#888;cursor:pointer;transition:all .15s;border:1px solid transparent}
+.cal-day.logged{background:#2C5F2E;color:#fff;font-weight:700;border-color:#1a4d1a}
+.cal-day.today{border:2px solid #B8962E}
+.cal-day.future{opacity:.3;cursor:default}
+.log-section{background:#fff;border:1px solid #e0e0dc;border-radius:10px;padding:18px;margin-bottom:16px}
+.log-title{font-size:14px;font-weight:700;color:#2C5F2E;margin-bottom:12px}
+.habit-log-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.habit-log-item{background:#f5f5f0;border:1.5px solid #e0e0dc;border-radius:8px;padding:11px 13px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .15s}
+.habit-log-item.done{background:#e6f4e6;border-color:#2C5F2E}
+.hli-check{width:22px;height:22px;border-radius:5px;border:1.5px solid #ccc;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;font-size:13px}
+.habit-log-item.done .hli-check{background:#2C5F2E;border-color:#2C5F2E;color:#fff}
+.hli-label{font-size:13px;color:#444;line-height:1.3}
+.log-btn{width:100%;padding:11px;background:#B8962E;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s}
+.log-btn:hover{background:#a07a20}
+.log-btn:disabled{opacity:.4;pointer-events:none}
+.autocomplete-banner{background:#B8962E;color:#fff;border-radius:12px;padding:20px;text-align:center;margin-bottom:20px;display:none}
+.ab-title{font-size:20px;font-weight:700;margin-bottom:6px}
+.ab-body{font-size:14px;opacity:.9;line-height:1.6}
+.feel-box{background:#fff8e6;border:1.5px solid #e6b800;border-radius:8px;padding:14px 16px;font-size:14px;line-height:1.65;color:#7a5a00}
+.info-box{background:#eef6ee;border-left:4px solid #2C5F2E;padding:12px 16px;border-radius:0 8px 8px 0;font-size:13px;color:#1a3d1a;line-height:1.65;margin-bottom:16px}
+</style>
+</head>
+<body>
+
+<div class="stage-badge">⚙️ Stage 3 — Routine</div>
+<div class="task-header">
+  <div class="task-title">Task 3.4 — Complete 30 consecutive days without breaking your streak</div>
+  <div class="task-meta">⏱ Daily log · Auto-completes at 30 days · All tracks</div>
+</div>
+
+<div class="section">
+  <div class="section-label">Why this matters</div>
+  <div class="section-body">This task does not require you to do anything new. It requires you to keep doing what you have already committed to — every single day, for thirty consecutive days.<br><br>That sounds simple. It is not. Thirty consecutive days is long enough to encounter at least one bad week, at least one crisis, at least one day when everything feels too heavy for a morning routine and five habits. The value of this task is not the streak number. It is what you discover about yourself when the streak is threatened and you choose to protect it anyway.<br><br>This task auto-completes. There is no prompt, no submission, no button to press. When the streak tracker records 30 consecutive logged days, the task marks itself done and Stage 3 moves one step closer to complete. All you have to do is show up.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="info-box">
+  <strong>How auto-completion works:</strong> This task is connected to your in-app streak tracker from Tasks 1.4 and 3.2. Every day you log your habits, the streak counter increments. When it reaches 30 consecutive days, this task automatically marks as complete in your Supabase profile — no action required from you. Miss a day and the counter resets to zero. The calendar below shows your progress in real time.
+</div>
+
+<div class="streak-hero">
+  <div class="sh-number" id="streak-display">0</div>
+  <div class="sh-label">consecutive days</div>
+  <div class="sh-habit" id="habit-display-main">Log your habits daily to build your streak</div>
+</div>
+
+<div class="section">
+  <div class="section-label">Milestone checkpoints</div>
+  <div class="milestone-cards">
+    <div class="mc" id="mc-7">
+      <div class="mc-num">7</div>
+      <div class="mc-label">One week — the habit is becoming real</div>
+      <div class="mc-check" id="check-7">○</div>
+    </div>
+    <div class="mc" id="mc-14">
+      <div class="mc-num">14</div>
+      <div class="mc-label">Two weeks — you are no longer deciding</div>
+      <div class="mc-check" id="check-14">○</div>
+    </div>
+    <div class="mc" id="mc-21">
+      <div class="mc-num">21</div>
+      <div class="mc-label">Three weeks — this is who you are becoming</div>
+      <div class="mc-check" id="check-21">○</div>
+    </div>
+    <div class="mc" id="mc-30">
+      <div class="mc-num">30</div>
+      <div class="mc-label">One month — Task 3.4 auto-completes ✓</div>
+      <div class="mc-check" id="check-30">○</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">30-day calendar</div>
+  <div class="calendar-grid" id="cal-grid">
+    <div class="cal-header">Mon</div>
+    <div class="cal-header">Tue</div>
+    <div class="cal-header">Wed</div>
+    <div class="cal-header">Thu</div>
+    <div class="cal-header">Fri</div>
+    <div class="cal-header">Sat</div>
+    <div class="cal-header">Sun</div>
+  </div>
+</div>
+
+<div class="autocomplete-banner" id="autocomplete-banner">
+  <div class="ab-title">🏆 30-Day Streak Complete</div>
+  <div class="ab-body">Task 3.4 has auto-completed. You showed up for 30 consecutive days. That is not a number — it is a character trait. Stage 3 is now one task closer to complete.</div>
+</div>
+
+<div class="log-section">
+  <div class="log-title">Log today's habits</div>
+  <div class="habit-log-grid" id="habit-log-grid">
+    <div class="habit-log-item" onclick="toggleHabit(this)"><div class="hli-check"></div><div class="hli-label">⚓ Habit 1 — Anchor habit</div></div>
+    <div class="habit-log-item" onclick="toggleHabit(this)"><div class="hli-check"></div><div class="hli-label">🏃 Habit 2 — Body</div></div>
+    <div class="habit-log-item" onclick="toggleHabit(this)"><div class="hli-check"></div><div class="hli-label">💰 Habit 3 — Finances</div></div>
+    <div class="habit-log-item" onclick="toggleHabit(this)"><div class="hli-check"></div><div class="hli-label">🤝 Habit 4 — Connection</div></div>
+    <div class="habit-log-item" onclick="toggleHabit(this)"><div class="hli-check"></div><div class="hli-label">🚀 Habit 5 — Forward progress</div></div>
+  </div>
+  <button class="log-btn" id="log-today-btn" onclick="logToday()" disabled>Log today — confirm all 5 habits done</button>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">What to expect to feel</div>
+  <div class="feel-box">Around day 10 to 14 the novelty is gone and something harder sets in — the question of whether this is worth it when nothing has dramatically changed yet. Keep going. The change that thirty days of consistent habits creates is not dramatic. It is structural. You will not wake up on day 31 transformed. You will wake up as someone who has proved to themselves that they keep their commitments for thirty days. That proof is more valuable than almost anything else you could have done with those thirty days.</div>
+</div>
+
+<script>
+let currentStreak=0, bestStreak=0, loggedDays=[], todayLogged=false;
+let habitsToday=[];
+
+function buildCalendar(){
+  const grid=document.getElementById('cal-grid');
+  const today=new Date();
+  const start=new Date(today);
+  start.setDate(today.getDate()-29);
+  const dayOfWeek=start.getDay();
+  const mondayOffset=(dayOfWeek===0?6:dayOfWeek-1);
+  for(let i=0;i<mondayOffset;i++){
+    const blank=document.createElement('div');
+    grid.appendChild(blank);
+  }
+  for(let i=0;i<30;i++){
+    const d=new Date(start);
+    d.setDate(start.getDate()+i);
+    const ds=d.toDateString();
+    const div=document.createElement('div');
+    const isToday=d.toDateString()===today.toDateString();
+    const isFuture=d>today;
+    div.className='cal-day'+(loggedDays.includes(ds)?' logged':'')+(isToday?' today':'')+(isFuture?' future':'');
+    div.textContent=d.getDate();
+    div.setAttribute('data-date',ds);
+    grid.appendChild(div);
+  }
+}
+
+function toggleHabit(el){
+  el.classList.toggle('done');
+  const check=el.querySelector('.hli-check');
+  check.textContent=el.classList.contains('done')?'✓':'';
+  const allDone=document.querySelectorAll('.habit-log-item.done').length===5;
+  document.getElementById('log-today-btn').disabled=!allDone;
+  if(allDone)document.getElementById('log-today-btn').textContent='Log today — all 5 habits confirmed ✓';
+  else document.getElementById('log-today-btn').textContent='Log today — confirm all 5 habits done';
+}
+
+function logToday(){
+  if(todayLogged)return;
+  const today=new Date().toDateString();
+  if(loggedDays.includes(today))return;
+  const yesterday=new Date(Date.now()-86400000).toDateString();
+  if(loggedDays.length>0&&loggedDays[loggedDays.length-1]===yesterday){currentStreak++;}
+  else{currentStreak=1;}
+  if(currentStreak>bestStreak)bestStreak=currentStreak;
+  loggedDays.push(today);
+  todayLogged=true;
+  document.getElementById('log-today-btn').disabled=true;
+  document.getElementById('log-today-btn').textContent='Logged today ✓';
+  updateStreakDisplay();
+  const todayCell=document.querySelector(`.cal-day[data-date="${today}"]`);
+  if(todayCell)todayCell.classList.add('logged');
+  checkMilestones();
+}
+
+function updateStreakDisplay(){
+  document.getElementById('streak-display').textContent=currentStreak;
+}
+
+function checkMilestones(){
+  [7,14,21,30].forEach(n=>{
+    const mc=document.getElementById('mc-'+n);
+    const check=document.getElementById('check-'+n);
+    if(currentStreak>=n){mc.classList.add('reached');check.textContent='✓';}
+    else if(currentStreak>=n-6&&currentStreak<n){mc.classList.add('current-milestone');}
+  });
+  if(currentStreak>=30){
+    document.getElementById('autocomplete-banner').style.display='block';
+  }
+}
+
+buildCalendar();
+</script>
+</body>
+</html>

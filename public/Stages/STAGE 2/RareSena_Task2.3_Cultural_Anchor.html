@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RareSena — Task 2.3 — Name Your Cultural Anchor</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f0;color:#222;padding:24px;max-width:820px;margin:0 auto}
+.stage-badge{display:inline-flex;align-items:center;gap:6px;background:#1A3A5C;color:#fff;font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;margin-bottom:14px}
+.task-header{border-left:5px solid #B8962E;padding:14px 18px;background:#fff;border-radius:0 10px 10px 0;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.task-title{font-size:20px;font-weight:700;color:#1A3A5C;margin-bottom:5px}
+.task-meta{font-size:13px;color:#888}
+.section{margin-bottom:24px}
+.section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B8962E;margin-bottom:9px}
+.section-body{font-size:14px;line-height:1.75;color:#444}
+.steps{counter-reset:step;list-style:none;padding:0}
+.steps li{counter-increment:step;display:flex;gap:12px;margin-bottom:14px;font-size:14px;line-height:1.65;color:#444}
+.steps li::before{content:counter(step);min-width:26px;height:26px;background:#B8962E;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
+.anchor-categories{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px}
+.anchor-cat{background:#fff;border:1.5px solid #e0e0dc;border-radius:8px;padding:12px;cursor:pointer;transition:all .15s;text-align:center}
+.anchor-cat:hover,.anchor-cat.selected{border-color:#B8962E;background:#fff8e6}
+.anchor-cat-icon{font-size:22px;margin-bottom:4px}
+.anchor-cat-label{font-size:13px;color:#444;font-weight:600}
+.anchor-cat-examples{font-size:11px;color:#888;margin-top:3px;line-height:1.4}
+.commitment-builder{background:#fff;border:1px solid #e0e0dc;border-radius:10px;padding:18px;margin-bottom:16px}
+.field-group{margin-bottom:14px}
+.field-group label{font-size:12px;font-weight:700;color:#555;display:block;margin-bottom:5px}
+.field-group input,.field-group textarea{width:100%;padding:9px 12px;border-radius:7px;border:1.5px solid #ccc;font-size:13px;color:#222;font-family:Arial,sans-serif}
+.field-group textarea{resize:vertical;min-height:70px;line-height:1.5}
+.field-group input:focus,.field-group textarea:focus{outline:none;border-color:#1A3A5C}
+.commitment-output{background:#1A3A5C;color:#fff;border-radius:10px;padding:16px;font-size:14px;line-height:1.7;min-height:60px;margin-top:14px}
+.research-box{background:#eef3ff;border-left:4px solid #1A3A5C;padding:14px 16px;border-radius:0 8px 8px 0;font-size:13px;color:#1A3A5C;line-height:1.7;margin-bottom:16px}
+.research-box strong{display:block;margin-bottom:6px;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+.feel-box{background:#fff8e6;border:1.5px solid #e6b800;border-radius:8px;padding:14px 16px;font-size:14px;line-height:1.65;color:#7a5a00}
+.divider{height:1px;background:#e0e0dc;margin:22px 0}
+.prompt-box{background:#f0f4ff;border:1.5px solid #1A3A5C;border-radius:10px;padding:18px}
+.prompt-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1A3A5C;margin-bottom:8px}
+.pf label{font-size:12px;color:#555;display:block;margin-bottom:4px;font-weight:600}
+textarea.prompt-ta{width:100%;padding:10px 12px;border-radius:7px;border:1.5px solid #ccc;font-size:13px;color:#222;background:#fff;resize:vertical;min-height:80px;font-family:Arial,sans-serif;line-height:1.55}
+textarea.prompt-ta:focus{outline:none;border-color:#1A3A5C}
+.char-count{font-size:11px;color:#999;text-align:right;margin-top:3px;margin-bottom:14px}
+.done-btn{width:100%;padding:13px;background:#B8962E;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;opacity:.35;pointer-events:none;transition:opacity .2s}
+.done-btn.active{opacity:1;pointer-events:auto}
+</style>
+</head>
+<body>
+
+<div class="stage-badge">🔭 Stage 2 — Rediscover</div>
+
+<div class="task-header">
+  <div class="task-title">Task 2.3 — Name one cultural anchor you will always maintain</div>
+  <div class="task-meta">⏱ 20–30 min &nbsp;·&nbsp; 🌍 Integration does not require erasure &nbsp;·&nbsp; All tracks</div>
+</div>
+
+<div class="section">
+  <div class="section-label">Why this matters</div>
+  <div class="section-body">The pressure to assimilate in a new country is real, constant, and largely unspoken. It arrives through small moments — the way people look at you when you speak your first language in public, the advice to "anglicise" your name for job applications, the slow drift away from food, music, celebration, and ritual that once held your life together.<br><br>The research on this is clear and consistent: immigrants who maintain a meaningful connection to their heritage culture while building in the new one have measurably better mental health outcomes than those who abandon it entirely in pursuit of belonging. This is not nostalgia — it is protective. The parts of you that existed before you arrived are not obstacles to rebuilding. They are resources.<br><br>This task asks you to name one thing deliberately — before it gets lost in the noise of survival — and to make a commitment about how it stays present in your life here.</div>
+
+  <div class="research-box">
+    <strong>The evidence behind this task</strong>
+    Clinical research on cultural bereavement (Bhugra; Eisenbruch) and acculturation theory (Berry's model) consistently shows that immigrants who maintain heritage cultural connections alongside UK integration — rather than abandoning one for the other — experience lower rates of depression, stronger sense of identity, and faster social integration. The concept of "continuing bonds" from grief theory also applies: maintaining connection to who you were does not prevent you from becoming who you are becoming. It supports it.
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">What to do</div>
+  <ol class="steps">
+    <li>Reflect on this question: <em>What one practice, tradition, language, food, ritual, music, or community connection do you refuse to give up — the thing that, if you stopped, would feel like losing a part of yourself?</em> Take a moment with it. Do not pick something aspirational. Pick something true.</li>
+    <li>Name it. Select a category below that resonates, then describe your specific anchor.</li>
+    <li>Decide how it will remain present in your life in the UK specifically. Not "I will try to maintain it" — a concrete decision: what day, how often, with whom, in what form.</li>
+    <li>Write it as a commitment statement using the builder below. This is saved to your profile as a permanent reminder of what you are protecting alongside what you are building.</li>
+  </ol>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">What category does your anchor fall into?</div>
+  <div class="anchor-categories">
+    <div class="anchor-cat" onclick="selectCat(this,'Language')"><div class="anchor-cat-icon">🗣️</div><div class="anchor-cat-label">Language</div><div class="anchor-cat-examples">Mother tongue, dialect, code-switching, reading in your first language</div></div>
+    <div class="anchor-cat" onclick="selectCat(this,'Food and cooking')"><div class="anchor-cat-icon">🍲</div><div class="anchor-cat-label">Food and cooking</div><div class="anchor-cat-examples">Recipes, ingredients, Sunday meals, fasting, celebration foods</div></div>
+    <div class="anchor-cat" onclick="selectCat(this,'Faith and spiritual practice')"><div class="anchor-cat-icon">🙏</div><div class="anchor-cat-label">Faith and spiritual practice</div><div class="anchor-cat-examples">Prayer, mosque, church, temple, devotional reading, fasting, ritual</div></div>
+    <div class="anchor-cat" onclick="selectCat(this,'Music and arts')"><div class="anchor-cat-icon">🎵</div><div class="anchor-cat-label">Music and arts</div><div class="anchor-cat-examples">Listening, playing, dancing, traditional arts, storytelling</div></div>
+    <div class="anchor-cat" onclick="selectCat(this,'Family traditions and rituals')"><div class="anchor-cat-icon">👨‍👩‍👧</div><div class="anchor-cat-label">Family traditions</div><div class="anchor-cat-examples">Celebrations, anniversaries, naming, greetings, family calls</div></div>
+    <div class="anchor-cat" onclick="selectCat(this,'Community and belonging')"><div class="anchor-cat-icon">🤝</div><div class="anchor-cat-label">Community</div><div class="anchor-cat-examples">Diaspora groups, mutual aid, elder relationships, collective celebration</div></div>
+    <div class="anchor-cat" onclick="selectCat(this,'Dress and appearance')"><div class="anchor-cat-icon">👗</div><div class="anchor-cat-label">Dress and appearance</div><div class="anchor-cat-examples">Traditional clothing, head coverings, cultural dress on specific occasions</div></div>
+    <div class="anchor-cat" onclick="selectCat(this,'Values and philosophy')"><div class="anchor-cat-icon">💭</div><div class="anchor-cat-label">Values and philosophy</div><div class="anchor-cat-examples">Ubuntu, filial piety, collectivism, hospitality as duty, specific ethical frameworks</div></div>
+    <div class="anchor-cat" onclick="selectCat(this,'Something else')"><div class="anchor-cat-icon">✨</div><div class="anchor-cat-label">Something else</div><div class="anchor-cat-examples">Anything that does not fit a category above</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">Build your commitment statement</div>
+  <div class="commitment-builder">
+    <div class="field-group">
+      <label>Describe your specific cultural anchor (be concrete)</label>
+      <textarea id="anchor-desc" placeholder="e.g. Speaking Yoruba with my children every evening, even on days when English would be easier. Teaching them the words for things that do not translate." oninput="buildCommitment()"></textarea>
+    </div>
+    <div class="field-group">
+      <label>How will it remain present in your life here — specifically? (day, frequency, with whom)</label>
+      <textarea id="anchor-how" placeholder="e.g. Every Sunday we cook a Nigerian meal together as a family. I also call my mother on Sunday evenings and we speak only Yoruba for the full call. I am looking for a local Yoruba-speaking community to join." oninput="buildCommitment()"></textarea>
+    </div>
+    <div style="font-size:12px;font-weight:700;color:#B8962E;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;margin-top:4px">Your commitment statement</div>
+    <div class="commitment-output" id="commitment-output">Fill in the fields above to generate your commitment statement...</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">What to expect to feel</div>
+  <div class="feel-box">Naming a cultural anchor can feel small and significant at the same time. Small because it is just one thing. Significant because saying it out loud — or writing it here — makes it real in a way that silent intention does not. You may also feel the weight of what you have already let slip since arriving, without even noticing. That is not failure — it is the cost of survival mode. This task is about moving out of survival mode, one deliberate decision at a time.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="prompt-box">
+    <div class="prompt-label">✏ Completion prompt</div>
+    <p style="font-size:14px;color:#222;margin-bottom:12px;line-height:1.6">What is your cultural anchor, and how will it stay present in your life here? Minimum 30 characters.</p>
+    <div class="pf">
+      <label>Your answer</label>
+      <textarea class="prompt-ta" id="prompt-answer" placeholder="e.g. My cultural anchor is speaking Igbo with my children daily and cooking traditional food every Sunday. It will stay present by making it a non-negotiable weekly ritual, not something we do when we have time." oninput="checkPrompt()"></textarea>
+      <div class="char-count" id="char-count">0 / 30 minimum characters</div>
+    </div>
+    <button class="done-btn" id="done-btn">✓ Mark task 2.3 complete</button>
+  </div>
+</div>
+
+<script>
+function selectCat(el,name){
+  document.querySelectorAll('.anchor-cat').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function buildCommitment(){
+  const d=document.getElementById('anchor-desc').value.trim();
+  const h=document.getElementById('anchor-how').value.trim();
+  const out=document.getElementById('commitment-output');
+  if(!d){out.textContent='Fill in the fields above to generate your commitment statement...';return;}
+  let s='My cultural anchor is: '+d;
+  if(h)s+='\n\nHow it stays present in my life here: '+h;
+  s+='\n\nThis is not negotiable. It travels with me.';
+  out.textContent=s;
+  document.getElementById('prompt-answer').value=d+(h?' — '+h:'');
+  checkPrompt();
+}
+function checkPrompt(){
+  const t=document.getElementById('prompt-answer').value.trim();
+  document.getElementById('char-count').textContent=t.length+' / 30 minimum characters';
+  document.getElementById('done-btn').classList.toggle('active',t.length>=30);
+}
+</script>
+</body>
+</html>

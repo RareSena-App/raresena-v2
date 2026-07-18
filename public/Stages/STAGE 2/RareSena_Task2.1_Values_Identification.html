@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RareSena — Task 2.1 — Values Identification Exercise</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f0;color:#222;padding:24px;max-width:820px;margin:0 auto}
+.stage-badge{display:inline-flex;align-items:center;gap:6px;background:#1A3A5C;color:#fff;font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;margin-bottom:14px}
+.task-header{border-left:5px solid #B8962E;padding:14px 18px;background:#fff;border-radius:0 10px 10px 0;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.task-title{font-size:20px;font-weight:700;color:#1A3A5C;margin-bottom:5px}
+.task-meta{font-size:13px;color:#888}
+.section{margin-bottom:24px}
+.section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B8962E;margin-bottom:9px}
+.section-body{font-size:14px;line-height:1.75;color:#444}
+.steps{counter-reset:step;list-style:none;padding:0}
+.steps li{counter-increment:step;display:flex;gap:12px;margin-bottom:14px;font-size:14px;line-height:1.65;color:#444}
+.steps li::before{content:counter(step);min-width:26px;height:26px;background:#B8962E;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
+.phase-label{font-size:13px;font-weight:700;color:#1A3A5C;margin-bottom:8px;margin-top:16px}
+.values-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:16px}
+.val-chip{background:#fff;border:1.5px solid #e0e0dc;border-radius:8px;padding:8px 6px;font-size:12px;color:#444;cursor:pointer;text-align:center;transition:all .15s;user-select:none;line-height:1.3}
+.val-chip:hover{border-color:#B8962E;background:#fffaf0}
+.val-chip.selected{border-color:#B8962E;background:#B8962E;color:#fff;font-weight:700}
+.val-chip.top3{border-color:#1A3A5C;background:#1A3A5C;color:#fff;font-weight:700}
+.progress-bar-wrap{background:#e0e0dc;border-radius:10px;height:8px;margin-bottom:6px;overflow:hidden}
+.progress-bar{height:100%;border-radius:10px;background:#B8962E;transition:width .3s}
+.progress-label{font-size:12px;color:#888;margin-bottom:14px}
+.top3-section{background:#fff;border:1px solid #e0e0dc;border-radius:10px;padding:16px;margin-bottom:16px}
+.top3-item{background:#f5f7ff;border-radius:8px;padding:12px 14px;margin-bottom:10px}
+.top3-title{font-size:14px;font-weight:700;color:#1A3A5C;margin-bottom:8px}
+textarea{width:100%;padding:9px 11px;border-radius:7px;border:1.5px solid #ccc;font-size:13px;color:#222;background:#fff;resize:vertical;min-height:60px;font-family:Arial,sans-serif;line-height:1.5;margin-top:4px}
+textarea:focus{outline:none;border-color:#1A3A5C}
+.feel-box{background:#fff8e6;border:1.5px solid #e6b800;border-radius:8px;padding:14px 16px;font-size:14px;line-height:1.65;color:#7a5a00}
+.divider{height:1px;background:#e0e0dc;margin:22px 0}
+.resource-card{background:#fff;border:1px solid #e0e0dc;border-radius:8px;padding:13px 15px;margin-bottom:9px;display:flex;align-items:flex-start;gap:12px}
+.resource-name{font-size:13px;font-weight:700;color:#1A3A5C;margin-bottom:2px}
+.resource-desc{font-size:12px;color:#888;line-height:1.5}
+.tag{font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;background:#e8f0fe;color:#1A3A5C}
+.ext{font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;background:#e6f4ea;color:#1a6b2e}
+.prompt-box{background:#f0f4ff;border:1.5px solid #1A3A5C;border-radius:10px;padding:18px}
+.prompt-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1A3A5C;margin-bottom:8px}
+.pf label{font-size:12px;color:#555;display:block;margin-bottom:4px;font-weight:600}
+.char-count{font-size:11px;color:#999;text-align:right;margin-top:3px;margin-bottom:14px}
+.done-btn{width:100%;padding:13px;background:#B8962E;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;opacity:.35;pointer-events:none;transition:opacity .2s}
+.done-btn.active{opacity:1;pointer-events:auto}
+.selected-display{background:#1A3A5C;color:#fff;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:13px;min-height:44px}
+.selected-display span{display:inline-block;background:rgba(255,255,255,.2);border-radius:6px;padding:3px 10px;margin:3px 4px 3px 0;font-size:12px}
+</style>
+</head>
+<body>
+
+<div class="stage-badge">🔭 Stage 2 — Rediscover</div>
+
+<div class="task-header">
+  <div class="task-title">Task 2.1 — Complete the values identification exercise</div>
+  <div class="task-meta">⏱ 30–45 min &nbsp;·&nbsp; 💡 Who you are beneath everything that changed &nbsp;·&nbsp; All tracks</div>
+</div>
+
+<div class="section">
+  <div class="section-label">Why this matters</div>
+  <div class="section-body">When everything external has changed — country, job, status, community, daily rhythm, language of the street — your values are the only constant. They did not cross the border and get checked at customs. They came with you.<br><br>But without naming them deliberately, values drift. You begin to rebuild by default — chasing what seems most urgent, most practical, most acceptable to the new system. And then one day you look up and realise you have been building someone else's life in a new country.<br><br>This exercise names your values before that can happen. It takes them out of the background and makes them structural — so that every decision about work, community, money, and direction in the stages ahead is tested against something that actually belongs to you.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">What to do</div>
+  <ol class="steps">
+    <li>Work through the 50 values below and select up to 10 that feel most true to who you are. Do not overthink. Your first instinct is usually more accurate than a considered choice. Tap any value to select it — tap again to deselect.</li>
+    <li>Once you have your top 10, review them and identify your <strong>top 3</strong> — the three you would refuse to compromise, even under pressure. Select them as your top 3 in the second phase below.</li>
+    <li>For each of your top 3: write one sentence on how this value showed up in your life before you arrived in the UK. Then write one sentence on how you intend it to show up here, in this rebuild, going forward.</li>
+    <li>Save your values to your profile. They will be visible on your dashboard throughout the rebuild as a reminder of what you are building toward — and why.</li>
+  </ol>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Phase 1 — Select your top 10 values</div>
+  <div class="progress-bar-wrap"><div class="progress-bar" id="pb" style="width:0%"></div></div>
+  <div class="progress-label" id="pl">0 of 10 selected</div>
+  <div class="values-grid" id="values-grid"></div>
+  <div class="selected-display" id="selected-display"><span style="opacity:.5">Your selected values will appear here</span></div>
+</div>
+
+<div class="section" id="top3-phase" style="display:none">
+  <div class="section-label">Phase 2 — Identify your top 3</div>
+  <div class="section-body" style="margin-bottom:12px">From your 10 selected values, tap the 3 that matter most — the ones you would not negotiate away even in a difficult situation.</div>
+  <div class="values-grid" id="top3-grid"></div>
+</div>
+
+<div class="section" id="reflection-phase" style="display:none">
+  <div class="section-label">Phase 3 — Reflect on each value</div>
+  <div class="top3-section" id="reflection-fields"></div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">What to expect to feel</div>
+  <div class="feel-box">Some people find this exercise energising — they recognise themselves clearly in what they select. Others find it quietly grief-inducing, because naming what you value makes visible how much of that has been stripped away or suppressed since you arrived. Both responses are valid. Both are information. The values you name here are not aspirational — they are descriptive. They describe who you already are. The rebuild is the work of expressing them in a new context.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Tools and resources</div>
+  <div class="resource-card">
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:start"><div class="resource-name">5R Rebuild Workbook — RareSena product</div><span class="tag">In-app product · £22</span></div>
+      <div class="resource-desc">The Workbook includes an extended values and identity section with reflection prompts, journalling exercises, and the full DO / FEEL / KNOW framework for each stage. Designed to sit alongside the app experience.</div>
+    </div>
+  </div>
+  <div class="resource-card">
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:start"><div class="resource-name">Stage Worksheets Bundle — RareSena product</div><span class="tag">In-app product · £25</span></div>
+      <div class="resource-desc">Printable and digital worksheets for each stage of the rebuild. The Rediscover worksheets include extended values work, professional identity mapping, and the cultural anchor exercise.</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="prompt-box">
+    <div class="prompt-label">✏ Completion prompt</div>
+    <p style="font-size:14px;color:#222;margin-bottom:12px;line-height:1.6">What is your top value, and how will it guide the rebuild you are building here? Minimum 40 characters.</p>
+    <div class="pf">
+      <label>Your answer</label>
+      <textarea id="prompt-answer" placeholder="e.g. My top value is integrity — being truthful about what I can do and refusing to misrepresent myself to get ahead faster. In the UK rebuild, this means I will only apply for roles I am genuinely qualified for, even if that means taking longer to find the right fit." oninput="checkPrompt()"></textarea>
+      <div class="char-count" id="char-count">0 / 40 minimum characters</div>
+    </div>
+    <button class="done-btn" id="done-btn">✓ Mark task 2.1 complete</button>
+  </div>
+</div>
+
+<script>
+const VALUES=[
+  'Integrity','Family','Independence','Growth','Security','Creativity','Justice','Community',
+  'Ambition','Resilience','Faith','Loyalty','Courage','Excellence','Freedom','Service',
+  'Authenticity','Learning','Dignity','Perseverance','Belonging','Leadership','Generosity','Discipline',
+  'Compassion','Privacy','Curiosity','Stability','Adventure','Respect','Wisdom','Connection',
+  'Hard work','Accountability','Simplicity','Tradition','Contribution','Purpose','Balance','Honesty',
+  'Legacy','Self-reliance','Kindness','Humility','Justice','Patience','Recognition','Impact','Trust','Harmony'
+];
+
+let selected=[], top3=[];
+
+function buildGrid(){
+  const g=document.getElementById('values-grid');
+  g.innerHTML='';
+  VALUES.forEach(v=>{
+    const d=document.createElement('div');
+    d.className='val-chip';
+    d.textContent=v;
+    d.onclick=()=>toggleValue(v,d);
+    g.appendChild(d);
+  });
+}
+
+function toggleValue(v,el){
+  if(selected.includes(v)){
+    selected=selected.filter(x=>x!==v);
+    top3=top3.filter(x=>x!==v);
+    el.classList.remove('selected','top3');
+  } else {
+    if(selected.length>=10)return;
+    selected.push(v);
+    el.classList.add('selected');
+  }
+  updateProgress();
+  updateSelectedDisplay();
+  if(selected.length===10)showTop3Phase();
+  else document.getElementById('top3-phase').style.display='none';
+}
+
+function updateProgress(){
+  const pct=selected.length/10*100;
+  document.getElementById('pb').style.width=pct+'%';
+  document.getElementById('pl').textContent=selected.length+' of 10 selected'+(selected.length===10?' — now identify your top 3 below':'');
+}
+
+function updateSelectedDisplay(){
+  const d=document.getElementById('selected-display');
+  if(selected.length===0){d.innerHTML='<span style="opacity:.5">Your selected values will appear here</span>';return;}
+  d.innerHTML=selected.map(v=>'<span>'+v+'</span>').join('');
+}
+
+function showTop3Phase(){
+  const ph=document.getElementById('top3-phase');
+  ph.style.display='block';
+  const g=document.getElementById('top3-grid');
+  g.innerHTML='';
+  selected.forEach(v=>{
+    const d=document.createElement('div');
+    d.className='val-chip'+(top3.includes(v)?' top3':'');
+    d.textContent=v;
+    d.onclick=()=>toggleTop3(v,d);
+    g.appendChild(d);
+  });
+  if(top3.length===3)showReflectionPhase();
+}
+
+function toggleTop3(v,el){
+  if(top3.includes(v)){
+    top3=top3.filter(x=>x!==v);
+    el.classList.remove('top3');
+  } else {
+    if(top3.length>=3)return;
+    top3.push(v);
+    el.classList.add('top3');
+  }
+  if(top3.length===3)showReflectionPhase();
+  else document.getElementById('reflection-phase').style.display='none';
+}
+
+function showReflectionPhase(){
+  const ph=document.getElementById('reflection-phase');
+  ph.style.display='block';
+  const f=document.getElementById('reflection-fields');
+  f.innerHTML='';
+  top3.forEach((v,i)=>{
+    f.innerHTML+=`<div class="top3-item">
+      <div class="top3-title">${i+1}. ${v}</div>
+      <label style="font-size:12px;color:#555;font-weight:600">How did this value show up in your life before you arrived in the UK?</label>
+      <textarea placeholder="One sentence — a specific example if possible..." rows="2"></textarea>
+      <label style="font-size:12px;color:#555;font-weight:600;margin-top:8px;display:block">How do you intend for this value to show up in your rebuild here?</label>
+      <textarea placeholder="One sentence — be as concrete as you can..." rows="2"></textarea>
+    </div>`;
+  });
+}
+
+function checkPrompt(){
+  const t=document.getElementById('prompt-answer').value.trim();
+  document.getElementById('char-count').textContent=t.length+' / 40 minimum characters';
+  document.getElementById('done-btn').classList.toggle('active',t.length>=40);
+}
+
+buildGrid();
+</script>
+</body>
+</html>

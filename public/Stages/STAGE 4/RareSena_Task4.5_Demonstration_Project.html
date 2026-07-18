@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RareSena — Task 4.5 — Complete One Project That Demonstrates Your Direction</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f0;color:#222;padding:24px;max-width:820px;margin:0 auto}
+.stage-badge{display:inline-flex;align-items:center;gap:6px;background:#7D3C0F;color:#fff;font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;margin-bottom:14px}
+.task-header{border-left:5px solid #B8962E;padding:14px 18px;background:#fff;border-radius:0 10px 10px 0;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.task-title{font-size:20px;font-weight:700;color:#7D3C0F;margin-bottom:5px}
+.task-meta{font-size:13px;color:#888}
+.section{margin-bottom:24px}
+.section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B8962E;margin-bottom:9px}
+.section-body{font-size:14px;line-height:1.75;color:#444}
+.steps{counter-reset:step;list-style:none;padding:0}
+.steps li{counter-increment:step;display:flex;gap:12px;margin-bottom:14px;font-size:14px;line-height:1.65;color:#444}
+.steps li::before{content:counter(step);min-width:26px;height:26px;background:#B8962E;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
+.divider{height:1px;background:#e0e0dc;margin:22px 0}
+.examples-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.example-card{background:#fff;border:1.5px solid #e0e0dc;border-radius:10px;padding:14px;cursor:pointer;transition:all .15s}
+.example-card:hover,.example-card.selected{border-color:#B8962E;background:#fffaf0}
+.example-card.selected{border-color:#7D3C0F}
+.ec-track{font-size:10px;font-weight:700;color:#B8962E;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.ec-title{font-size:13px;font-weight:700;color:#7D3C0F;margin-bottom:4px}
+.ec-desc{font-size:12px;color:#666;line-height:1.4}
+.project-brief{background:#fff;border:1px solid #e0e0dc;border-radius:10px;padding:18px;margin-bottom:16px}
+.pb-title{font-size:14px;font-weight:700;color:#7D3C0F;margin-bottom:12px}
+.field-group{margin-bottom:14px}
+.field-group label{font-size:12px;font-weight:700;color:#555;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
+.field-group input,.field-group textarea,.field-group select{width:100%;padding:9px 12px;border-radius:7px;border:1.5px solid #ccc;font-size:13px;color:#222;background:#fafafa;font-family:Arial,sans-serif}
+.field-group textarea{resize:vertical;min-height:65px;line-height:1.5}
+.field-group input:focus,.field-group textarea:focus,.field-group select:focus{outline:none;border-color:#7D3C0F;background:#fff}
+.progress-tracker{background:#1B2D5B;color:#fff;border-radius:12px;padding:18px;margin-bottom:16px}
+.pt-title{font-size:13px;font-weight:700;margin-bottom:12px;opacity:.8}
+.pt-stages{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px}
+.pt-stage{background:rgba(255,255,255,.1);border-radius:7px;padding:10px;text-align:center;cursor:pointer;transition:all .15s}
+.pt-stage.active{background:#B8962E}
+.pt-stage-label{font-size:11px;opacity:.7;margin-bottom:3px}
+.pt-stage-status{font-size:13px;font-weight:700}
+.feel-box{background:#fff8e6;border:1.5px solid #e6b800;border-radius:8px;padding:14px 16px;font-size:14px;line-height:1.65;color:#7a5a00}
+.resource-card{background:#fff;border:1px solid #e0e0dc;border-radius:8px;padding:13px 15px;margin-bottom:9px}
+.resource-name{font-size:13px;font-weight:700;color:#7D3C0F;margin-bottom:2px}
+.resource-desc{font-size:12px;color:#888;line-height:1.5}
+.tag{font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;background:#fde8d8;color:#7D3C0F}
+.prompt-box{background:#fdf5f0;border:1.5px solid #7D3C0F;border-radius:10px;padding:18px}
+.prompt-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7D3C0F;margin-bottom:8px}
+.pf{margin-bottom:12px}
+.pf label{font-size:12px;color:#555;display:block;margin-bottom:4px;font-weight:600}
+.pf textarea{width:100%;padding:9px 12px;border-radius:7px;border:1.5px solid #ccc;font-size:13px;color:#222;resize:vertical;min-height:80px;font-family:Arial,sans-serif;line-height:1.5;background:#fff}
+.pf textarea:focus{outline:none;border-color:#7D3C0F}
+.upload-area{border:2px dashed #ccc;border-radius:8px;padding:20px;text-align:center;margin-bottom:12px;cursor:pointer;transition:all .15s}
+.upload-area:hover{border-color:#B8962E;background:#fffaf0}
+.upload-text{font-size:13px;color:#888}
+.url-input{width:100%;padding:9px 12px;border-radius:7px;border:1.5px solid #ccc;font-size:13px;color:#222;background:#fff;margin-bottom:12px}
+.url-input:focus{outline:none;border-color:#7D3C0F}
+.char-count{font-size:11px;color:#999;text-align:right;margin-top:3px;margin-bottom:14px}
+.done-btn{width:100%;padding:13px;background:#B8962E;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;opacity:.35;pointer-events:none;transition:opacity .2s;margin-top:14px}
+.done-btn.active{opacity:1;pointer-events:auto}
+</style>
+</head>
+<body>
+<div class="stage-badge">📈 Stage 4 — Rise</div>
+<div class="task-header">
+  <div class="task-title">Task 4.5 — Complete one project that demonstrates your direction</div>
+  <div class="task-meta">⏱ This stage · Evidence of movement · All tracks</div>
+</div>
+
+<div class="section">
+  <div class="section-label">Why this matters</div>
+  <div class="section-body">Everything in Stage 4 has been about direction and intention — defining your 90 days, identifying your income stream, building your network, assessing your immigration support needs. Task 4.5 is where intention becomes evidence.<br><br>A project is not a plan. It is a completed thing — something that exists at the end of this stage that did not exist at the beginning. Something that demonstrates, to yourself and to others, that the direction you named in Task 4.1 is real.<br><br>The project does not need to be large. It needs to be real and it needs to be done. A completed ENIC application. A published piece of content. A first invoice sent. A professional portfolio built. A business plan submitted. A qualification exam sat. The scale matters less than the completion — because completion is the proof that you are a person who moves, not just a person who plans.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">What to do</div>
+  <ol class="steps">
+    <li>Choose a project from the examples below or define your own. It must be directly connected to your 90-day direction from Task 4.1 and completable within the remaining time in Stage 4.</li>
+    <li>Use the project brief to define exactly what done looks like — not "work on my CV" but "a completed, UK-formatted CV ready to send to employers, reviewed by one professional in my sector."</li>
+    <li>Set a completion date. Not a rough timeframe — a specific date. Mark it in your calendar now.</li>
+    <li>When complete, paste a link, upload evidence, or describe the completed project in the prompt below. That evidence is what marks this task done.</li>
+  </ol>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">What could your project be?</div>
+  <div class="examples-grid">
+    <div class="example-card" onclick="selectProject(this,'A UK-formatted CV and LinkedIn profile, reviewed by one professional in my sector')"><div class="ec-track">All tracks</div><div class="ec-title">Complete UK CV and LinkedIn profile</div><div class="ec-desc">A finished, reviewed, UK-formatted CV and fully optimised LinkedIn profile — ready to use, not just drafted.</div></div>
+    <div class="example-card" onclick="selectProject(this,'ENIC Statement of Comparability application submitted and reference number saved')"><div class="ec-track">All tracks — overseas qualified</div><div class="ec-title">Submit ENIC application</div><div class="ec-desc">The Statement of Comparability applied for and tracked. A concrete step in the professional recognition sequence.</div></div>
+    <div class="example-card" onclick="selectProject(this,'First UGC portfolio — 5 pieces across 2 categories, with a media kit ready to send')"><div class="ec-track">Creator tracks</div><div class="ec-title">UGC portfolio — 5 pieces</div><div class="ec-desc">Five completed UGC pieces across at least two categories. A media kit with rates, niche, and contact information.</div></div>
+    <div class="example-card" onclick="selectProject(this,'Professional registration application submitted with all required documents')"><div class="ec-track">Tracks A, C, D, E, F</div><div class="ec-title">Submit professional registration</div><div class="ec-desc">The NMC, GMC, GDC, SRA, or equivalent application submitted with all documents in order. Not started — done.</div></div>
+    <div class="example-card" onclick="selectProject(this,'First paying client or first invoice sent for a service in my professional field')"><div class="ec-track">Tracks C, D, F, G, H</div><div class="ec-title">First client or first invoice</div><div class="ec-desc">First revenue generated in your field. Not a plan for first revenue — actual money invoiced or received.</div></div>
+    <div class="example-card" onclick="selectProject(this,'Business plan or endorsement application completed and submitted')"><div class="ec-track">Tracks G, H</div><div class="ec-title">Business plan or endorsement application</div><div class="ec-desc">The Innovator Founder endorsement application or self-sponsorship business plan completed, reviewed, and submitted.</div></div>
+    <div class="example-card" onclick="selectProject(this,'Professional qualification exam sat or study programme enrolled')"><div class="ec-track">All tracks — professional routes</div><div class="ec-title">Qualification exam sat or programme enrolled</div><div class="ec-desc">The CBT, OSCE, SQE1, or equivalent sat — or a structured study programme formally enrolled and started.</div></div>
+    <div class="example-card" onclick="selectProject(this,'Custom project — defined in brief below')"><div class="ec-track">Any track</div><div class="ec-title">Custom project</div><div class="ec-desc">Something specific to your direction that does not fit a category above. Define it in the brief below.</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">Project brief</div>
+  <div class="project-brief">
+    <div class="pb-title">Define exactly what done looks like</div>
+    <div class="field-group">
+      <label>Project name — what you are building or completing</label>
+      <input type="text" id="project-name" placeholder="e.g. UK-formatted CV and LinkedIn profile" oninput="checkPrompt()" />
+    </div>
+    <div class="field-group">
+      <label>What does done look like? — specific, measurable, no ambiguity</label>
+      <textarea placeholder="e.g. A completed, UK-formatted CV reviewed by my contact James O. (NHS nurse), with all checkboxes from Task 4.3 ticked, and a LinkedIn profile with Open to Work activated and 3 endorsements requested." oninput="checkPrompt()"></textarea>
+    </div>
+    <div class="field-group">
+      <label>Completion date — specific date, in your calendar</label>
+      <input type="date" id="completion-date" oninput="checkPrompt()" />
+    </div>
+    <div class="field-group">
+      <label>How does this project demonstrate your 90-day direction from Task 4.1?</label>
+      <textarea placeholder="e.g. My 90-day direction is to secure a nursing role in my sector. A completed, reviewed CV is the non-negotiable first step — without it I cannot apply to anything." rows="2" oninput="checkPrompt()"></textarea>
+    </div>
+  </div>
+
+  <div class="progress-tracker">
+    <div class="pt-title">Project progress — tap to update</div>
+    <div class="pt-stages">
+      <div class="pt-stage" onclick="setStage(this,0)"><div class="pt-stage-label">Stage</div><div class="pt-stage-status">Not started</div></div>
+      <div class="pt-stage" onclick="setStage(this,1)"><div class="pt-stage-label">Stage</div><div class="pt-stage-status">In progress</div></div>
+      <div class="pt-stage" onclick="setStage(this,2)"><div class="pt-stage-label">Stage</div><div class="pt-stage-status">Nearly done</div></div>
+      <div class="pt-stage active" onclick="setStage(this,3)"><div class="pt-stage-label">Stage</div><div class="pt-stage-status">Complete ✓</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">What to expect to feel</div>
+  <div class="feel-box">Completing something in Stage 4 — even one thing — creates a disproportionate shift in your sense of agency. Not because the project itself is transformative, but because completion breaks the cycle of planning without proving. After Task 4.5, you are no longer someone who is going to do something. You are someone who has done something. That shift is internal, and it is permanent. Nobody can take it from you.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Tools and resources</div>
+  <div class="resource-card">
+    <div style="display:flex;justify-content:space-between;align-items:start"><div class="resource-name">Project brief template — RareSena</div><span class="tag">In-app</span></div>
+    <div class="resource-desc">A structured project brief template for defining the project, the done criteria, the completion date, and the accountability mechanism. Download and use alongside your weekly review in Task 3.3.</div>
+  </div>
+  <div class="resource-card">
+    <div style="display:flex;justify-content:space-between;align-items:start"><div class="resource-name">Rare Circle — Rise group accountability</div><span class="tag">In-app</span></div>
+    <div class="resource-desc">Share your project in the Rise group for peer accountability. State what you are building and when you will be done. Public commitment increases completion rates significantly — even in a small community.</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="prompt-box">
+    <div class="prompt-label">✏ Completion prompt — evidence required</div>
+    <p style="font-size:14px;color:#222;margin-bottom:12px;line-height:1.6">Describe your completed project in 2–3 sentences and paste a link or describe one piece of evidence that it is done. Both fields required.</p>
+    <div class="pf">
+      <label>Describe your completed project</label>
+      <textarea id="project-desc" placeholder="e.g. I completed my UK-formatted CV and LinkedIn profile. My contact James O. reviewed it and suggested two changes which I incorporated. I have submitted three job applications in the past 48 hours using it." oninput="checkPrompt()"></textarea>
+      <div class="char-count" id="char-count">0 / 40 minimum characters</div>
+    </div>
+    <div class="pf">
+      <label>Evidence — paste a link or describe one concrete thing that proves it is done</label>
+      <input type="text" id="evidence" placeholder="e.g. LinkedIn URL / application confirmation number / screenshot description / first invoice reference number" oninput="checkPrompt()" style="width:100%;padding:9px 12px;border-radius:7px;border:1.5px solid #ccc;font-size:13px;color:#222;background:#fff" />
+    </div>
+    <button class="done-btn" id="done-btn">✓ Mark task 4.5 complete — Stage 4 Rise is done</button>
+  </div>
+</div>
+
+<script>
+function selectProject(el,name){
+  document.querySelectorAll('.example-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('project-name').value=name;
+  checkPrompt();
+}
+function setStage(el,n){
+  document.querySelectorAll('.pt-stage').forEach(s=>s.classList.remove('active'));
+  el.classList.add('active');
+}
+function checkPrompt(){
+  const d=document.getElementById('project-desc').value.trim();
+  const e=document.getElementById('evidence').value.trim();
+  document.getElementById('char-count').textContent=d.length+' / 40 minimum characters';
+  document.getElementById('done-btn').classList.toggle('active',d.length>=40&&e.length>5);
+}
+</script>
+</body>
+</html>

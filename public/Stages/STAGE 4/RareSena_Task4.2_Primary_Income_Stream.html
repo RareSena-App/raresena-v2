@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RareSena — Task 4.2 — Identify and Start Your Primary Income Stream</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f0;color:#222;padding:24px;max-width:820px;margin:0 auto}
+.stage-badge{display:inline-flex;align-items:center;gap:6px;background:#7D3C0F;color:#fff;font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;margin-bottom:14px}
+.task-header{border-left:5px solid #B8962E;padding:14px 18px;background:#fff;border-radius:0 10px 10px 0;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.task-title{font-size:20px;font-weight:700;color:#7D3C0F;margin-bottom:5px}
+.task-meta{font-size:13px;color:#888}
+.section{margin-bottom:24px}
+.section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B8962E;margin-bottom:9px}
+.section-body{font-size:14px;line-height:1.75;color:#444}
+.steps{counter-reset:step;list-style:none;padding:0}
+.steps li{counter-increment:step;display:flex;gap:12px;margin-bottom:14px;font-size:14px;line-height:1.65;color:#444}
+.steps li::before{content:counter(step);min-width:26px;height:26px;background:#B8962E;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
+.divider{height:1px;background:#e0e0dc;margin:22px 0}
+.track-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.track-tab{padding:6px 13px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #ccc;background:#fff;color:#555;transition:all .15s}
+.track-tab.active{background:#7D3C0F;color:#fff;border-color:#7D3C0F}
+.track-content{display:none}
+.track-content.active{display:block}
+.track-intro{background:#fdf5f0;border-left:4px solid #7D3C0F;padding:12px 16px;border-radius:0 8px 8px 0;font-size:13px;color:#5a2d0c;line-height:1.65;margin-bottom:14px}
+.income-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.income-card{background:#fff;border:1.5px solid #e0e0dc;border-radius:10px;padding:14px;cursor:pointer;transition:all .15s}
+.income-card:hover,.income-card.selected{border-color:#B8962E;background:#fffaf0}
+.income-card.selected{border-color:#7D3C0F}
+.ic-icon{font-size:22px;margin-bottom:6px}
+.ic-title{font-size:13px;font-weight:700;color:#7D3C0F;margin-bottom:3px}
+.ic-desc{font-size:12px;color:#666;line-height:1.4}
+.ic-permit{font-size:11px;font-weight:700;padding:3px 8px;border-radius:10px;margin-top:6px;display:inline-block}
+.permit-yes{background:#e6f4ea;color:#1a6b2e}
+.permit-check{background:#fff8e6;color:#7a5a00}
+.permit-no{background:#fde8e8;color:#8b0000}
+.activation-plan{background:#fff;border:1px solid #e0e0dc;border-radius:10px;padding:18px;margin-bottom:16px}
+.ap-title{font-size:14px;font-weight:700;color:#7D3C0F;margin-bottom:12px}
+.field-group{margin-bottom:14px}
+.field-group label{font-size:12px;font-weight:700;color:#555;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
+.field-group input,.field-group textarea,.field-group select{width:100%;padding:9px 12px;border-radius:7px;border:1.5px solid #ccc;font-size:13px;color:#222;background:#fafafa;font-family:Arial,sans-serif}
+.field-group textarea{resize:vertical;min-height:65px;line-height:1.5}
+.field-group input:focus,.field-group textarea:focus,.field-group select:focus{outline:none;border-color:#7D3C0F;background:#fff}
+.warning-box{background:#fff0f0;border:1.5px solid #cc2222;border-radius:8px;padding:13px 15px;font-size:13px;color:#8b0000;line-height:1.6;margin-bottom:14px}
+.callout{background:#eef3ff;border-left:4px solid #1B2D5B;padding:12px 16px;border-radius:0 8px 8px 0;font-size:13px;color:#1B2D5B;line-height:1.65;margin-bottom:14px}
+.feel-box{background:#fff8e6;border:1.5px solid #e6b800;border-radius:8px;padding:14px 16px;font-size:14px;line-height:1.65;color:#7a5a00}
+.resource-card{background:#fff;border:1px solid #e0e0dc;border-radius:8px;padding:13px 15px;margin-bottom:9px}
+.resource-name{font-size:13px;font-weight:700;color:#7D3C0F;margin-bottom:2px}
+.resource-desc{font-size:12px;color:#888;line-height:1.5}
+.tag{font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;background:#fde8d8;color:#7D3C0F}
+.ext{font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;background:#e6f4ea;color:#1a6b2e}
+.prompt-box{background:#fdf5f0;border:1.5px solid #7D3C0F;border-radius:10px;padding:18px}
+.prompt-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7D3C0F;margin-bottom:8px}
+.pf{margin-bottom:12px}
+.pf label{font-size:12px;color:#555;display:block;margin-bottom:4px;font-weight:600}
+.pf textarea{width:100%;padding:9px 12px;border-radius:7px;border:1.5px solid #ccc;font-size:13px;color:#222;resize:vertical;min-height:80px;font-family:Arial,sans-serif;line-height:1.5;background:#fff}
+.pf textarea:focus{outline:none;border-color:#7D3C0F}
+.char-count{font-size:11px;color:#999;text-align:right;margin-top:3px;margin-bottom:14px}
+.done-btn{width:100%;padding:13px;background:#B8962E;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;opacity:.35;pointer-events:none;transition:opacity .2s;margin-top:14px}
+.done-btn.active{opacity:1;pointer-events:auto}
+</style>
+</head>
+<body>
+
+<div class="stage-badge">📈 Stage 4 — Rise</div>
+<div class="task-header">
+  <div class="task-title">Task 4.2 — Identify and start your primary income stream</div>
+  <div class="task-meta">⏱ 45–60 min · Visa-compliant · All tracks</div>
+</div>
+
+<div class="section">
+  <div class="section-label">Why this matters</div>
+  <div class="section-body">By Stage 4 you have a routine, a direction, and a financial tracking system. Now comes the question that determines whether the rebuild becomes sovereign or stays precarious: <em>where is your income coming from, and is it building toward independence or deepening dependence?</em><br><br>Most immigrants in the UK reach Stage 4 with one income source — usually employment or a single employer — and no plan for what happens if that source disappears. A Skilled Worker who loses their sponsor. A student who graduates and enters the 60-day clock. A spouse whose relationship changes. A refugee whose Universal Credit is reviewed.<br><br>This task is about identifying the primary income stream that is right for your visa track and your stage — and taking the first concrete action to activate or grow it. Not a plan. An action. This week.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Select your visa track for income guidance</div>
+  <div class="track-tabs">
+    <div class="track-tab active" onclick="sw('A')">Skilled Worker</div>
+    <div class="track-tab" onclick="sw('B')">Student</div>
+    <div class="track-tab" onclick="sw('C')">Family/Spouse</div>
+    <div class="track-tab" onclick="sw('D')">BN(O)</div>
+    <div class="track-tab" onclick="sw('E')">Refugee/Asylum</div>
+    <div class="track-tab" onclick="sw('F')">Global Talent</div>
+    <div class="track-tab" onclick="sw('G')">Innovator Founder</div>
+    <div class="track-tab" onclick="sw('H')">Self-Sponsored</div>
+  </div>
+
+  <div id="track-A" class="track-content active">
+    <div class="track-intro"><strong>Track A — Skilled Worker:</strong> Your right to work is tied to your sponsor. You can work full-time for your sponsor and, in most cases, do supplementary work up to 20 hours/week in a second job — but that second job must not be your primary activity and must be in an eligible occupation. Self-employment is not permitted unless you switch visa routes.</div>
+    <div class="income-grid">
+      <div class="income-card" onclick="selectIncome(this,'Employed — primary sponsored role')"><div class="ic-icon">💼</div><div class="ic-title">Primary sponsored employment</div><div class="ic-desc">Your main role. Ensure salary meets threshold (£41,700 or going rate). This is your anchor income.</div><span class="ic-permit permit-yes">✓ Fully permitted</span></div>
+      <div class="income-card" onclick="selectIncome(this,'Supplementary employment — up to 20hrs/week')"><div class="ic-icon">⏰</div><div class="ic-title">Supplementary employment</div><div class="ic-desc">Up to 20 hours/week in a second job in an eligible occupation. Must not be primary activity.</div><span class="ic-permit permit-check">⚠ Permitted with conditions</span></div>
+      <div class="income-card" onclick="selectIncome(this,'Digital products and passive income — check eligibility')"><div class="ic-icon">📦</div><div class="ic-title">Digital products</div><div class="ic-desc">Selling digital products (templates, courses, guides) may be considered self-employment. Get regulated immigration advice before activating.</div><span class="ic-permit permit-check">⚠ Seek advice first</span></div>
+      <div class="income-card" onclick="selectIncome(this,'Career advancement in current role')"><div class="ic-icon">📈</div><div class="ic-title">Career advancement</div><div class="ic-desc">Promotion, salary increase, or lateral move to a stronger sponsor. Often the safest and fastest income growth path on this route.</div><span class="ic-permit permit-yes">✓ Fully permitted</span></div>
+    </div>
+    <div class="warning-box"><strong>Critical — Track A:</strong> Self-employment and running a business as your primary activity is NOT permitted on a Skilled Worker visa. If your income strategy involves self-employment, you need regulated immigration advice before proceeding. The consequences of a breach include visa curtailment.</div>
+  </div>
+
+  <div id="track-B" class="track-content">
+    <div class="track-intro"><strong>Track B — Student:</strong> You can work up to 20 hours per week during term time and full-time during official vacation periods. You cannot be self-employed or run your own business. Your primary income must come from permitted employment within these hours.</div>
+    <div class="income-grid">
+      <div class="income-card" onclick="selectIncome(this,'Part-time employment within 20hr cap')"><div class="ic-icon">⏰</div><div class="ic-title">Part-time employment</div><div class="ic-desc">Up to 20 hours/week during term. Track your hours meticulously — a breach risks your visa immediately.</div><span class="ic-permit permit-yes">✓ Permitted within limits</span></div>
+      <div class="income-card" onclick="selectIncome(this,'Full-time employment during vacation periods')"><div class="ic-icon">☀️</div><div class="ic-title">Vacation-period employment</div><div class="ic-desc">Full-time work during official university vacation periods. Know your exact term dates and plan income accordingly.</div><span class="ic-permit permit-yes">✓ Permitted in vacations</span></div>
+      <div class="income-card" onclick="selectIncome(this,'Graduate Route planning — post-study income strategy')"><div class="ic-icon">🎓</div><div class="ic-title">Graduate Route planning</div><div class="ic-desc">Start planning now for the Graduate visa (2-year open work permit after graduation). Your post-study income strategy starts here.</div><span class="ic-permit permit-yes">✓ Plan now, activate later</span></div>
+      <div class="income-card" onclick="selectIncome(this,'University hardship fund and bursaries')"><div class="ic-icon">🏫</div><div class="ic-title">University hardship and bursaries</div><div class="ic-desc">Most UK universities have hardship funds, bursaries, and scholarship opportunities for international students. Most go unclaimed. Apply.</div><span class="ic-permit permit-yes">✓ Not employment — apply</span></div>
+    </div>
+  </div>
+
+  <div id="track-C" class="track-content">
+    <div class="track-intro"><strong>Track C — Family/Spouse:</strong> You typically have full right to work in the UK — employment, self-employment, and running a business are all permitted unless NRPF applies to your visa. Check your eVisa conditions carefully. If NRPF applies, this affects benefit eligibility but not your right to work.</div>
+    <div class="income-grid">
+      <div class="income-card" onclick="selectIncome(this,'Full-time employment in any sector')"><div class="ic-icon">💼</div><div class="ic-title">Full-time employment</div><div class="ic-desc">No restrictions on employment type or hours. Focus on roles that use your skills at the appropriate level.</div><span class="ic-permit permit-yes">✓ Fully permitted</span></div>
+      <div class="income-card" onclick="selectIncome(this,'Self-employment or freelancing')"><div class="ic-icon">🛠️</div><div class="ic-title">Self-employment</div><div class="ic-desc">Permitted. Register as self-employed with HMRC, get a UTR number, and keep clean financial records from day one.</div><span class="ic-permit permit-yes">✓ Fully permitted</span></div>
+      <div class="income-card" onclick="selectIncome(this,'Own business — limited company')"><div class="ic-icon">🏢</div><div class="ic-title">Own business</div><div class="ic-desc">You can incorporate and run your own UK limited company. No immigration restrictions on this route — just standard company law obligations.</div><span class="ic-permit permit-yes">✓ Fully permitted</span></div>
+      <div class="income-card" onclick="selectIncome(this,'Digital income — UGC, products, courses')"><div class="ic-icon">📱</div><div class="ic-title">Digital income</div><div class="ic-desc">UGC work, digital products, online courses, brand partnerships. All permitted. Declare income through self-assessment.</div><span class="ic-permit permit-yes">✓ Fully permitted</span></div>
+    </div>
+  </div>
+
+  <div id="track-D" class="track-content">
+    <div class="track-intro"><strong>Track D — BN(O) Hong Konger:</strong> You have full right to work in the UK — employment, self-employment, business ownership. No restrictions. You also have access to public funds once you have leave to remain. Focus on income that builds toward ILR and the 5-year settlement milestone.</div>
+    <div class="income-grid">
+      <div class="income-card" onclick="selectIncome(this,'Employment — any sector, any hours')"><div class="ic-icon">💼</div><div class="ic-title">Employment — unrestricted</div><div class="ic-desc">Full right to work in any sector. Prioritise roles that contribute to your ILR qualifying period and build a strong employment record.</div><span class="ic-permit permit-yes">✓ Fully permitted</span></div>
+      <div class="income-card" onclick="selectIncome(this,'Self-employment or business')"><div class="ic-icon">🏢</div><div class="ic-title">Self-employment or business</div><div class="ic-desc">Permitted. Register with HMRC for self-assessment if self-employed. Incorporated companies welcome.</div><span class="ic-permit permit-yes">✓ Fully permitted</span></div>
+      <div class="income-card" onclick="selectIncome(this,'Digital income — UGC, products, creator economy')"><div class="ic-icon">📱</div><div class="ic-title">Digital and creator income</div><div class="ic-desc">UGC, brand deals, digital products, online courses. All permitted. Your bilingual background and cultural perspective is a creator asset.</div><span class="ic-permit permit-yes">✓ Fully permitted</span></div>
+    </div>
+  </div>
+
+  <div id="track-E" class="track-content">
+    <div class="track-intro"><strong>Track E — Refugee/Asylum:</strong> If you have been granted refugee status or humanitarian protection, you have full right to work — the same as a UK citizen. If you are still awaiting a decision, you may be eligible for permission to work after 12 months. Your income options expand significantly once status is granted.</div>
+    <div class="income-grid">
+      <div class="income-card" onclick="selectIncome(this,'Employment — any sector (post-grant)')"><div class="ic-icon">💼</div><div class="ic-title">Employment — post-grant</div><div class="ic-desc">Full right to work in any sector once status is granted. No restrictions. Priority: employment that uses your skills and builds your UK work record.</div><span class="ic-permit permit-yes">✓ Fully permitted (post-grant)</span></div>
+      <div class="income-card" onclick="selectIncome(this,'Self-employment (post-grant)')"><div class="ic-icon">🛠️</div><div class="ic-title">Self-employment</div><div class="ic-desc">Permitted after grant of status. Register with HMRC as self-employed. Many refugees with professional skills start freelancing in their field during the registration period for their regulated profession.</div><span class="ic-permit permit-yes">✓ Permitted post-grant</span></div>
+      <div class="income-card" onclick="selectIncome(this,'Breaking Barriers employment programme')"><div class="ic-icon">🤝</div><div class="ic-title">Breaking Barriers programme</div><div class="ic-desc">Specialist employment support for refugees. 71% of clients hold at least a degree. Employer partnerships, CV support, and interview coaching.</div><span class="ic-permit permit-yes">✓ Apply — breaking-barriers.co.uk</span></div>
+      <div class="income-card" onclick="selectIncome(this,'Universal Credit and in-work benefits (post-grant)')"><div class="ic-icon">🏛️</div><div class="ic-title">Universal Credit in-work</div><div class="ic-desc">Once working, you may be eligible for Universal Credit top-up depending on income. Use the Turn2us calculator to check eligibility.</div><span class="ic-permit permit-yes">✓ Permitted post-grant</span></div>
+    </div>
+  </div>
+
+  <div id="track-F" class="track-content">
+    <div class="track-intro"><strong>Track F — Global Talent:</strong> You have maximum income flexibility. Employment, self-employment, business ownership, freelancing, consultancy, digital income — all permitted simultaneously, with no restrictions on sector or hours. Your visa was designed for this.</div>
+    <div class="income-grid">
+      <div class="income-card" onclick="selectIncome(this,'Consultancy and freelancing in endorsed field')"><div class="ic-icon">🎯</div><div class="ic-title">Consultancy in endorsed field</div><div class="ic-desc">The highest-value use of Global Talent flexibility. Charge professional rates. Build a client roster. No employer tie.</div><span class="ic-permit permit-yes">✓ Fully permitted</span></div>
+      <div class="income-card" onclick="selectIncome(this,'Employment plus portfolio income')"><div class="ic-icon">💼</div><div class="ic-title">Employment plus portfolio income</div><div class="ic-desc">Employment as anchor income, with consultancy, digital products, or speaking fees alongside. Maximum income architecture.</div><span class="ic-permit permit-yes">✓ Fully permitted</span></div>
+      <div class="income-card" onclick="selectIncome(this,'Digital products and intellectual property income')"><div class="ic-icon">📦</div><div class="ic-title">Digital and IP income</div><div class="ic-desc">Courses, books, tools, templates, speaking engagements. Income from your expertise that does not depend on presence. Global Talent visa is built for this.</div><span class="ic-permit permit-yes">✓ Fully permitted</span></div>
+      <div class="income-card" onclick="selectIncome(this,'Own company and business')"><div class="ic-icon">🏢</div><div class="ic-title">Own company</div><div class="ic-desc">You can incorporate, direct, and draw salary from your own company with no immigration restrictions.</div><span class="ic-permit permit-yes">✓ Fully permitted</span></div>
+    </div>
+  </div>
+
+  <div id="track-G" class="track-content">
+    <div class="track-intro"><strong>Track G — Innovator Founder:</strong> Your visa requires your endorsed business to be your primary professional activity at all times. You can do supplementary employment up to 20 hours/week — but if your employed work becomes more prominent than your business, your endorsement is at risk.</div>
+    <div class="income-grid">
+      <div class="income-card" onclick="selectIncome(this,'Own endorsed business — primary income focus')"><div class="ic-icon">🚀</div><div class="ic-title">Endorsed business — primary</div><div class="ic-desc">This must be your primary professional activity. Focus on generating your first revenue. Your ILR milestones depend on business progress, not employment.</div><span class="ic-permit permit-yes">✓ Required — primary focus</span></div>
+      <div class="income-card" onclick="selectIncome(this,'Supplementary employment — up to 20hrs/week')"><div class="ic-icon">⏰</div><div class="ic-title">Supplementary employment</div><div class="ic-desc">Up to 20 hours/week maximum. Cannot become your primary activity. Use as a bridge while the business grows — not as a permanent income substitute.</div><span class="ic-permit permit-check">⚠ Permitted — 20hr max only</span></div>
+      <div class="income-card" onclick="selectIncome(this,'Business revenue — products, services, contracts')"><div class="ic-icon">💰</div><div class="ic-title">Business revenue streams</div><div class="ic-desc">Products, services, B2B contracts, partnerships — all within your endorsed business. Your £1m revenue ILR milestone starts with your first invoice.</div><span class="ic-permit permit-yes">✓ Fully permitted — pursue actively</span></div>
+    </div>
+    <div class="warning-box"><strong>Track G critical reminder:</strong> Your endorsing body can withdraw your endorsement if they determine your business is not progressing. Your next mandatory contact point meeting is a compliance event — not optional. Know your date.</div>
+  </div>
+
+  <div id="track-H" class="track-content">
+    <div class="track-intro"><strong>Track H — Self-Sponsored (own company):</strong> Your visa is tied to your own company's sponsor licence. Your salary from that company must meet the threshold (£41,700 as of July 2025) and your role must match your CoS. Income from the company is permitted — additional self-employment or work for other employers needs careful immigration advice.</div>
+    <div class="income-grid">
+      <div class="income-card" onclick="selectIncome(this,'Salary from own company — compliant and documented')"><div class="ic-icon">🏢</div><div class="ic-title">Salary from own company</div><div class="ic-desc">Your primary income. Must meet the £41,700 threshold. Pay yourself through PAYE. Keep payslips, contracts, and board minutes — the Home Office may request these.</div><span class="ic-permit permit-yes">✓ Required — maintain threshold</span></div>
+      <div class="income-card" onclick="selectIncome(this,'Company dividends — in addition to salary')"><div class="ic-icon">💰</div><div class="ic-title">Company dividends</div><div class="ic-desc">Directors can take dividends in addition to salary. This is standard UK company practice — ensure your accountant structures this correctly.</div><span class="ic-permit permit-yes">✓ Permitted — get accountant advice</span></div>
+      <div class="income-card" onclick="selectIncome(this,'Company growth — clients, contracts, revenue')"><div class="ic-icon">📈</div><div class="ic-title">Company revenue growth</div><div class="ic-desc">Win clients, grow the business, increase revenue. This increases what you can legitimately pay yourself and builds the company value that supports ILR.</div><span class="ic-permit permit-yes">✓ Pursue actively</span></div>
+    </div>
+    <div class="warning-box"><strong>Track H critical reminder:</strong> If your company cannot sustain the minimum salary threshold, your visa compliance is at risk — not just your income. This is a legal obligation, not a financial aspiration. Get an immigration-specialist accountant involved early.</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Your income activation plan</div>
+  <div class="activation-plan">
+    <div class="ap-title">Turn your identified income stream into action</div>
+    <div class="field-group">
+      <label>Your primary income stream (selected or typed)</label>
+      <input type="text" id="income-stream" placeholder="e.g. Part-time nursing agency work while completing NMC registration" oninput="checkPrompt()" />
+    </div>
+    <div class="field-group">
+      <label>Current status — where are you with this income stream right now?</label>
+      <select id="income-status" onchange="checkPrompt()">
+        <option value="">Select...</option>
+        <option>Not yet started — planning phase</option>
+        <option>Research done — ready to begin</option>
+        <option>In progress — first steps taken</option>
+        <option>Active — generating some income</option>
+        <option>Active — this is my main income</option>
+      </select>
+    </div>
+    <div class="field-group">
+      <label>The one action you are taking this week to activate or grow it (specific — with a day)</label>
+      <textarea placeholder="e.g. Registering with two nursing agencies on Monday — Pulse Nursing and Medacs Healthcare. I have my NMC PIN so I am eligible to work as a locum while my permanent role search continues." oninput="checkPrompt()"></textarea>
+    </div>
+    <div class="field-group">
+      <label>Target monthly income from this stream in 90 days (realistic, not aspirational)</label>
+      <input type="text" id="income-target" placeholder="e.g. £800/month from agency nursing shifts" oninput="checkPrompt()" />
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">What to expect to feel</div>
+  <div class="feel-box">Income anxiety in Stage 4 is different from income anxiety in Stage 1. In Stage 1 it was survival anxiety — will I have enough to eat and pay rent? In Stage 4 it is direction anxiety — am I building the right thing, am I moving fast enough, is this actually going anywhere? Both are real. Both require action rather than reassurance. The action this task asks for is small and specific — one thing, this week. That is enough for now.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Tools and resources</div>
+  <div class="resource-card">
+    <div style="display:flex;justify-content:space-between;align-items:start"><div class="resource-name">Guide: Income options by visa type — what is permitted and what is not</div><span class="tag">In-app</span></div>
+    <div class="resource-desc">A complete reference guide covering all 8 visa tracks — employment conditions, self-employment rules, business ownership eligibility, and the specific actions that trigger a compliance breach on each route.</div>
+  </div>
+  <div class="resource-card">
+    <div style="display:flex;justify-content:space-between;align-items:start"><div class="resource-name">Breaking Barriers — refugee employment support</div><span class="ext">External (Track E)</span></div>
+    <div class="resource-desc">breaking-barriers.co.uk — specialist employment support for refugees. Employer partnerships, CV workshops, interview preparation, and professional skills translation. Free service.</div>
+  </div>
+  <div class="resource-card">
+    <div style="display:flex;justify-content:space-between;align-items:start"><div class="resource-name">HMRC self-employment registration</div><span class="ext">External</span></div>
+    <div class="resource-desc">gov.uk/set-up-sole-trader — register as self-employed with HMRC in 10 minutes. Required before you earn self-employment income. You need your NI number and a Government Gateway account.</div>
+  </div>
+  <div class="resource-card">
+    <div style="display:flex;justify-content:space-between;align-items:start"><div class="resource-name">Turn2us — in-work benefits checker</div><span class="ext">External</span></div>
+    <div class="resource-desc">turn2us.org.uk — check whether you are eligible for Universal Credit top-up or other in-work benefits based on your income and visa status. Many working immigrants miss benefits they are entitled to.</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="prompt-box">
+    <div class="prompt-label">✏ Completion prompt</div>
+    <p style="font-size:14px;color:#222;margin-bottom:12px;line-height:1.6">What is your primary income stream and what is the first action you have taken or will take this week to activate or grow it?</p>
+    <div class="pf">
+      <label>Your answer</label>
+      <textarea id="prompt-answer" placeholder="e.g. My primary income stream is nursing agency work — permitted on my current NMC registration while I complete the full UK registration process. I am registering with Pulse Nursing and Medacs Healthcare on Monday. Target: £800/month within 60 days from locum shifts." oninput="checkPrompt()"></textarea>
+      <div class="char-count" id="char-count">0 / 30 minimum characters</div>
+    </div>
+    <button class="done-btn" id="done-btn">✓ Mark task 4.2 complete</button>
+  </div>
+</div>
+
+<script>
+function sw(t){
+  document.querySelectorAll('.track-tab').forEach((el,i)=>el.classList.toggle('active',['A','B','C','D','E','F','G','H'][i]===t));
+  ['A','B','C','D','E','F','G','H'].forEach(id=>document.getElementById('track-'+id).classList.toggle('active',id===t));
+}
+function selectIncome(el,name){
+  document.querySelectorAll('.income-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('income-stream').value=name;
+  checkPrompt();
+}
+function checkPrompt(){
+  const t=document.getElementById('prompt-answer').value.trim();
+  document.getElementById('char-count').textContent=t.length+' / 30 minimum characters';
+  document.getElementById('done-btn').classList.toggle('active',t.length>=30);
+}
+</script>
+</body>
+</html>

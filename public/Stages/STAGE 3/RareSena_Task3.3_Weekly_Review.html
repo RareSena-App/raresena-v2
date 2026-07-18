@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RareSena — Task 3.3 — Build Your Weekly Review Practice</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f0;color:#222;padding:24px;max-width:820px;margin:0 auto}
+.stage-badge{display:inline-flex;align-items:center;gap:6px;background:#2C5F2E;color:#fff;font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;margin-bottom:14px}
+.task-header{border-left:5px solid #B8962E;padding:14px 18px;background:#fff;border-radius:0 10px 10px 0;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.task-title{font-size:20px;font-weight:700;color:#2C5F2E;margin-bottom:5px}
+.task-meta{font-size:13px;color:#888}
+.section{margin-bottom:24px}
+.section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B8962E;margin-bottom:9px}
+.section-body{font-size:14px;line-height:1.75;color:#444}
+.steps{counter-reset:step;list-style:none;padding:0}
+.steps li{counter-increment:step;display:flex;gap:12px;margin-bottom:14px;font-size:14px;line-height:1.65;color:#444}
+.steps li::before{content:counter(step);min-width:26px;height:26px;background:#B8962E;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
+.review-header{background:#2C5F2E;color:#fff;border-radius:12px;padding:18px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center}
+.rh-left h3{font-size:16px;font-weight:700;margin-bottom:4px}
+.rh-left p{font-size:12px;opacity:.75}
+.rh-right{text-align:right}
+.rh-week{font-size:22px;font-weight:700;color:#B8962E}
+.rh-date{font-size:11px;opacity:.6;margin-top:2px}
+.review-section{background:#fff;border:1px solid #e0e0dc;border-radius:10px;margin-bottom:12px;overflow:hidden}
+.rs-header{padding:14px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #f0f0ec;cursor:pointer;user-select:none}
+.rs-icon{font-size:20px}
+.rs-title{font-size:14px;font-weight:700;color:#2C5F2E;flex:1}
+.rs-tag{font-size:11px;font-weight:700;padding:2px 10px;border-radius:10px;background:#e6f4e6;color:#1a4d1a}
+.rs-body{padding:16px;display:none}
+.rs-body.open{display:block}
+.field-group{margin-bottom:14px}
+.field-group label{font-size:12px;font-weight:700;color:#555;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
+.field-group textarea{width:100%;padding:9px 12px;border-radius:7px;border:1.5px solid #ccc;font-size:13px;color:#222;background:#fafafa;resize:vertical;min-height:65px;font-family:Arial,sans-serif;line-height:1.5}
+.field-group textarea:focus{outline:none;border-color:#2C5F2E;background:#fff}
+.field-group input{width:100%;padding:9px 12px;border-radius:7px;border:1.5px solid #ccc;font-size:13px;color:#222;background:#fafafa}
+.field-group input:focus{outline:none;border-color:#2C5F2E;background:#fff}
+.rating-row{display:flex;gap:8px;margin-top:4px}
+.rating-btn{width:36px;height:36px;border-radius:50%;border:1.5px solid #e0e0dc;background:#fff;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;font-weight:700;color:#888}
+.rating-btn.selected{background:#2C5F2E;border-color:#2C5F2E;color:#fff}
+.rating-labels{display:flex;justify-content:space-between;font-size:10px;color:#aaa;margin-top:3px}
+.score-display{background:#f0f7f0;border:1px solid #c8e6c8;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:13px;color:#1a4d1a;display:none}
+.habit-tracker-mini{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:6px}
+.habit-mini{background:#f0f0ec;border-radius:6px;padding:8px 6px;text-align:center;cursor:pointer;transition:all .15s}
+.habit-mini.done{background:#2C5F2E;color:#fff}
+.habit-mini .hm-name{font-size:10px;line-height:1.3;margin-top:3px;color:#666}
+.habit-mini.done .hm-name{color:rgba(255,255,255,.8)}
+.habit-mini .hm-icon{font-size:16px}
+.feel-box{background:#fff8e6;border:1.5px solid #e6b800;border-radius:8px;padding:14px 16px;font-size:14px;line-height:1.65;color:#7a5a00}
+.divider{height:1px;background:#e0e0dc;margin:22px 0}
+.review-summary{background:#1B2D5B;color:#fff;border-radius:12px;padding:18px;margin-bottom:16px;display:none}
+.rs-sum-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;opacity:.7;margin-bottom:12px}
+.rs-sum-item{font-size:13px;margin-bottom:6px;line-height:1.5;padding-left:12px;border-left:2px solid rgba(184,150,46,.6)}
+.prompt-box{background:#f0f7f0;border:1.5px solid #2C5F2E;border-radius:10px;padding:18px}
+.prompt-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#2C5F2E;margin-bottom:8px}
+.pf{margin-bottom:12px}
+.pf label{font-size:12px;color:#555;display:block;margin-bottom:4px;font-weight:600}
+.pf textarea{width:100%;padding:9px 12px;border-radius:7px;border:1.5px solid #ccc;font-size:13px;color:#222;resize:vertical;min-height:80px;font-family:Arial,sans-serif;line-height:1.5}
+.pf textarea:focus{outline:none;border-color:#2C5F2E}
+.char-count{font-size:11px;color:#999;text-align:right;margin-top:3px;margin-bottom:14px}
+.done-btn{width:100%;padding:13px;background:#B8962E;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;opacity:.35;pointer-events:none;transition:opacity .2s;margin-top:14px}
+.done-btn.active{opacity:1;pointer-events:auto}
+.notification-setup{background:#eef6ee;border:1px solid #c8e6c8;border-radius:8px;padding:14px 16px;margin-bottom:16px}
+.ns-title{font-size:13px;font-weight:700;color:#1a4d1a;margin-bottom:8px}
+.ns-row{display:flex;gap:10px;align-items:center}
+.ns-row label{font-size:13px;color:#444;flex:1}
+.ns-row select,.ns-row input{padding:7px 10px;border-radius:6px;border:1px solid #ccc;font-size:13px;color:#222;background:#fff}
+</style>
+</head>
+<body>
+
+<div class="stage-badge">⚙️ Stage 3 — Routine</div>
+<div class="task-header">
+  <div class="task-title">Task 3.3 — Build your weekly review practice</div>
+  <div class="task-meta">⏱ 15–20 min weekly · Five dimensions · All tracks</div>
+</div>
+
+<div class="section">
+  <div class="section-label">Why this matters</div>
+  <div class="section-body">The weekly review is the most underrated practice in any rebuild. Not because it produces insight — though it does. Because it creates the discipline of honest self-assessment at regular intervals, before problems compound into crises.<br><br>Most immigrants rebuilding in the UK are in reactive mode for months — responding to the next urgent thing, never stepping back to assess whether the direction is right and whether the fundamentals are holding. The weekly review is the antidote to that. Fifteen minutes, once a week, across five dimensions: finances, career progress, connection, wellbeing, and one action forward. That is all it takes to move from reactive to deliberate.<br><br>The review you complete below is your first one. You will complete it every week from here — same day, same time, same five dimensions. This week's responses become the baseline everything else is measured against.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">What to do</div>
+  <ol class="steps">
+    <li>Set your weekly review day and time in the notification setup below. This seeds your weekly push notification — the prompt that arrives every week to bring you back to the review.</li>
+    <li>Complete your first review using the five-dimension template below. Be honest. The review is private. Its value comes entirely from accuracy, not from sounding good.</li>
+    <li>After your first review, respond to the completion prompt. Your biggest win and your biggest gap this week — two honest sentences. That is what marks this task done.</li>
+  </ol>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Set your weekly review notification</div>
+  <div class="notification-setup">
+    <div class="ns-title">📅 When do you want your weekly review reminder?</div>
+    <div class="ns-row">
+      <label>Day of the week</label>
+      <select id="review-day">
+        <option>Sunday evening</option>
+        <option>Monday morning</option>
+        <option>Friday afternoon</option>
+        <option>Saturday morning</option>
+      </select>
+    </div>
+    <div class="ns-row" style="margin-top:8px">
+      <label>Time</label>
+      <input type="time" id="review-time" value="19:00" />
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Your weekly review — complete all five dimensions</div>
+
+  <div class="review-header">
+    <div class="rh-left">
+      <h3>Weekly Review</h3>
+      <p>5R Rebuild Method · Stage 3 — Routine</p>
+    </div>
+    <div class="rh-right">
+      <div class="rh-week" id="week-num">Week 1</div>
+      <div class="rh-date" id="review-date"></div>
+    </div>
+  </div>
+
+  <!-- DIMENSION 1: FINANCES -->
+  <div class="review-section">
+    <div class="rs-header" onclick="toggleSection('fin')">
+      <div class="rs-icon">💰</div>
+      <div class="rs-title">Financial — decisions, savings and cost of living</div>
+      <span class="rs-tag">Dimension 1</span>
+    </div>
+    <div class="rs-body" id="sec-fin">
+      <div class="field-group">
+        <label>What financial decision did you make this week?</label>
+        <textarea placeholder="e.g. Decided to switch to a cheaper SIM-only plan saving £18/month. Also opened a credit-builder savings pot with Monzo — £20 transferred automatically every Friday." oninput="updateSummary()"></textarea>
+      </div>
+      <div class="field-group">
+        <label>Did you save anything this week? If yes, how much and where?</label>
+        <textarea placeholder="e.g. Yes — transferred £20 to savings pot and did not spend on any non-essentials Tuesday to Thursday." rows="2" oninput="updateSummary()"></textarea>
+      </div>
+      <div class="field-group">
+        <label>How does your actual spending this week compare to your budget?</label>
+        <div class="rating-row" id="budget-rating">
+          <button class="rating-btn" onclick="rate('budget',1,this)">😰</button>
+          <button class="rating-btn" onclick="rate('budget',2,this)">😟</button>
+          <button class="rating-btn" onclick="rate('budget',3,this)">😐</button>
+          <button class="rating-btn" onclick="rate('budget',4,this)">🙂</button>
+          <button class="rating-btn" onclick="rate('budget',5,this)">😊</button>
+        </div>
+        <div class="rating-labels"><span>Way over</span><span>Slightly over</span><span>On track</span><span>Under budget</span><span>Significantly under</span></div>
+      </div>
+      <div class="field-group">
+        <label>One financial action to take next week</label>
+        <textarea placeholder="e.g. Register on the electoral roll — it will improve my credit score and takes 5 minutes." rows="2" oninput="updateSummary()"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIMENSION 2: CAREER -->
+  <div class="review-section">
+    <div class="rs-header" onclick="toggleSection('career')">
+      <div class="rs-icon">🚀</div>
+      <div class="rs-title">Career and future goals — action taken this week</div>
+      <span class="rs-tag">Dimension 2</span>
+    </div>
+    <div class="rs-body" id="sec-career">
+      <div class="field-group">
+        <label>What concrete action did you take toward your future goals this week?</label>
+        <textarea placeholder="e.g. Submitted my NMC application documents. Also attended a webinar on UK nursing registration run by an IMG nurse who completed the process last year — got three useful contacts." oninput="updateSummary()"></textarea>
+      </div>
+      <div class="field-group">
+        <label>Did you make any progress on your professional registration, qualification recognition, or job search?</label>
+        <textarea placeholder="e.g. Received confirmation that my ENIC application is being processed. Expected in 10 working days." rows="2" oninput="updateSummary()"></textarea>
+      </div>
+      <div class="field-group">
+        <label>How would you rate your career progress momentum this week?</label>
+        <div class="rating-row">
+          <button class="rating-btn" onclick="rate('career',1,this)">1</button>
+          <button class="rating-btn" onclick="rate('career',2,this)">2</button>
+          <button class="rating-btn" onclick="rate('career',3,this)">3</button>
+          <button class="rating-btn" onclick="rate('career',4,this)">4</button>
+          <button class="rating-btn" onclick="rate('career',5,this)">5</button>
+        </div>
+        <div class="rating-labels"><span>Stalled</span><span></span><span>Moving</span><span></span><span>Strong momentum</span></div>
+      </div>
+      <div class="field-group">
+        <label>One career action to take next week (specific — with a day attached)</label>
+        <textarea placeholder="e.g. Email the three contacts from Tuesday's webinar by Wednesday. Ask each one if they are willing to answer 3 questions about their NMC experience." rows="2" oninput="updateSummary()"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIMENSION 3: CONNECTION -->
+  <div class="review-section">
+    <div class="rs-header" onclick="toggleSection('connection')">
+      <div class="rs-icon">🤝</div>
+      <div class="rs-title">Connection and network — who I reached, who reached me</div>
+      <span class="rs-tag">Dimension 3</span>
+    </div>
+    <div class="rs-body" id="sec-connection">
+      <div class="field-group">
+        <label>Who did you connect with this week — professionally or personally?</label>
+        <textarea placeholder="e.g. Messaged two people from the Rare Circle Routine group. One replied and we have a call next week. Also called my sister in Lagos on Thursday." oninput="updateSummary()"></textarea>
+      </div>
+      <div class="field-group">
+        <label>Did anyone reach out to you? What came from it?</label>
+        <textarea placeholder="e.g. A former colleague from Lagos messaged to say she is also in London now. We are meeting for coffee on Saturday." rows="2" oninput="updateSummary()"></textarea>
+      </div>
+      <div class="field-group">
+        <label>How connected do you feel right now — to community, to people who understand this journey?</label>
+        <div class="rating-row">
+          <button class="rating-btn" onclick="rate('connection',1,this)">1</button>
+          <button class="rating-btn" onclick="rate('connection',2,this)">2</button>
+          <button class="rating-btn" onclick="rate('connection',3,this)">3</button>
+          <button class="rating-btn" onclick="rate('connection',4,this)">4</button>
+          <button class="rating-btn" onclick="rate('connection',5,this)">5</button>
+        </div>
+        <div class="rating-labels"><span>Isolated</span><span></span><span>Some connection</span><span></span><span>Well connected</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIMENSION 4: WELLBEING -->
+  <div class="review-section">
+    <div class="rs-header" onclick="toggleSection('wellbeing')">
+      <div class="rs-icon">💚</div>
+      <div class="rs-title">Wellbeing and belonging — mental state and community presence</div>
+      <span class="rs-tag">Dimension 4</span>
+    </div>
+    <div class="rs-body" id="sec-wellbeing">
+      <div class="field-group">
+        <label>Honest check-in — how are you actually doing this week?</label>
+        <textarea placeholder="e.g. Harder than last week. The ENIC wait is making me anxious and I had two nights of poor sleep. Not in crisis — just heavy. The Sunday walk helped." oninput="updateSummary()"></textarea>
+      </div>
+      <div class="field-group">
+        <label>Did you do anything this week that connected you to where you physically are — a community event, a local space, a neighbour, your area?</label>
+        <textarea placeholder="e.g. Went to the local parkrun on Saturday for the first time. Did not talk to anyone but felt less invisible just by being there." rows="2" oninput="updateSummary()"></textarea>
+      </div>
+      <div class="field-group">
+        <label>Overall mental state this week</label>
+        <div class="rating-row">
+          <button class="rating-btn" onclick="rate('wellbeing',1,this)">😔</button>
+          <button class="rating-btn" onclick="rate('wellbeing',2,this)">😞</button>
+          <button class="rating-btn" onclick="rate('wellbeing',3,this)">😐</button>
+          <button class="rating-btn" onclick="rate('wellbeing',4,this)">🙂</button>
+          <button class="rating-btn" onclick="rate('wellbeing',5,this)">😊</button>
+        </div>
+        <div class="rating-labels"><span>Very difficult</span><span>Hard</span><span>Managing</span><span>Good</span><span>Strong</span></div>
+      </div>
+      <div class="field-group">
+        <label>Is there anything you need right now that you are not getting? Name it honestly.</label>
+        <textarea placeholder="e.g. I need to talk to someone who has been through the NMC process. The anxiety of waiting is worse than the wait itself. I will ask in Rare Circle this week." rows="2" oninput="updateSummary()"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIMENSION 5: ONE THING FORWARD -->
+  <div class="review-section">
+    <div class="rs-header" onclick="toggleSection('forward')">
+      <div class="rs-icon">🎯</div>
+      <div class="rs-title">One thing forward — the single most important action next week</div>
+      <span class="rs-tag">Dimension 5</span>
+    </div>
+    <div class="rs-body" id="sec-forward">
+      <div class="field-group">
+        <label>Looking at everything you have reviewed — what is the one most important action for next week? Not a list. One thing, with a day.</label>
+        <textarea id="forward-action" placeholder="e.g. Email the three NMC contacts by Wednesday — this is the action most likely to move me forward fastest right now. Everything else is secondary to this." oninput="updateSummary();checkPrompt()"></textarea>
+      </div>
+      <div class="field-group">
+        <label>What would getting that done mean for your rebuild?</label>
+        <textarea placeholder="e.g. It would give me real intel from people who have done what I am trying to do, which would reduce the anxiety and clarify the next three months." rows="2"></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">What to expect to feel</div>
+  <div class="feel-box">The first weekly review is the most uncomfortable one. You are looking honestly at a week that probably had gaps — things you said you would do and did not, money that went somewhere you did not plan, connection you intended to make but did not. That discomfort is the point. A review that only acknowledges what went well is not a review — it is a performance. The value is in the gap between intention and reality, because the gap tells you exactly what needs to change.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="prompt-box">
+    <div class="prompt-label">✏ Completion prompt — your first review</div>
+    <p style="font-size:14px;color:#222;margin-bottom:12px;line-height:1.6">Complete your first weekly review above. Then answer both questions below. Both fields required — minimum 20 characters each.</p>
+    <div class="pf">
+      <label>What was your biggest win this week?</label>
+      <textarea id="win-text" placeholder="e.g. I submitted my NMC documents after putting it off for two weeks. That was the hardest thing on my list and I finally did it." oninput="checkPrompt()"></textarea>
+    </div>
+    <div class="pf">
+      <label>What was your biggest gap this week — the thing you intended to do but did not?</label>
+      <textarea id="gap-text" placeholder="e.g. I did not contact the three contacts from Tuesday's webinar. I kept telling myself I would do it tomorrow. Next week it has a day and a time attached." oninput="checkPrompt()"></textarea>
+      <div class="char-count" id="char-count">Complete both fields to enable completion</div>
+    </div>
+    <button class="done-btn" id="done-btn">✓ Mark task 3.3 complete — weekly review is now part of your routine</button>
+  </div>
+</div>
+
+<script>
+function toggleSection(id){
+  const body=document.getElementById('sec-'+id);
+  body.classList.toggle('open');
+}
+function rate(dim,val,btn){
+  btn.closest('.rs-body').querySelectorAll('.rating-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+function updateSummary(){}
+function checkPrompt(){
+  const w=document.getElementById('win-text').value.trim();
+  const g=document.getElementById('gap-text').value.trim();
+  const cc=document.getElementById('char-count');
+  cc.textContent='Win: '+w.length+' chars · Gap: '+g.length+' chars (20 minimum each)';
+  document.getElementById('done-btn').classList.toggle('active',w.length>=20&&g.length>=20);
+}
+// Set current date
+const now=new Date();
+document.getElementById('review-date').textContent=now.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+// Open first section by default
+document.getElementById('sec-fin').classList.add('open');
+</script>
+</body>
+</html>

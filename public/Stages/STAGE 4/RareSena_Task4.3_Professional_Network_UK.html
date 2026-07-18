@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RareSena — Task 4.3 — Build Your Professional Network in the UK</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f0;color:#222;padding:24px;max-width:820px;margin:0 auto}
+.stage-badge{display:inline-flex;align-items:center;gap:6px;background:#7D3C0F;color:#fff;font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;margin-bottom:14px}
+.task-header{border-left:5px solid #B8962E;padding:14px 18px;background:#fff;border-radius:0 10px 10px 0;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.task-title{font-size:20px;font-weight:700;color:#7D3C0F;margin-bottom:5px}
+.task-meta{font-size:13px;color:#888}
+.section{margin-bottom:24px}
+.section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B8962E;margin-bottom:9px}
+.section-body{font-size:14px;line-height:1.75;color:#444}
+.steps{counter-reset:step;list-style:none;padding:0}
+.steps li{counter-increment:step;display:flex;gap:12px;margin-bottom:14px;font-size:14px;line-height:1.65;color:#444}
+.steps li::before{content:counter(step);min-width:26px;height:26px;background:#B8962E;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
+.divider{height:1px;background:#e0e0dc;margin:22px 0}
+.linkedin-builder{background:#fff;border:1px solid #e0e0dc;border-radius:10px;padding:18px;margin-bottom:16px}
+.lb-title{font-size:14px;font-weight:700;color:#7D3C0F;margin-bottom:12px}
+.checklist-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:#f9f9f7;border-radius:7px;margin-bottom:8px;cursor:pointer;border:1px solid #e8e8e4;transition:all .15s}
+.checklist-item.done{background:#fdf5f0;border-color:#7D3C0F}
+.ci-check{width:20px;height:20px;border-radius:5px;border:1.5px solid #ccc;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .15s;margin-top:1px}
+.checklist-item.done .ci-check{background:#7D3C0F;border-color:#7D3C0F;color:#fff}
+.ci-content{flex:1}
+.ci-label{font-size:13px;color:#444;font-weight:600;margin-bottom:2px}
+.ci-desc{font-size:12px;color:#888;line-height:1.4}
+.network-strategy{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.ns-card{background:#fff;border:1px solid #e0e0dc;border-radius:8px;padding:13px}
+.ns-title{font-size:13px;font-weight:700;color:#7D3C0F;margin-bottom:4px}
+.ns-body{font-size:12px;color:#666;line-height:1.5}
+.ns-action{font-size:11px;font-weight:700;color:#B8962E;margin-top:6px}
+.tracker{background:#fff;border:1px solid #e0e0dc;border-radius:10px;padding:18px;margin-bottom:16px}
+.tracker-title{font-size:14px;font-weight:700;color:#7D3C0F;margin-bottom:12px}
+.contact-row{display:grid;grid-template-columns:1fr 1fr 120px;gap:8px;margin-bottom:8px;align-items:center}
+.contact-row input,.contact-row select{padding:7px 10px;border-radius:6px;border:1px solid #ccc;font-size:12px;color:#222;background:#fafafa;width:100%}
+.add-contact{font-size:12px;color:#7D3C0F;cursor:pointer;font-weight:700;margin-top:6px;display:inline-flex;align-items:center;gap:4px}
+.feel-box{background:#fff8e6;border:1.5px solid #e6b800;border-radius:8px;padding:14px 16px;font-size:14px;line-height:1.65;color:#7a5a00}
+.resource-card{background:#fff;border:1px solid #e0e0dc;border-radius:8px;padding:13px 15px;margin-bottom:9px}
+.resource-name{font-size:13px;font-weight:700;color:#7D3C0F;margin-bottom:2px}
+.resource-desc{font-size:12px;color:#888;line-height:1.5}
+.ext{font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;background:#e6f4ea;color:#1a6b2e}
+.tag{font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;background:#fde8d8;color:#7D3C0F}
+.prompt-box{background:#fdf5f0;border:1.5px solid #7D3C0F;border-radius:10px;padding:18px}
+.prompt-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7D3C0F;margin-bottom:8px}
+.checklist-confirm{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f9f9f7;border-radius:7px;margin-bottom:8px;cursor:pointer;border:1px solid #e8e8e4;transition:all .15s}
+.checklist-confirm.confirmed{background:#fdf5f0;border-color:#7D3C0F}
+.cc-check{width:20px;height:20px;border-radius:5px;border:1.5px solid #ccc;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px}
+.checklist-confirm.confirmed .cc-check{background:#7D3C0F;border-color:#7D3C0F;color:#fff}
+.cc-label{font-size:13px;color:#444}
+.done-btn{width:100%;padding:13px;background:#B8962E;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;opacity:.35;pointer-events:none;transition:opacity .2s;margin-top:14px}
+.done-btn.active{opacity:1;pointer-events:auto}
+</style>
+</head>
+<body>
+<div class="stage-badge">📈 Stage 4 — Rise</div>
+<div class="task-header">
+  <div class="task-title">Task 4.3 — Build your professional network in the UK</div>
+  <div class="task-meta">⏱ 45–60 min setup · Ongoing · All tracks</div>
+</div>
+
+<div class="section">
+  <div class="section-label">Why this matters</div>
+  <div class="section-body">Research on immigrant employment in the UK is consistent on one finding: professional networks are the single most powerful determinant of whether an immigrant rebuilds at their skill level or stays trapped below it. Not qualifications. Not language. Networks.<br><br>Most immigrants in the UK are undernetworked relative to their UK-born peers — not because they are less capable of building relationships, but because they arrived without the inherited professional networks that UK-educated professionals accumulate over years of study and early career. Every connection you build deliberately in Stage 4 is closing a gap that the system created, not you.<br><br>This task is not about collecting LinkedIn connections. It is about building three things: visibility in your sector, relationships with people who can open doors, and a professional presence that accurately represents what you bring.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">What to do</div>
+  <ol class="steps">
+    <li>Complete the LinkedIn profile checklist below. A complete, accurate, UK-optimised LinkedIn profile is the foundation. Without it, every networking action you take lands on an incomplete surface.</li>
+    <li>Make contact with at least 3 UK-based professionals in your sector this week. Not a mass connection request — a personal message with a specific reason for connecting.</li>
+    <li>Register for or attend one professional networking event — online or in person — before this stage is complete.</li>
+    <li>Log your contacts in the tracker below. Every meaningful professional contact logged is a relationship being managed deliberately rather than left to chance.</li>
+  </ol>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">LinkedIn profile checklist</div>
+  <div class="linkedin-builder">
+    <div class="lb-title">Complete your UK-optimised LinkedIn profile</div>
+    <div class="checklist-item" onclick="toggle(this)"><div class="ci-check"></div><div class="ci-content"><div class="ci-label">Professional headshot — clear, professional, current</div><div class="ci-desc">Not a selfie or a holiday photo. A clean background, good lighting, and professional attire appropriate for your sector.</div></div></div>
+    <div class="checklist-item" onclick="toggle(this)"><div class="ci-check"></div><div class="ci-content"><div class="ci-label">Headline — role + sector + one differentiator</div><div class="ci-desc">Not just your job title. "Paediatric Nurse | NMC Registration in Progress | 8 years clinical experience" is stronger than "Nurse."</div></div></div>
+    <div class="checklist-item" onclick="toggle(this)"><div class="ci-check"></div><div class="ci-content"><div class="ci-label">About section — 3–4 sentences, first person, what you bring and what you are looking for</div><div class="ci-desc">Use your UK professional summary from Task 2.2. Write to a UK audience — achievements and outcomes, not duties.</div></div></div>
+    <div class="checklist-item" onclick="toggle(this)"><div class="ci-check"></div><div class="ci-content"><div class="ci-label">Work experience — reverse chronological, achievement-focused bullets</div><div class="ci-desc">Each role: company, title, dates, 2–3 bullet points starting with a verb. "Led a team of 12" not "Responsible for managing."</div></div></div>
+    <div class="checklist-item" onclick="toggle(this)"><div class="ci-check"></div><div class="ci-content"><div class="ci-label">Education — with ENIC Statement of Comparability reference if overseas degree</div><div class="ci-desc">Include your degree, institution, and year. If overseas-qualified, note "UK ENIC Statement of Comparability — [level]" as a credential.</div></div></div>
+    <div class="checklist-item" onclick="toggle(this)"><div class="ci-check"></div><div class="ci-content"><div class="ci-label">Skills section — top 5 skills endorsed by connections</div><div class="ci-desc">Add your top skills. Ask 3 connections you know well to endorse them. Endorsed skills rank higher in recruiter searches.</div></div></div>
+    <div class="checklist-item" onclick="toggle(this)"><div class="ci-check"></div><div class="ci-content"><div class="ci-label">Right to work statement in About section — one line</div><div class="ci-desc">"Full right to work in the UK — [visa type or status]." Removes doubt for recruiters and hiring managers.</div></div></div>
+    <div class="checklist-item" onclick="toggle(this)"><div class="ci-check"></div><div class="ci-content"><div class="ci-label">Open to Work signal activated for relevant roles</div><div class="ci-desc">Set your Open to Work preferences to show recruiters — or set it visible to all if you are actively searching.</div></div></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Networking strategies that work without pretending to be someone else</div>
+  <div class="network-strategy">
+    <div class="ns-card"><div class="ns-title">The specific ask</div><div class="ns-body">When connecting with someone, always have a specific reason. "I am also navigating NMC registration and saw your post about the OSCE — would you be open to a 15-minute call?" is 10x more likely to get a response than a blank connection request.</div><div class="ns-action">→ Draft your specific ask before each connection</div></div>
+    <div class="ns-card"><div class="ns-title">LinkedIn content visibility</div><div class="ns-body">Posting once a week about your professional journey — even briefly — increases profile views by 5–10x. You do not need to perform. Share what you are learning, what you are navigating, and what you know. Your perspective as an immigrant professional is distinctive.</div><div class="ns-action">→ One post per week. Authentic, not polished.</div></div>
+    <div class="ns-card"><div class="ns-title">Alumni networks</div><div class="ns-body">If you studied in the UK or your university has a UK alumni chapter — use it. Alumni networks are the most frictionless professional community to enter because the shared connection already exists.</div><div class="ns-action">→ Search LinkedIn for your university alumni in the UK</div></div>
+    <div class="ns-card"><div class="ns-title">Professional associations</div><div class="ns-body">Most UK professional bodies have local branches with networking events, mentorship programmes, and online communities. Even during registration, you can usually join as an associate member or attend events.</div><div class="ns-action">→ Find your professional body's local branch and attend once</div></div>
+    <div class="ns-card"><div class="ns-title">Rare Circle Rise group</div><div class="ns-body">The Stage 4 community inside Rare Circle — people in Rise who are building professional networks, starting income streams, and navigating the same Stage 4 pressures. The most relevant peer network for where you are right now.</div><div class="ns-action">→ Open Rare Circle — Rise group</div></div>
+    <div class="ns-card"><div class="ns-title">The follow-up</div><div class="ns-body">Most networking fails not at the first contact but at the follow-up. If someone agrees to a call — do it. If a call was useful — send a thank you and one specific thing you took from it within 24 hours. That is what turns a contact into a relationship.</div><div class="ns-action">→ Follow up within 24 hours. Always.</div></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Contact tracker</div>
+  <div class="tracker">
+    <div class="tracker-title">Log your professional contacts</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 120px;gap:8px;margin-bottom:6px">
+      <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase">Name / role</div>
+      <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase">How connected / what for</div>
+      <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase">Status</div>
+    </div>
+    <div id="contact-rows">
+      <div class="contact-row"><input type="text" placeholder="e.g. James O. — NHS Nurse, NMC registered" /><input type="text" placeholder="e.g. LinkedIn — NMC registration advice" /><select><option>Connected</option><option>Messaged</option><option>Call booked</option><option>Call done</option><option>Follow up sent</option></select></div>
+      <div class="contact-row"><input type="text" placeholder="Contact 2" /><input type="text" placeholder="How connected / purpose" /><select><option>Connected</option><option>Messaged</option><option>Call booked</option><option>Call done</option><option>Follow up sent</option></select></div>
+      <div class="contact-row"><input type="text" placeholder="Contact 3" /><input type="text" placeholder="How connected / purpose" /><select><option>Connected</option><option>Messaged</option><option>Call booked</option><option>Call done</option><option>Follow up sent</option></select></div>
+    </div>
+    <div class="add-contact" onclick="addContact()">+ Add contact</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">What to expect to feel</div>
+  <div class="feel-box">Professional networking as an immigrant in the UK carries a specific discomfort that does not get talked about enough: the feeling that you are asking for something you have not yet earned, in a language that is not always yours, in a culture whose unspoken rules you are still learning. That feeling is real — and it does not mean you do not belong in these spaces. It means you are doing something genuinely hard. The discomfort reduces with every contact you make. It does not go away — it just becomes less loud.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Tools and resources</div>
+  <div class="resource-card">
+    <div style="display:flex;justify-content:space-between;align-items:start"><div class="resource-name">Guide: Networking in the UK without pretending to be someone else</div><span class="tag">In-app</span></div>
+    <div class="resource-desc">How to build genuine professional relationships in UK workplace culture — the unspoken rules, what to say, what not to say, and how to network authentically as an immigrant professional.</div>
+  </div>
+  <div class="resource-card">
+    <div style="display:flex;justify-content:space-between;align-items:start"><div class="resource-name">LinkedIn — professional networking and job search</div><span class="ext">External</span></div>
+    <div class="resource-desc">linkedin.com — the primary professional networking platform in the UK. Set up your profile using the checklist above before making any connection requests.</div>
+  </div>
+  <div class="resource-card">
+    <div style="display:flex;justify-content:space-between;align-items:start"><div class="resource-name">Eventbrite — professional networking events near you</div><span class="ext">External</span></div>
+    <div class="resource-desc">eventbrite.co.uk — search your sector and city for networking events, professional meetups, and industry conferences. Many are free or low-cost.</div>
+  </div>
+  <div class="resource-card">
+    <div style="display:flex;justify-content:space-between;align-items:start"><div class="resource-name">MSDUK — minority supplier and professional network</div><span class="ext">External</span></div>
+    <div class="resource-desc">msduk.org.uk — professional network for ethnic minority professionals and business owners in the UK. Annual conference, business connections, and sector-specific community.</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="prompt-box">
+    <div class="prompt-label">✏ Completion prompt — confirm all three actions</div>
+    <p style="font-size:14px;color:#222;margin-bottom:12px;line-height:1.6">All three must be confirmed before this task can be marked done.</p>
+    <div class="checklist-confirm" id="cc1" onclick="toggleCC(1)"><div class="cc-check" id="cck1"></div><div class="cc-label">My LinkedIn profile is updated with all checklist items above</div></div>
+    <div class="checklist-confirm" id="cc2" onclick="toggleCC(2)"><div class="cc-check" id="cck2"></div><div class="cc-label">I have connected with or messaged at least 3 UK-based professionals in my sector</div></div>
+    <div class="checklist-confirm" id="cc3" onclick="toggleCC(3)"><div class="cc-check" id="cck3"></div><div class="cc-label">I have attended or registered for at least one professional networking event</div></div>
+    <button class="done-btn" id="done-btn">✓ Mark task 4.3 complete</button>
+  </div>
+</div>
+
+<script>
+let confirmed={1:false,2:false,3:false};
+function toggle(el){el.classList.toggle('done');const c=el.querySelector('.ci-check');c.textContent=el.classList.contains('done')?'✓':'';}
+function toggleCC(n){
+  confirmed[n]=!confirmed[n];
+  document.getElementById('cck'+n).textContent=confirmed[n]?'✓':'';
+  document.getElementById('cc'+n).classList.toggle('confirmed',confirmed[n]);
+  document.getElementById('done-btn').classList.toggle('active',Object.values(confirmed).every(Boolean));
+}
+function addContact(){
+  const c=document.getElementById('contact-rows');
+  const d=document.createElement('div');
+  d.className='contact-row';
+  d.innerHTML='<input type="text" placeholder="Name / role" /><input type="text" placeholder="How connected / purpose" /><select><option>Connected</option><option>Messaged</option><option>Call booked</option><option>Call done</option><option>Follow up sent</option></select>';
+  c.appendChild(d);
+}
+</script>
+</body>
+</html>

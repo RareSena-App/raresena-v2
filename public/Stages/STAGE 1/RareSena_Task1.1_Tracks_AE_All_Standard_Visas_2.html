@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RareSena — Task 1.1 (Tracks A–E) — Visa Deadlines</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f0;color:#222;padding:24px;max-width:800px;margin:0 auto}
+.stage-badge{display:inline-flex;align-items:center;gap:6px;background:#1B2D5B;color:#fff;font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;margin-bottom:14px}
+.task-header{border-left:5px solid #B8962E;padding:14px 18px;background:#fff;border-radius:0 10px 10px 0;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.task-title{font-size:20px;font-weight:700;color:#1B2D5B;margin-bottom:5px}
+.task-meta{font-size:13px;color:#888}
+.section{margin-bottom:24px}
+.section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B8962E;margin-bottom:9px}
+.section-body{font-size:14px;line-height:1.75;color:#444}
+.track-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.track-tab{padding:7px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid #ccc;background:#fff;color:#555;transition:all .15s}
+.track-tab.active{background:#1B2D5B;color:#fff;border-color:#1B2D5B}
+.track-content{display:none;font-size:14px;line-height:1.75;color:#444}
+.track-content.active{display:block}
+.steps{counter-reset:step;list-style:none;padding:0}
+.steps li{counter-increment:step;display:flex;gap:12px;margin-bottom:14px;font-size:14px;line-height:1.65;color:#444}
+.steps li::before{content:counter(step);min-width:26px;height:26px;background:#B8962E;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
+.feel-box{background:#fff8e6;border:1.5px solid #e6b800;border-radius:8px;padding:14px 16px;font-size:14px;line-height:1.65;color:#7a5a00}
+.divider{height:1px;background:#e0e0dc;margin:22px 0}
+.resource-card{background:#fff;border:1px solid #e0e0dc;border-radius:8px;padding:13px 15px;margin-bottom:9px;display:flex;align-items:flex-start;gap:12px}
+.resource-name{font-size:13px;font-weight:700;color:#1B2D5B;margin-bottom:2px}
+.resource-desc{font-size:12px;color:#888}
+.tag{font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;background:#e8f0fe;color:#1B2D5B}
+.ext{font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;background:#e6f4ea;color:#1a6b2e}
+.prompt-box{background:#f0f4ff;border:1.5px solid #1B2D5B;border-radius:10px;padding:18px}
+.prompt-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1B2D5B;margin-bottom:8px}
+.pf{margin-bottom:12px}
+.pf label{font-size:12px;color:#555;display:block;margin-bottom:4px;font-weight:600}
+.pf input{width:100%;padding:9px 12px;border-radius:7px;border:1.5px solid #ccc;font-size:13px;color:#222}
+.done-btn{width:100%;padding:13px;background:#B8962E;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;margin-top:12px;opacity:.35;pointer-events:none}
+.done-btn.active{opacity:1;pointer-events:auto}
+.alert{background:#fff0f0;border:1.5px solid #cc2222;border-radius:8px;padding:12px 15px;font-size:13px;color:#8b0000;margin:12px 0;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="stage-badge">⚓ Stage 1 — Reset</div>
+<div class="task-header">
+  <div class="task-title">Task 1.1 — Understand your visa options and deadlines</div>
+  <div class="task-meta">⏱ 20–30 min &nbsp;·&nbsp; 🛡 Non-negotiable &nbsp;·&nbsp; Tracks A–E</div>
+</div>
+<div class="section">
+  <div class="section-label">Why this matters</div>
+  <div class="section-body">Your visa expiry date is not a suggestion — it is the thing that can undo everything you are building here. The system does not send you reminders. It does not care if you were busy, overwhelmed, or simply unaware. Most immigrants who miss critical immigration deadlines do not miss them because they were careless. They miss them because nobody told them to look on day one.<br><br>This task changes that. You are going to find every date, every condition, and every next action that applies to your specific visa — right now, before anything else gets in the way.</div>
+</div>
+<div class="divider"></div>
+<div class="section">
+  <div class="section-label">Select your visa type</div>
+  <div class="track-tabs">
+    <div class="track-tab active" onclick="sw('A')">Skilled Worker</div>
+    <div class="track-tab" onclick="sw('B')">Student</div>
+    <div class="track-tab" onclick="sw('C')">Family / Spouse</div>
+    <div class="track-tab" onclick="sw('D')">BN(O) Hong Konger</div>
+    <div class="track-tab" onclick="sw('E')">Refugee / Asylum</div>
+  </div>
+  <div id="tA" class="track-content active">
+    <ol class="steps">
+      <li>Go to <strong>gov.uk/view-prove-immigration-status</strong> and log into your UKVI online account. Screenshot your eVisa status page and save it.</li>
+      <li>Note your <strong>visa expiry date</strong>. Calculate your 60-day window: if your employer's sponsor licence were revoked today, you would have 60 days to find new sponsorship or leave. Know this number.</li>
+      <li>Check your visa conditions: right to work, restrictions on job type or employer, whether NRPF applies. Write these down.</li>
+      <li>Set four calendar reminders: <strong>6 months before expiry</strong> (start renewal research), <strong>3 months before</strong> (submit application), <strong>1 month before</strong> (urgent action), <strong>2 weeks before</strong> (final check).</li>
+      <li>Find your employer's HR contact name and save it. In a Skilled Worker emergency, they are your first call.</li>
+    </ol>
+  </div>
+  <div id="tB" class="track-content">
+    <ol class="steps">
+      <li>Log into your <strong>UKVI online account</strong>. Find your Student visa expiry date. Screenshot it.</li>
+      <li>Locate your <strong>CAS number</strong> from your offer letter or student portal. Keep it with your visa documents.</li>
+      <li>Write your work limit clearly: <strong>20 hours per week maximum during term time</strong>. Full-time in official vacation only. A single breach can cause visa curtailment — there is no warning system.</li>
+      <li>Find your institution's <strong>International Student Support office</strong> contact and save it now.</li>
+      <li>Set reminders: <strong>6 months before visa expiry</strong>, <strong>3 months before</strong> (submit extension or Graduate Route application), and at <strong>every new term start</strong>.</li>
+    </ol>
+  </div>
+  <div id="tC" class="track-content">
+    <ol class="steps">
+      <li>Log into your <strong>UKVI online account</strong>. Note your visa expiry date and your sponsor's (partner's) visa status — your visa is linked to theirs.</li>
+      <li>Check your <strong>right to work conditions</strong> on your eVisa. Family visa holders typically have the right to work, but confirm this is stated.</li>
+      <li>Confirm whether <strong>NRPF applies</strong>. If it does, you cannot access most benefits even in hardship. Note this clearly.</li>
+      <li>If your relationship is under strain or you are unsafe: the <strong>Domestic Abuse destitution concession</strong> is a specific immigration route that does not require your sponsor's cooperation. Citizens Advice (0800 144 8848) or Rights of Women (020 7251 6577) can advise confidentially.</li>
+      <li>Set reminders at 6 months, 3 months, and 1 month before visa expiry. Also note when you become eligible for ILR — typically 5 years after entry.</li>
+    </ol>
+  </div>
+  <div id="tD" class="track-content">
+    <ol class="steps">
+      <li>Activate your <strong>eVisa</strong> at gov.uk/view-prove-immigration-status immediately if not done. Your BRP is transitional only — do not rely on it for right-to-rent or right-to-work checks.</li>
+      <li>Confirm your <strong>eVisa is linked to the correct passport</strong>. If you renew your passport, update the linkage in your UKVI account before any travel. Failure causes "no-board" errors at airports.</li>
+      <li>Note your <strong>5-year settlement date</strong> and the 180-day absence rule: you cannot spend more than 180 days outside the UK in any 12-month period during the 5-year qualifying period.</li>
+      <li>Confirm all family members — including children — have activated their own eVisas linked to the correct passports. Each family member needs a separate UKVI account.</li>
+      <li>Set reminders: <strong>6 months before settlement date</strong> (ILR preparation), and immediately on any passport renewal.</li>
+    </ol>
+  </div>
+  <div id="tE" class="track-content">
+    <div class="alert"><strong>Track E — time-sensitive:</strong> If you have just received a positive asylum decision, your move-on clock starts now. You have approximately 28 days before asylum support ends. Contact Migrant Help (0808 8010 503) today.</div>
+    <ol class="steps">
+      <li><strong>If awaiting a decision:</strong> Locate your <strong>ARC card</strong>. If lost, report to the Home Office via Migrant Help: <strong>0808 8010 503</strong> (free, 24/7).</li>
+      <li><strong>If just granted status:</strong> Contact Migrant Help on the day of your grant letter. Within 7 days: contact local council housing, apply for Universal Credit, open a bank account using your BRP or eVisa, register with a GP.</li>
+      <li>Note your BRP expiry date or activate your eVisa. Your status is tied to this document — keep it safe.</li>
+      <li>If you have an active appeal: contact a regulated immigration adviser. Free legal aid is available for some asylum appeals. The Refugee Council (refugeecouncil.org.uk) can help find accredited support at no cost.</li>
+    </ol>
+  </div>
+</div>
+<div class="divider"></div>
+<div class="section">
+  <div class="section-label">What to expect to feel</div>
+  <div class="feel-box">Reading through visa conditions can trigger a specific anxiety — the feeling that your entire life here rests on a document. That feeling is real and reasonable. The system was designed to be managed, not to be kind. What this task does is move you from passive anxiety to active knowledge. Knowing your dates does not remove the pressure — but it removes the thing that makes pressure dangerous: not knowing.</div>
+</div>
+<div class="divider"></div>
+<div class="section">
+  <div class="section-label">Resources</div>
+  <div class="resource-card">
+    <div>
+      <div style="display:flex;justify-content:space-between"><div class="resource-name">Guide: How to read your eVisa and find every key date</div><span class="tag">In-app</span></div>
+      <div class="resource-desc">Step-by-step UKVI account walkthrough — what each field means and how to identify critical dates.</div>
+    </div>
+  </div>
+  <div class="resource-card">
+    <div>
+      <div style="display:flex;justify-content:space-between"><div class="resource-name">Visa Deadline Tracker (interactive tool)</div><span class="tag">In-app</span></div>
+      <div class="resource-desc">Enter your expiry date — the tracker calculates all reminder milestones and syncs push notifications.</div>
+    </div>
+  </div>
+  <div class="resource-card">
+    <div>
+      <div style="display:flex;justify-content:space-between"><div class="resource-name">UKVI Online Account</div><span class="ext">External</span></div>
+      <div class="resource-desc">gov.uk/view-prove-immigration-status — official portal for your eVisa and conditions.</div>
+    </div>
+  </div>
+  <div class="resource-card">
+    <div>
+      <div style="display:flex;justify-content:space-between"><div class="resource-name">Migrant Help (Track E)</div><span class="ext">External</span></div>
+      <div class="resource-desc">0808 8010 503 — free, 24/7 asylum helpline. For Track E: this is your first call.</div>
+    </div>
+  </div>
+</div>
+<div class="divider"></div>
+<div class="prompt-box">
+  <div class="prompt-label">✏ Completion prompt</div>
+  <p style="font-size:14px;color:#222;margin-bottom:14px">Enter both fields. This seeds your Visa Deadline Dashboard and push notifications.</p>
+  <div class="pf"><label>Your visa expiry date</label><input type="date" id="vd" oninput="chk()" /></div>
+  <div class="pf"><label>The single most important action you must take before that date</label><input type="text" id="va" placeholder="e.g. Submit ILR application / Find new sponsor / Attend 12-month contact point" oninput="chk()" /></div>
+  <button class="done-btn" id="db">✓ Mark task 1.1 complete</button>
+</div>
+<script>
+function sw(t){['A','B','C','D','E'].forEach(x=>{document.getElementById('t'+x).classList.toggle('active',x===t)});document.querySelectorAll('.track-tab').forEach((el,i)=>el.classList.toggle('active',['A','B','C','D','E'][i]===t));}
+function chk(){const d=document.getElementById('vd').value,a=document.getElementById('va').value.trim();document.getElementById('db').classList.toggle('active',d&&a.length>8);}
+</script>
+</body>
+</html>

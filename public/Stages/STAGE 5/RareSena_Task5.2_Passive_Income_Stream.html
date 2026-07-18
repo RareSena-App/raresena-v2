@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RareSena — Task 5.2 — Activate a Second or Passive Income Stream</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f0;color:#222;padding:24px;max-width:820px;margin:0 auto}
+.stage-badge{display:inline-flex;align-items:center;gap:6px;background:#4A235A;color:#fff;font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;margin-bottom:14px}
+.task-header{border-left:5px solid #B8962E;padding:14px 18px;background:#fff;border-radius:0 10px 10px 0;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.task-title{font-size:20px;font-weight:700;color:#4A235A;margin-bottom:5px}
+.task-meta{font-size:13px;color:#888}
+.section{margin-bottom:24px}
+.section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B8962E;margin-bottom:9px}
+.section-body{font-size:14px;line-height:1.75;color:#444}
+.steps{counter-reset:step;list-style:none;padding:0}
+.steps li{counter-increment:step;display:flex;gap:12px;margin-bottom:14px;font-size:14px;line-height:1.65;color:#444}
+.steps li::before{content:counter(step);min-width:26px;height:26px;background:#B8962E;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
+.divider{height:1px;background:#e0e0dc;margin:22px 0}
+.callout{background:#f6f0fa;border-left:4px solid #4A235A;padding:12px 16px;border-radius:0 8px 8px 0;font-size:13px;color:#4A235A;line-height:1.65;margin-bottom:16px}
+.warning-box{background:#fff0f0;border:1.5px solid #cc2222;border-radius:8px;padding:13px 15px;font-size:13px;color:#8b0000;line-height:1.6;margin-bottom:14px}
+.stream-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.stream-card{background:#fff;border:1.5px solid #e0e0dc;border-radius:10px;padding:14px;cursor:pointer;transition:all .15s}
+.stream-card:hover,.stream-card.selected{border-color:#B8962E;background:#fffaf0}
+.stream-card.selected{border-color:#4A235A}
+.sc-icon{font-size:22px;margin-bottom:6px}
+.sc-title{font-size:13px;font-weight:700;color:#4A235A;margin-bottom:3px}
+.sc-desc{font-size:12px;color:#666;line-height:1.45}
+.sc-effort{font-size:11px;font-weight:700;padding:3px 8px;border-radius:10px;margin-top:6px;display:inline-block;margin-right:4px}
+.effort-low{background:#e6f4ea;color:#1a6b2e}
+.effort-med{background:#fff8e6;color:#7a5a00}
+.effort-high{background:#fde8e8;color:#8b0000}
+.sc-visa{font-size:11px;color:#888;margin-top:5px;line-height:1.4}
+.plan-builder{background:#fff;border:1px solid #e0e0dc;border-radius:10px;padding:18px;margin-bottom:16px}
+.pb-title{font-size:14px;font-weight:700;color:#4A235A;margin-bottom:12px}
+.field-group{margin-bottom:14px}
+.field-group label{font-size:12px;font-weight:700;color:#555;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
+.field-group input,.field-group textarea,.field-group select{width:100%;padding:9px 12px;border-radius:7px;border:1.5px solid #ccc;font-size:13px;color:#222;background:#fafafa;font-family:Arial,sans-serif}
+.field-group textarea{resize:vertical;min-height:65px;line-height:1.5}
+.field-group input:focus,.field-group textarea:focus,.field-group select:focus{outline:none;border-color:#4A235A;background:#fff}
+.feel-box{background:#fff8e6;border:1.5px solid #e6b800;border-radius:8px;padding:14px 16px;font-size:14px;line-height:1.65;color:#7a5a00}
+.resource-card{background:#fff;border:1px solid #e0e0dc;border-radius:8px;padding:13px 15px;margin-bottom:9px}
+.resource-name{font-size:13px;font-weight:700;color:#4A235A;margin-bottom:2px}
+.resource-desc{font-size:12px;color:#888;line-height:1.5}
+.tag{font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;background:#f0e6f6;color:#4A235A}
+.ext{font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;background:#e6f4ea;color:#1a6b2e}
+.prompt-box{background:#f6f0fa;border:1.5px solid #4A235A;border-radius:10px;padding:18px}
+.prompt-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#4A235A;margin-bottom:8px}
+.pf{margin-bottom:12px}
+.pf label{font-size:12px;color:#555;display:block;margin-bottom:4px;font-weight:600}
+.pf textarea{width:100%;padding:10px 12px;border-radius:7px;border:1.5px solid #ccc;font-size:13px;color:#222;resize:vertical;min-height:80px;font-family:Arial,sans-serif;line-height:1.55;background:#fff}
+.pf textarea:focus{outline:none;border-color:#4A235A}
+.char-count{font-size:11px;color:#999;text-align:right;margin-top:3px;margin-bottom:14px}
+.done-btn{width:100%;padding:13px;background:#B8962E;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;opacity:.35;pointer-events:none;transition:opacity .2s}
+.done-btn.active{opacity:1;pointer-events:auto}
+</style>
+</head>
+<body>
+<div class="stage-badge">🌟 Stage 5 — Realize</div>
+<div class="task-header">
+  <div class="task-title">Task 5.2 — Activate a second or passive income stream</div>
+  <div class="task-meta">⏱ Planning: 45–60 min · Activation: this stage · Visa-compliant · All tracks</div>
+</div>
+
+<div class="section">
+  <div class="section-label">Why this matters</div>
+  <div class="section-body">One income source is a single point of failure. You know this in your body — because a single point of failure is precisely what made your arrival so precarious. One employer. One sponsor. One decision letter. One thread holding everything.<br><br>Sovereignty — the destination of this entire framework — is structural, not aspirational. It means your life stands on enough independent foundations that no single institution can pull it down. Task 4.2 established your primary income stream. This task adds the second: a stream that runs alongside your primary one, that you control, and that continues generating even when your attention is elsewhere.<br><br>Realistic expectations matter here. "Passive" income is rarely passive at the start — it is front-loaded effort that pays over time. The goal for this task is not £1,000 a month. It is a second stream that is live, legal, and generating anything at all. From there, it compounds.</div>
+
+  <div class="warning-box"><strong>Visa compliance first — always:</strong> Before activating any second income stream, confirm it is permitted on your visa. Tracks C, D, E (post-grant), and F have broad freedom. Track A (Skilled Worker) cannot be self-employed — some passive investment income is generally permitted but selling products or services is likely to count as self-employment; get regulated advice first. Track B (Student) cannot be self-employed at all. Tracks G and H have business-tied conditions. Task 4.2 covered your track's rules — re-read them before choosing below.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">What to do</div>
+  <ol class="steps">
+    <li>Choose one second-stream category below that is permitted on your visa and matches a skill or asset you already have. Do not pick the one with the biggest theoretical ceiling — pick the one you can activate fastest with what you already know.</li>
+    <li>Complete the activation plan: what you are building, the first three actions, the date it goes live, and a realistic 6-month monthly income target.</li>
+    <li>Take the first action within 7 days. The gap between planning and starting is where most second streams die.</li>
+    <li>Complete the prompt when your stream is activated — meaning it exists in the world and can receive money, even if it has not yet.</li>
+  </ol>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Second income stream options — choose what fits your visa and skills</div>
+  <div class="stream-grid">
+    <div class="stream-card" onclick="selectStream(this,'Digital products — templates, guides, planners')"><div class="sc-icon">📦</div><div class="sc-title">Digital products</div><div class="sc-desc">Templates, guides, planners, spreadsheets built from your professional expertise. Create once, sell repeatedly on Etsy, Gumroad, or your own shop.</div><span class="sc-effort effort-med">Medium setup</span><span class="sc-effort effort-low">Low maintenance</span><div class="sc-visa">✓ Tracks C, D, E (post-grant), F · ⚠ Tracks A, B: counts as self-employment — not permitted / seek advice</div></div>
+    <div class="stream-card" onclick="selectStream(this,'UGC and content creation for brands')"><div class="sc-icon">📱</div><div class="sc-title">UGC and creator income</div><div class="sc-desc">Creating content for brands — paid per piece, no audience required. Your perspective as an immigrant navigating UK life is a genuine content asset.</div><span class="sc-effort effort-med">Medium setup</span><span class="sc-effort effort-med">Ongoing effort</span><div class="sc-visa">✓ Tracks C, D, E (post-grant), F · ⚠ Tracks A, B: self-employment rules apply — seek advice</div></div>
+    <div class="stream-card" onclick="selectStream(this,'Stocks and shares ISA — long-term investing')"><div class="sc-icon">📊</div><div class="sc-title">Stocks and shares ISA</div><div class="sc-desc">Up to £20,000/year tax-free investing. Low-cost index funds via Vanguard, Trading 212, or Freetrade. Genuinely passive — but this is long-term wealth building, not monthly income.</div><span class="sc-effort effort-low">Low setup</span><span class="sc-effort effort-low">Truly passive</span><div class="sc-visa">✓ Generally permitted on all tracks as personal investment — must be UK tax resident. Capital at risk.</div></div>
+    <div class="stream-card" onclick="selectStream(this,'Tutoring or teaching your professional skill')"><div class="sc-icon">🎓</div><div class="sc-title">Tutoring and teaching</div><div class="sc-desc">Teaching your language, your professional skill, or academic subjects. Platforms: Preply, Superprof, Tutorful. Employed tutoring positions also exist for restricted visas.</div><span class="sc-effort effort-low">Low setup</span><span class="sc-effort effort-med">Time for money</span><div class="sc-visa">✓ Tracks C, D, E (post-grant), F freely · Tracks A, B: only as employed work within your permitted hours</div></div>
+    <div class="stream-card" onclick="selectStream(this,'Online course from your expertise')"><div class="sc-icon">🎬</div><div class="sc-title">Online course</div><div class="sc-desc">A structured course teaching what you know professionally. Higher effort, higher ceiling. Host on Teachable, Podia, or your own site.</div><span class="sc-effort effort-high">High setup</span><span class="sc-effort effort-low">Low maintenance after</span><div class="sc-visa">✓ Tracks C, D, E (post-grant), F · ⚠ Tracks A, B: counts as self-employment — seek advice</div></div>
+    <div class="stream-card" onclick="selectStream(this,'Freelance services in my professional field')"><div class="sc-icon">🛠️</div><div class="sc-title">Freelance services</div><div class="sc-desc">Consulting, design, writing, analysis, development — sold by the project on Upwork, Fiverr, PeoplePerHour, or direct to your network from Task 4.3.</div><span class="sc-effort effort-low">Low setup</span><span class="sc-effort effort-high">Active effort</span><div class="sc-visa">✓ Tracks C, D, E (post-grant), F · ✗ Tracks A, B: self-employment not permitted · Tracks G, H: within business conditions</div></div>
+    <div class="stream-card" onclick="selectStream(this,'Higher-yield savings and interest income')"><div class="sc-icon">🏦</div><div class="sc-title">Interest income</div><div class="sc-desc">Moving savings from 0% accounts to 4–5% easy-access savers or Cash ISAs. Not a fortune — but £3,000 sitting at 4.5% instead of 0% is £135/year for ten minutes of admin.</div><span class="sc-effort effort-low">10-minute setup</span><span class="sc-effort effort-low">Truly passive</span><div class="sc-visa">✓ All tracks — personal savings income is permitted on every visa</div></div>
+    <div class="stream-card" onclick="selectStream(this,'Custom stream — defined in plan below')"><div class="sc-icon">✨</div><div class="sc-title">Custom stream</div><div class="sc-desc">Something specific to your skills, assets, or situation that does not fit above. Define it in the activation plan — and verify visa compliance before anything else.</div><span class="sc-effort effort-med">Varies</span><div class="sc-visa">⚠ Verify against your track's conditions from Task 4.2 first</div></div>
+  </div>
+
+  <div class="callout"><strong>The honest rule of second streams:</strong> pick the intersection of three circles — what you already know, what your visa permits, and what can go live within 30 days. Ignore anything outside that intersection for now, no matter how attractive the ceiling looks. A live small stream beats a theoretical large one every time.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Activation plan</div>
+  <div class="plan-builder">
+    <div class="pb-title">Turn the choice into a live stream</div>
+    <div class="field-group">
+      <label>Your second income stream</label>
+      <input type="text" id="stream-name" placeholder="e.g. Digital planner templates for nurses preparing for NMC OSCE — sold on Etsy" oninput="checkPrompt()" />
+    </div>
+    <div class="field-group">
+      <label>Visa compliance check — why is this permitted on your track?</label>
+      <input type="text" placeholder="e.g. Track C — full right to work including self-employment. Registered with HMRC for self-assessment, UTR received." oninput="checkPrompt()" />
+    </div>
+    <div class="field-group">
+      <label>First three actions — each with a date</label>
+      <textarea placeholder="e.g. 1. Create the first template in Canva — by Saturday. 2. Set up Etsy shop and payment details — by Tuesday. 3. List first product with photos and description — by next Friday." oninput="checkPrompt()"></textarea>
+    </div>
+    <div class="field-group">
+      <label>Go-live date — when the stream can receive money</label>
+      <input type="date" id="live-date" oninput="checkPrompt()" />
+    </div>
+    <div class="field-group">
+      <label>Realistic monthly income target at 6 months</label>
+      <input type="text" placeholder="e.g. £150/month by month 6 — modest, honest, achievable" oninput="checkPrompt()" />
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">What to expect to feel</div>
+  <div class="feel-box">The first pound your second stream earns will feel disproportionately significant — more than its face value in any rational accounting. That is because it is not really a pound. It is proof of concept for a different kind of life: one where your income does not depend on a single institution's continued goodwill. Expect the early months to be slow. Expect to wonder if it is worth it. It is — not because of what it earns in month two, but because of what it becomes by year two, and what it makes impossible: the single letter that takes everything.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Tools and resources</div>
+  <div class="resource-card">
+    <div style="display:flex;justify-content:space-between;align-items:start"><div class="resource-name">Guide: Income options by visa type</div><span class="tag">In-app</span></div>
+    <div class="resource-desc">The complete 8-track reference from Task 4.2 — re-read your track's section before activating anything new.</div>
+  </div>
+  <div class="resource-card">
+    <div style="display:flex;justify-content:space-between;align-items:start"><div class="resource-name">HMRC — register for self-assessment</div><span class="ext">External</span></div>
+    <div class="resource-desc">gov.uk/register-for-self-assessment — if your stream involves self-employment income, register before you earn. You must declare self-employment income over £1,000/year (the trading allowance threshold).</div>
+  </div>
+  <div class="resource-card">
+    <div style="display:flex;justify-content:space-between;align-items:start"><div class="resource-name">MoneyHelper — ISA and savings guidance</div><span class="ext">External</span></div>
+    <div class="resource-desc">moneyhelper.org.uk — free government-backed guidance on ISAs, savings accounts, and investment basics. Start here before opening any investment account.</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="prompt-box">
+    <div class="prompt-label">✏ Completion prompt — activation required</div>
+    <p style="font-size:14px;color:#222;margin-bottom:12px;line-height:1.6">This task completes when your stream is live — meaning it exists and can receive money. Minimum 40 characters.</p>
+    <div class="pf">
+      <label>What is your second income stream, when did it go live, and what has it generated so far (£0 is a valid answer — live is what counts)?</label>
+      <textarea id="prompt-answer" placeholder="e.g. My second stream is OSCE preparation templates for internationally-trained nurses, live on Etsy since the 14th. Three products listed. £23 in first sales so far. Small — but it exists, it is legal, and it is mine." oninput="checkPrompt2()"></textarea>
+      <div class="char-count" id="char-count">0 / 40 minimum characters</div>
+    </div>
+    <button class="done-btn" id="done-btn">✓ Mark task 5.2 complete</button>
+  </div>
+</div>
+
+<script>
+function selectStream(el,name){
+  document.querySelectorAll('.stream-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('stream-name').value=name;
+}
+function checkPrompt(){}
+function checkPrompt2(){
+  const t=document.getElementById('prompt-answer').value.trim();
+  document.getElementById('char-count').textContent=t.length+' / 40 minimum characters';
+  document.getElementById('done-btn').classList.toggle('active',t.length>=40);
+}
+</script>
+</body>
+</html>

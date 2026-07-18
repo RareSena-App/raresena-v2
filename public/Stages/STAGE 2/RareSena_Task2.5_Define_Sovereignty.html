@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RareSena — Task 2.5 — Define What Sovereignty Means to You</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f0;color:#222;padding:24px;max-width:820px;margin:0 auto}
+.stage-badge{display:inline-flex;align-items:center;gap:6px;background:#1A3A5C;color:#fff;font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;margin-bottom:14px}
+.task-header{border-left:5px solid #B8962E;padding:14px 18px;background:#fff;border-radius:0 10px 10px 0;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.task-title{font-size:20px;font-weight:700;color:#1A3A5C;margin-bottom:5px}
+.task-meta{font-size:13px;color:#888}
+.section{margin-bottom:24px}
+.section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B8962E;margin-bottom:9px}
+.section-body{font-size:14px;line-height:1.75;color:#444}
+.steps{counter-reset:step;list-style:none;padding:0}
+.steps li{counter-increment:step;display:flex;gap:12px;margin-bottom:14px;font-size:14px;line-height:1.65;color:#444}
+.steps li::before{content:counter(step);min-width:26px;height:26px;background:#B8962E;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
+.raresena-definition{background:#1A3A5C;color:#fff;border-radius:12px;padding:22px;margin-bottom:20px}
+.rd-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;opacity:.7;margin-bottom:8px}
+.rd-text{font-size:15px;line-height:1.75;font-style:italic}
+.rd-source{font-size:12px;opacity:.6;margin-top:10px}
+.dimension-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.dim-card{background:#fff;border:1.5px solid #e0e0dc;border-radius:8px;padding:13px;cursor:pointer;transition:all .15s}
+.dim-card:hover,.dim-card.selected{border-color:#B8962E;background:#fff8e6}
+.dim-icon{font-size:20px;margin-bottom:4px}
+.dim-label{font-size:13px;font-weight:700;color:#1A3A5C;margin-bottom:3px}
+.dim-desc{font-size:12px;color:#666;line-height:1.4}
+.dim-input{margin-top:8px;width:100%;padding:7px 10px;border-radius:6px;border:1px solid #ccc;font-size:12px;color:#222;display:none;font-family:Arial,sans-serif}
+.dim-input.show{display:block}
+.sovereignty-output{background:#1A3A5C;color:#fff;border-radius:12px;padding:20px;margin-top:16px;font-size:14px;line-height:1.75;min-height:80px}
+.sovereignty-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;opacity:.7;margin-bottom:8px}
+.examples{background:#fff;border:1px solid #e0e0dc;border-radius:8px;padding:14px;margin-bottom:16px}
+.examples-title{font-size:12px;font-weight:700;color:#B8962E;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.example-item{border-left:3px solid #B8962E;padding:8px 12px;margin-bottom:8px;font-size:13px;color:#444;line-height:1.55;font-style:italic}
+.feel-box{background:#fff8e6;border:1.5px solid #e6b800;border-radius:8px;padding:14px 16px;font-size:14px;line-height:1.65;color:#7a5a00}
+.divider{height:1px;background:#e0e0dc;margin:22px 0}
+.prompt-box{background:#f0f4ff;border:1.5px solid #1A3A5C;border-radius:10px;padding:18px}
+.prompt-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1A3A5C;margin-bottom:8px}
+.pf label{font-size:12px;color:#555;display:block;margin-bottom:4px;font-weight:600}
+textarea{width:100%;padding:10px 12px;border-radius:7px;border:1.5px solid #ccc;font-size:13px;color:#222;background:#fff;resize:vertical;min-height:90px;font-family:Arial,sans-serif;line-height:1.55}
+textarea:focus{outline:none;border-color:#1A3A5C}
+.char-count{font-size:11px;color:#999;text-align:right;margin-top:3px;margin-bottom:14px}
+.done-btn{width:100%;padding:13px;background:#B8962E;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;opacity:.35;pointer-events:none;transition:opacity .2s}
+.done-btn.active{opacity:1;pointer-events:auto}
+.profile-save-note{background:#e6f4ea;border:1px solid #1a6b2e;border-radius:8px;padding:11px 14px;font-size:12px;color:#1a5c1a;margin-top:14px;line-height:1.5}
+</style>
+</head>
+<body>
+
+<div class="stage-badge">🔭 Stage 2 — Rediscover</div>
+
+<div class="task-header">
+  <div class="task-title">Task 2.5 — Define what sovereignty means to you personally</div>
+  <div class="task-meta">⏱ 30–45 min &nbsp;·&nbsp; 🌿 The destination gives every stage its direction &nbsp;·&nbsp; All tracks</div>
+</div>
+
+<div class="section">
+  <div class="section-label">Why this matters</div>
+  <div class="section-body">Sovereignty is the end destination of the entire 5R framework. It is the word RareSena uses for a specific condition: a life that cannot be destabilised by a single letter — from an employer, from the Home Office, from a landlord, from a bank.<br><br>But sovereignty means something different for every person who arrives in the UK. For one person it is owning their own home so nobody can evict them. For another it is ILR and then citizenship, so no letter can ever threaten their right to stay. For another it is an income that does not depend on a single employer or a single visa condition. For another it is simply the freedom to call their mother without calculating the cost of the call.<br><br>Defining what sovereignty means to you — specifically, concretely — gives every stage that follows a direction. Without a destination, rebuilding has no shape. With one, every task in every stage becomes a step toward something. That is the difference between surviving and building.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">The RareSena definition of sovereignty</div>
+  <div class="raresena-definition">
+    <div class="rd-label">RareSena — 5R Rebuild Method</div>
+    <div class="rd-text">"Sovereignty is the condition in which a single letter — from an employer, from the Home Office, from a bank, from a landlord — can no longer destabilise the life you have built. It is not wealth. It is not perfection. It is structural security: a life built on enough independent foundations that no single institution holds the power to unravel it."</div>
+    <div class="rd-source">— RareSena 5R Rebuild Method · Realize Stage</div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">What to do</div>
+  <ol class="steps">
+    <li>Read the RareSena definition above. Sit with it. Notice which parts land and which parts feel distant from your current reality.</li>
+    <li>Select the dimensions of sovereignty that matter most to you personally — what does a sovereign life look like in your specific situation? Select all that apply and add detail for each one.</li>
+    <li>Write your personal sovereignty definition using the builder below. It should be 2–3 sentences, specific to your life, and concrete enough that you will recognise when you have arrived.</li>
+    <li>This definition is saved to your profile and displayed on your dashboard throughout the rebuild as a north star. Every stage is designed to move you closer to it.</li>
+  </ol>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">What does sovereignty look like for you?</div>
+  <div class="dimension-grid">
+    <div class="dim-card" onclick="toggleDim(this,'legal')"><div class="dim-icon">🛡️</div><div class="dim-label">Legal and immigration security</div><div class="dim-desc">ILR, citizenship, or settled status — a status that cannot be revoked by an employer or relationship breakdown</div><input class="dim-input" id="d-legal" placeholder="e.g. British citizenship by 2029 so no future visa renewal can threaten my right to stay" oninput="buildSov()" /></div>
+    <div class="dim-card" onclick="toggleDim(this,'financial')"><div class="dim-icon">💰</div><div class="dim-label">Financial independence</div><div class="dim-desc">Income that does not depend on a single employer, a single client, or a single visa condition</div><input class="dim-input" id="d-financial" placeholder="e.g. Multiple income streams generating at least £3,000/month that I control regardless of employment status" oninput="buildSov()" /></div>
+    <div class="dim-card" onclick="toggleDim(this,'housing')"><div class="dim-icon">🏠</div><div class="dim-label">Housing security</div><div class="dim-desc">Owning or having secure tenancy — a home that cannot be taken away by a landlord's decision</div><input class="dim-input" id="d-housing" placeholder="e.g. Own a property by 2030 so no landlord or eviction notice can remove the roof over my children's heads" oninput="buildSov()" /></div>
+    <div class="dim-card" onclick="toggleDim(this,'professional')"><div class="dim-icon">💼</div><div class="dim-label">Professional recognition</div><div class="dim-desc">A role that uses your skills, in your field, at the level you are qualified for</div><input class="dim-input" id="d-professional" placeholder="e.g. Practising as a registered nurse in the NHS within 18 months, in a senior role within 3 years" oninput="buildSov()" /></div>
+    <div class="dim-card" onclick="toggleDim(this,'family')"><div class="dim-icon">👨‍👩‍👧</div><div class="dim-label">Family security and togetherness</div><div class="dim-desc">Family members joined, safe, and established — nobody left behind or at risk</div><input class="dim-input" id="d-family" placeholder="e.g. My mother joined me in the UK under a family visa within 2 years, with stable housing and healthcare access" oninput="buildSov()" /></div>
+    <div class="dim-card" onclick="toggleDim(this,'belonging')"><div class="dim-icon">🌍</div><div class="dim-label">Belonging and identity</div><div class="dim-desc">Feeling genuinely at home here without having erased who you were before you arrived</div><input class="dim-input" id="d-belonging" placeholder="e.g. A life where I am British and Nigerian without apology — both identities present and valued" oninput="buildSov()" /></div>
+    <div class="dim-card" onclick="toggleDim(this,'business')"><div class="dim-icon">🚀</div><div class="dim-label">Business and legacy</div><div class="dim-desc">A business or platform built on your terms, generating value independently of any employer</div><input class="dim-input" id="d-business" placeholder="e.g. A UK-registered business generating £5,000/month in revenue by year 3, owned entirely by me" oninput="buildSov()" /></div>
+    <div class="dim-card" onclick="toggleDim(this,'wellbeing')"><div class="dim-icon">💚</div><div class="dim-label">Wellbeing and peace</div><div class="dim-desc">A daily life with enough stability and enough freedom that anxiety is no longer the background noise</div><input class="dim-input" id="d-wellbeing" placeholder="e.g. A life where I am not constantly calculating risk — where I wake up without the background hum of existential threat" oninput="buildSov()" /></div>
+  </div>
+
+  <div style="font-size:12px;font-weight:700;color:#B8962E;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Your personal sovereignty definition</div>
+  <div class="sovereignty-output">
+    <div class="sovereignty-label">What you are building toward</div>
+    <div id="sov-output">Select the dimensions above to build your definition...</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Examples of personal sovereignty definitions</div>
+  <div class="examples">
+    <div class="examples-title">From people who have defined sovereignty for themselves</div>
+    <div class="example-item">"Sovereignty for me means British citizenship, a mortgage in my own name, and an income I generate myself — so that no employer, no landlord, and no Home Office letter can ever again determine where my children live."</div>
+    <div class="example-item">"My sovereignty is the day I practise medicine again — not as a locum filling gaps, but as a consultant in a department that values what I bring. That is the day I stop proving myself and start being myself here."</div>
+    <div class="example-item">"Sovereignty is simpler for me: it is being able to call my mother without calculating the cost, to cook the food I grew up with without explaining it, and to know that my family's status in this country is not dependent on one piece of paper or one employer's goodwill."</div>
+    <div class="example-item">"For me it is financial. Three income streams. None of them dependent on my visa status. That is the day no letter can touch me — not a P45, not a visa refusal, not a landlord's notice."</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">What to expect to feel</div>
+  <div class="feel-box">Defining sovereignty when you are still in Reset or early Rediscover can feel presumptuous — like you are not yet in a position to claim it as a destination. That feeling is wrong. The definition is not a claim. It is a compass. You do not need to be close to sovereignty to name what it looks like. In fact, the further you are from it, the more important it is to name it — because without a destination, survival becomes the goal. And survival is not what you came here for.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="prompt-box">
+    <div class="prompt-label">✏ Completion prompt</div>
+    <p style="font-size:14px;color:#222;margin-bottom:12px;line-height:1.6">Describe your version of sovereignty in 2–3 sentences. What does it look, feel, and mean for you? Minimum 60 characters. Saved to your profile dashboard.</p>
+    <div class="pf">
+      <label>Your sovereignty definition</label>
+      <textarea id="prompt-answer" placeholder="e.g. Sovereignty for me means ILR by 2027 followed by citizenship, a role as a registered nurse in the NHS, and an income that my family can live on without depending on a single employer. It means my children growing up without the background anxiety of precarious status. It means being British and Ghanaian without apology, and never again feeling that one letter can undo everything I have built." oninput="checkPrompt()"></textarea>
+      <div class="char-count" id="char-count">0 / 60 minimum characters</div>
+    </div>
+    <button class="done-btn" id="done-btn">✓ Mark task 2.5 complete — Stage 2 Rediscover is done</button>
+    <div class="profile-save-note">✓ Your sovereignty definition will be saved to your profile and displayed on your dashboard throughout Stages 3, 4, and 5 as a reminder of what you are building toward.</div>
+  </div>
+</div>
+
+<script>
+function toggleDim(el,id){
+  el.classList.toggle('selected');
+  const inp=document.getElementById('d-'+id);
+  inp.classList.toggle('show',el.classList.contains('selected'));
+  if(!el.classList.contains('selected')){inp.value='';}
+  buildSov();
+}
+function buildSov(){
+  const dims=[
+    {id:'legal',label:'Legal security'},
+    {id:'financial',label:'Financial independence'},
+    {id:'housing',label:'Housing security'},
+    {id:'professional',label:'Professional recognition'},
+    {id:'family',label:'Family security'},
+    {id:'belonging',label:'Belonging'},
+    {id:'business',label:'Business and legacy'},
+    {id:'wellbeing',label:'Wellbeing'}
+  ];
+  const active=dims.filter(d=>document.getElementById('d-'+d.id).classList.contains('show')&&document.getElementById('d-'+d.id).value.trim());
+  const out=document.getElementById('sov-output');
+  if(active.length===0){out.textContent='Select the dimensions above to build your definition...';return;}
+  let text='Sovereignty for me means: ';
+  text+=active.map(d=>document.getElementById('d-'+d.id).value.trim()).filter(Boolean).join('. ')+'.';
+  out.textContent=text;
+  if(text.length>60){
+    document.getElementById('prompt-answer').value=text;
+    checkPrompt();
+  }
+}
+function checkPrompt(){
+  const t=document.getElementById('prompt-answer').value.trim();
+  document.getElementById('char-count').textContent=t.length+' / 60 minimum characters';
+  document.getElementById('done-btn').classList.toggle('active',t.length>=60);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RareSena — Task 4.4 — Begin the Sovereignty Programme Assessment</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f0;color:#222;padding:24px;max-width:820px;margin:0 auto}
+.stage-badge{display:inline-flex;align-items:center;gap:6px;background:#7D3C0F;color:#fff;font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;margin-bottom:14px}
+.task-header{border-left:5px solid #B8962E;padding:14px 18px;background:#fff;border-radius:0 10px 10px 0;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.task-title{font-size:20px;font-weight:700;color:#7D3C0F;margin-bottom:5px}
+.task-meta{font-size:13px;color:#888}
+.section{margin-bottom:24px}
+.section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B8962E;margin-bottom:9px}
+.section-body{font-size:14px;line-height:1.75;color:#444}
+.steps{counter-reset:step;list-style:none;padding:0}
+.steps li{counter-increment:step;display:flex;gap:12px;margin-bottom:14px;font-size:14px;line-height:1.65;color:#444}
+.steps li::before{content:counter(step);min-width:26px;height:26px;background:#B8962E;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
+.divider{height:1px;background:#e0e0dc;margin:22px 0}
+.programme-card{background:#1B2D5B;color:#fff;border-radius:14px;padding:22px;margin-bottom:20px}
+.pc-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;opacity:.6;margin-bottom:8px}
+.pc-title{font-size:20px;font-weight:700;margin-bottom:8px}
+.pc-desc{font-size:14px;opacity:.85;line-height:1.7;margin-bottom:16px}
+.pc-features{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.pc-feature{background:rgba(255,255,255,.1);border-radius:7px;padding:10px 12px;font-size:12px;line-height:1.4}
+.pc-feature strong{display:block;color:#B8962E;margin-bottom:2px;font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+.pc-price{font-size:22px;font-weight:700;color:#B8962E;margin-bottom:4px}
+.pc-price-note{font-size:12px;opacity:.6}
+.pc-cta{display:inline-block;background:#B8962E;color:#fff;padding:11px 22px;border-radius:8px;font-size:14px;font-weight:700;text-decoration:none;cursor:pointer;margin-top:10px}
+.readiness-check{background:#fff;border:1px solid #e0e0dc;border-radius:10px;padding:18px;margin-bottom:16px}
+.rc-title{font-size:14px;font-weight:700;color:#7D3C0F;margin-bottom:12px}
+.rc-question{background:#f9f9f7;border-radius:8px;padding:12px 14px;margin-bottom:8px}
+.rc-q-text{font-size:13px;color:#444;margin-bottom:8px;font-weight:600}
+.rc-options{display:flex;gap:8px;flex-wrap:wrap}
+.rc-opt{padding:5px 13px;border-radius:20px;font-size:12px;border:1px solid #ccc;cursor:pointer;color:#555;background:#fff;transition:all .15s}
+.rc-opt.selected{background:#1B2D5B;color:#fff;border-color:#1B2D5B}
+.readiness-result{background:#fff8e6;border:1.5px solid #B8962E;border-radius:8px;padding:14px 16px;margin-top:14px;display:none}
+.rr-title{font-size:13px;font-weight:700;color:#7a3300;margin-bottom:6px}
+.rr-body{font-size:13px;color:#555;line-height:1.6}
+.not-ready-section{background:#f5f5f0;border:1px solid #e0e0dc;border-radius:10px;padding:18px;margin-bottom:16px}
+.nr-title{font-size:14px;font-weight:700;color:#555;margin-bottom:8px}
+.nr-body{font-size:13px;color:#666;line-height:1.65}
+.feel-box{background:#fff8e6;border:1.5px solid #e6b800;border-radius:8px;padding:14px 16px;font-size:14px;line-height:1.65;color:#7a5a00}
+.prompt-box{background:#fdf5f0;border:1.5px solid #7D3C0F;border-radius:10px;padding:18px}
+.prompt-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7D3C0F;margin-bottom:8px}
+.pf{margin-bottom:12px}
+.pf label{font-size:12px;color:#555;display:block;margin-bottom:4px;font-weight:600}
+.pf textarea{width:100%;padding:9px 12px;border-radius:7px;border:1.5px solid #ccc;font-size:13px;color:#222;resize:vertical;min-height:80px;font-family:Arial,sans-serif;line-height:1.5;background:#fff}
+.pf textarea:focus{outline:none;border-color:#7D3C0F}
+.char-count{font-size:11px;color:#999;text-align:right;margin-top:3px;margin-bottom:14px}
+.done-btn{width:100%;padding:13px;background:#B8962E;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;opacity:.35;pointer-events:none;transition:opacity .2s;margin-top:14px}
+.done-btn.active{opacity:1;pointer-events:auto}
+.legal-note{background:#f0f4ff;border:1px solid #1B2D5B;border-radius:7px;padding:11px 14px;font-size:12px;color:#1B2D5B;line-height:1.55;margin-top:12px}
+</style>
+</head>
+<body>
+<div class="stage-badge">📈 Stage 4 — Rise</div>
+<div class="task-header">
+  <div class="task-title">Task 4.4 — Begin the Sovereignty Programme assessment</div>
+  <div class="task-meta">⏱ 30–40 min · High-touch support · All tracks</div>
+</div>
+
+<div class="section">
+  <div class="section-label">Why this matters</div>
+  <div class="section-body">The Sovereignty Programme exists for a specific situation: an immigrant who is navigating immigration complexity — a visa that is becoming precarious, a route that needs to change, a settlement application that needs expert guidance — and who needs someone to walk alongside them through it, not just point them to a website.<br><br>Not every user in Stage 4 needs the Sovereignty Programme right now. But every user in Stage 4 should know it exists, understand what it does, and be honest with themselves about whether they are in a situation that needs this level of support.<br><br>This task is not a sales prompt. It is a readiness assessment — a structured way of asking yourself: <em>is my immigration situation one that I can navigate alone with the knowledge I have built in this app, or is it one that requires expert, regulated, hand-held support?</em> The answer to that question should drive your decision.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">The Sovereignty Programme</div>
+  <div class="programme-card">
+    <div class="pc-label">RareSena — high-touch immigration and rebuild support</div>
+    <div class="pc-title">Sovereignty Programme</div>
+    <div class="pc-desc">A combination of personal coaching with Sena, cohort learning with peers navigating similar situations, and self-paced structured content — supported by regulated immigration advisers where your situation requires it. Built for immigrants whose immigration complexity has become the biggest obstacle to their rebuild.</div>
+    <div class="pc-features">
+      <div class="pc-feature"><strong>Personal coaching</strong>One-to-one sessions with Sena — the person who built this framework from inside the experience.</div>
+      <div class="pc-feature"><strong>Regulated adviser access</strong>OISC-regulated immigration advisers for situations that require formal legal guidance.</div>
+      <div class="pc-feature"><strong>Cohort community</strong>Peers navigating similar immigration situations — structured, confidential, and focused.</div>
+      <div class="pc-feature"><strong>Self-paced content</strong>Structured modules covering every major UK immigration route change, ILR preparation, and sovereignty planning.</div>
+    </div>
+    <div class="pc-price">From £3,500</div>
+    <div class="pc-price-note">Price subject to review · Payment plans available · Contact for current cohort availability</div>
+    <div class="pc-cta" onclick="window.open('https://raresena.com','_blank')">→ Learn more and apply at raresena.com</div>
+    <div class="legal-note">⚠ Immigration advice provided within the Sovereignty Programme is delivered by or under the supervision of OISC-regulated advisers. The programme does not constitute a solicitor-client relationship. For formal legal representation, you will be referred to a regulated solicitor.</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Readiness assessment — is the Sovereignty Programme right for you right now?</div>
+  <div class="readiness-check">
+    <div class="rc-title">Answer honestly — this assessment is private</div>
+
+    <div class="rc-question">
+      <div class="rc-q-text">1. How would you describe your current immigration situation?</div>
+      <div class="rc-options">
+        <div class="rc-opt" onclick="selectOpt(this,'imm','stable')">Stable — no immediate concerns</div>
+        <div class="rc-opt" onclick="selectOpt(this,'imm','monitoring')">Monitoring — some uncertainty</div>
+        <div class="rc-opt" onclick="selectOpt(this,'imm','complex')">Complex — I need to change or extend my route</div>
+        <div class="rc-opt" onclick="selectOpt(this,'imm','crisis')">Critical — urgent situation</div>
+      </div>
+    </div>
+
+    <div class="rc-question">
+      <div class="rc-q-text">2. Do you have a clear plan for your ILR or settlement application?</div>
+      <div class="rc-options">
+        <div class="rc-opt" onclick="selectOpt(this,'ilr','yes')">Yes — date set, documents in order</div>
+        <div class="rc-opt" onclick="selectOpt(this,'ilr','partial')">Partial — I know roughly when but not the steps</div>
+        <div class="rc-opt" onclick="selectOpt(this,'ilr','no')">No — I do not know where to start</div>
+        <div class="rc-opt" onclick="selectOpt(this,'ilr','notyet')">Not applicable yet — too early in my route</div>
+      </div>
+    </div>
+
+    <div class="rc-question">
+      <div class="rc-q-text">3. Have you ever consulted a regulated immigration adviser about your situation?</div>
+      <div class="rc-options">
+        <div class="rc-opt" onclick="selectOpt(this,'adviser','yes')">Yes — and I have ongoing support</div>
+        <div class="rc-opt" onclick="selectOpt(this,'adviser','once')">Once — but not recently</div>
+        <div class="rc-opt" onclick="selectOpt(this,'adviser','no')">No — I have navigated alone</div>
+        <div class="rc-opt" onclick="selectOpt(this,'adviser','cant')">No — I could not afford it</div>
+      </div>
+    </div>
+
+    <div class="rc-question">
+      <div class="rc-q-text">4. Is there an aspect of your immigration situation that keeps you awake at night?</div>
+      <div class="rc-options">
+        <div class="rc-opt" onclick="selectOpt(this,'anxiety','no')">No — I feel informed and in control</div>
+        <div class="rc-opt" onclick="selectOpt(this,'anxiety','sometimes')">Sometimes — specific things worry me</div>
+        <div class="rc-opt" onclick="selectOpt(this,'anxiety','yes')">Yes — regularly</div>
+        <div class="rc-opt" onclick="selectOpt(this,'anxiety','always')">Always — it is a constant background presence</div>
+      </div>
+    </div>
+
+    <div class="readiness-result" id="readiness-result">
+      <div class="rr-title" id="rr-title"></div>
+      <div class="rr-body" id="rr-body"></div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">If you are not yet ready — what this task still asks of you</div>
+  <div class="not-ready-section">
+    <div class="nr-title">You do not need to enrol today. You need to answer one question honestly.</div>
+    <div class="nr-body">This task completes when you answer the prompt below — regardless of whether you are ready for the Sovereignty Programme right now or not. The question is: <em>what is the one thing you most want to resolve about your immigration situation, and what would need to be true for you to feel ready for expert support?</em><br><br>That question is worth sitting with whether you enrol in the next week or the next year. The answer tells you where your sovereignty work needs to go next.</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">What to expect to feel</div>
+  <div class="feel-box">The Sovereignty Programme is a significant financial investment — and if you are in Stage 4 of a rebuild, that number lands differently than it would at a different point in your life. The question this task asks is not "can you afford it right now" but "is this the thing that, if resolved, changes the trajectory of everything else?" For some users the answer is clearly yes. For others it is not yet. Both are honest answers — and this task accepts both.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="prompt-box">
+    <div class="prompt-label">✏ Completion prompt</div>
+    <p style="font-size:14px;color:#222;margin-bottom:12px;line-height:1.6">Answer honestly — whether you are ready to begin now or not. Minimum 40 characters.</p>
+    <div class="pf">
+      <label>What is the one thing you most want to resolve about your immigration situation — and what would need to be true for you to feel ready to begin the Sovereignty Programme?</label>
+      <textarea id="prompt-answer" placeholder="e.g. The thing I most want to resolve is my ILR application — I am 4 years in on a Skilled Worker visa and I do not fully understand the continuous residence requirements or how my travel history affects my eligibility. I would be ready for the Sovereignty Programme when I have saved the first instalment and when the app has got me to a stable enough financial baseline to justify the investment.&#10;&#10;OR&#10;&#10;I do not currently have immigration complexity — my situation is stable and I understand my route. If that changes, the Sovereignty Programme is where I would go first." oninput="checkPrompt()"></textarea>
+      <div class="char-count" id="char-count">0 / 40 minimum characters</div>
+    </div>
+    <button class="done-btn" id="done-btn">✓ Mark task 4.4 complete</button>
+  </div>
+</div>
+
+<script>
+const answers={};
+function selectOpt(el,dim,val){
+  el.closest('.rc-options').querySelectorAll('.rc-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  answers[dim]=val;
+  if(Object.keys(answers).length>=4)showResult();
+}
+function showResult(){
+  const r=document.getElementById('readiness-result');
+  const t=document.getElementById('rr-title');
+  const b=document.getElementById('rr-body');
+  r.style.display='block';
+  const crisis=answers.imm==='crisis'||answers.anxiety==='always';
+  const complex=answers.imm==='complex'||answers.ilr==='no'||answers.anxiety==='yes';
+  const stable=answers.imm==='stable'&&answers.ilr==='yes';
+  if(crisis){t.textContent='Your situation may benefit from immediate support';b.textContent='Based on your answers, your immigration situation sounds urgent. The Sovereignty Programme is designed for exactly this — but if the situation is immediately critical, please also contact a regulated immigration adviser directly through find-an-immigration-adviser at gov.uk. Do not wait.';}
+  else if(complex){t.textContent='The Sovereignty Programme is likely relevant to you';b.textContent='Your answers suggest immigration complexity that goes beyond what general knowledge can solve. The Sovereignty Programme — combining personal coaching, cohort support, and regulated adviser access — is built for your situation. Consider booking a discovery call to understand whether now is the right time.';}
+  else if(stable){t.textContent='Your immigration foundation is stable';b.textContent='Based on your answers, your immigration situation is under control for now. Keep monitoring as your route progresses. The Sovereignty Programme remains available when complexity arises — particularly as you approach ILR or any route change.';}
+  else{t.textContent='Some uncertainty worth addressing';b.textContent='Your answers suggest some immigration uncertainty that would benefit from clarity — even if not crisis level. The Sovereignty Programme or a one-off consultation with a regulated adviser could give you the specific answers you need.';}
+}
+function checkPrompt(){
+  const t=document.getElementById('prompt-answer').value.trim();
+  document.getElementById('char-count').textContent=t.length+' / 40 minimum characters';
+  document.getElementById('done-btn').classList.toggle('active',t.length>=40);
+}
+</script>
+</body>
+</html>

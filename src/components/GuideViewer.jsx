@@ -16,7 +16,7 @@ export default function GuideViewer({ guideFile, onClose }) {
       </div>
       {/* Guide content in iframe */}
       <iframe
-        src={`/guides/${guideFile}`}
+        src={`/${guideFile}`}
         style={{ flex: 1, border: 'none', width: '100%' }}
         title="Guide"
       />

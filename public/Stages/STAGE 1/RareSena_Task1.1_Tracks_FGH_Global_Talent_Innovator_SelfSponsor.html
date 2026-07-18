@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RareSena — Task 1.1 (Tracks F, G, H) — Visa Deadlines</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f0;color:#222;padding:24px;max-width:800px;margin:0 auto}
+.stage-badge{display:inline-flex;align-items:center;gap:6px;background:#1B2D5B;color:#fff;font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;margin-bottom:14px}
+.task-header{border-left:5px solid #B8962E;padding:14px 18px;background:#fff;border-radius:0 10px 10px 0;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.task-title{font-size:20px;font-weight:700;color:#1B2D5B;margin-bottom:5px}
+.task-meta{font-size:13px;color:#888}
+.section{margin-bottom:24px}
+.section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B8962E;margin-bottom:9px}
+.section-body{font-size:14px;line-height:1.75;color:#444}
+.track-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.track-tab{padding:7px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid #ccc;background:#fff;color:#555;transition:all .15s}
+.track-tab.active{background:#1B2D5B;color:#fff;border-color:#1B2D5B}
+.track-content{display:none;font-size:14px;line-height:1.75;color:#444}
+.track-content.active{display:block}
+.track-intro{background:#f0f4ff;border-left:4px solid #1B2D5B;padding:12px 16px;border-radius:0 8px 8px 0;margin-bottom:16px;font-size:13px;color:#1B2D5B;line-height:1.6}
+.steps{counter-reset:step;list-style:none;padding:0}
+.steps li{counter-increment:step;display:flex;gap:12px;margin-bottom:14px;font-size:14px;line-height:1.65;color:#444}
+.steps li::before{content:counter(step);min-width:26px;height:26px;background:#B8962E;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
+.warning-box{background:#fff8e6;border:1.5px solid #B8962E;border-radius:8px;padding:14px 16px;font-size:13px;color:#7a5a00;line-height:1.6;margin:14px 0}
+.feel-box{background:#fff8e6;border:1.5px solid #e6b800;border-radius:8px;padding:14px 16px;font-size:14px;line-height:1.65;color:#7a5a00}
+.divider{height:1px;background:#e0e0dc;margin:22px 0}
+.resource-card{background:#fff;border:1px solid #e0e0dc;border-radius:8px;padding:13px 15px;margin-bottom:9px;display:flex;align-items:flex-start;gap:12px}
+.resource-icon{width:34px;height:34px;border-radius:7px;background:#1B2D5B;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;color:#fff}
+.resource-name{font-size:13px;font-weight:700;color:#1B2D5B;margin-bottom:2px}
+.resource-desc{font-size:12px;color:#888}
+.tag{font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;background:#e8f0fe;color:#1B2D5B}
+.ext{font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;background:#e6f4ea;color:#1a6b2e}
+.prompt-box{background:#f0f4ff;border:1.5px solid #1B2D5B;border-radius:10px;padding:18px}
+.prompt-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1B2D5B;margin-bottom:8px}
+.prompt-text{font-size:14px;color:#222;margin-bottom:14px;line-height:1.65}
+.pf{margin-bottom:12px}
+.pf label{font-size:12px;color:#555;display:block;margin-bottom:4px;font-weight:600}
+.pf input{width:100%;padding:9px 12px;border-radius:7px;border:1.5px solid #ccc;font-size:13px;color:#222;background:#fff}
+.pf input:focus{outline:none;border-color:#1B2D5B}
+.done-btn{width:100%;padding:13px;background:#B8962E;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;margin-top:12px;opacity:.35;pointer-events:none;transition:opacity .2s}
+.done-btn.active{opacity:1;pointer-events:auto}
+.done-btn.active:hover{background:#a07a20}
+</style>
+</head>
+<body>
+
+<div class="stage-badge">⚓ Stage 1 — Reset</div>
+
+<div class="task-header">
+  <div class="task-title">Task 1.1 — Understand your visa options and deadlines</div>
+  <div class="task-meta">⏱ 20–30 min &nbsp;·&nbsp; 🛡 Non-negotiable &nbsp;·&nbsp; Tracks F, G &amp; H</div>
+</div>
+
+<div class="section">
+  <div class="section-label">Why this matters</div>
+  <div class="section-body">Your visa conditions are not paperwork — they are the legal infrastructure your entire life in the UK is built on. On the business and talent routes, the risks are different from a standard Skilled Worker visa, but they are just as real. A lapsed endorsement, a missed compliance meeting, a role that drifts outside your SOC code, a company that stops trading — any of these can destabilise your status and, by extension, everything you are building. This task is about knowing exactly what conditions apply to your route, where your deadlines are, and what your vulnerabilities are — before they become emergencies.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Select your visa type</div>
+  <div class="track-tabs">
+    <div class="track-tab active" onclick="switchTrack('F')">Global Talent</div>
+    <div class="track-tab" onclick="switchTrack('G')">Innovator Founder</div>
+    <div class="track-tab" onclick="switchTrack('H')">Self-Sponsored (Own Company)</div>
+  </div>
+
+  <!-- TRACK F: GLOBAL TALENT -->
+  <div id="track-F" class="track-content active">
+    <div class="track-intro">
+      <strong>Global Talent visa</strong> — you have been endorsed by one of six designated bodies (Royal Society, Royal Academy of Engineering, British Academy, UKRI, Arts Council England, or Tech Nation) as an exceptional talent or exceptional promise in your field. You have no employer tie and significant flexibility — but your compliance obligations are different from what most people expect.
+    </div>
+    <ol class="steps">
+      <li>Log into your <strong>UKVI online account</strong> at gov.uk/view-prove-immigration-status. Note your visa expiry date and the length of your current grant (up to 5 years at a time, renewable). Take a screenshot and save it.</li>
+      <li>Confirm your <strong>endorsing body</strong> and find your endorsement letter. Your endorsement was valid for 3 months from issue — your visa was granted on the basis of that letter. Your endorsing body does not manage your ongoing visa, but knowing who endorsed you matters if you ever need to switch fields, extend, or apply for ILR.</li>
+      <li>Note your <strong>ILR eligibility date</strong>. Global Talent visa holders can apply for ILR after 3 years (if endorsed as Exceptional Talent) or 5 years (if endorsed as Exceptional Promise). This is one of the fastest routes to settlement in the UK immigration system. Calculate your date now.</li>
+      <li>Understand your <strong>absence rule</strong>: you cannot spend more than 180 days outside the UK in any consecutive 12-month period during the qualifying period for ILR. Every trip matters. Start logging your travel dates now — a simple spreadsheet of departure and return dates is sufficient and essential.</li>
+      <li>Note the <strong>renewal process</strong>: when your visa expires, you apply to extend your stay. There is no limit on renewals. Your endorsing body is not involved in the renewal — it is handled directly with the Home Office. Set a reminder 6 months before your visa expiry date to begin the renewal process.</li>
+      <li>Confirm whether your current work aligns with your <strong>endorsed field</strong>. You have freedom to work in any capacity, including employment, self-employment, and running your own business. However, maintaining credibility in your endorsed field is relevant if your endorsing body is ever asked to verify your status for future applications.</li>
+    </ol>
+    <div class="warning-box">
+      <strong>Digital Technology track note (August 2025 change):</strong> From 4 August 2025, the Tech Nation application form was permanently withdrawn. New applications for the digital technology pathway now use the single GOV.UK Stage 1 form only. If you are on the digital technology track, confirm your eVisa is correctly linked to your UKVI account and that your endorsement records are filed.
+    </div>
+  </div>
+
+  <!-- TRACK G: INNOVATOR FOUNDER -->
+  <div id="track-G" class="track-content">
+    <div class="track-intro">
+      <strong>Innovator Founder visa</strong> — you have been endorsed by an approved endorsing body (as at April 2026: UK Endorsing Services, Innovator International, Envestors Limited, or the Global Entrepreneurs Programme) to establish an innovative, viable, and scalable UK business. Your visa is for 3 years with a route to ILR. But your endorsing body is actively monitoring your progress — and that changes everything about how you manage this visa.
+    </div>
+    <ol class="steps">
+      <li>Log into your <strong>UKVI online account</strong> and note your visa expiry date. Your Innovator Founder visa is granted for 3 years. Take a screenshot of your eVisa and save it somewhere permanent.</li>
+      <li>Locate your <strong>endorsement letter</strong> and the name of your endorsing body. Your ongoing relationship with this body is a legal requirement — not optional, not advisory. They will contact you for mandatory checkpoint meetings.</li>
+      <li>Note your <strong>two mandatory contact point meetings</strong>: one at 12 months and one at 24 months after your visa grant. You pay £500 per meeting directly to your endorsing body. These meetings assess whether your business is progressing as planned. Missing them without explanation is a compliance failure that can affect your extension and ILR eligibility.</li>
+      <li>Understand the <strong>ILR milestones</strong> you must meet after 3 years. The Home Office requires at least two of the following: £50,000 invested in and actively spent on your business; creation of at least 2 UK-based full-time equivalent jobs paying at least the minimum wage for at least 12 months; annual revenue from business activity of at least £1 million; a contract or partnership with a third party that has been active for at least 6 months. Know which milestones you are targeting from day one.</li>
+      <li>Confirm your <strong>endorsement can be withdrawn</strong>: if your endorsing body determines you are not progressing your business as required, they can withdraw your endorsement. This curtails your visa, giving you 60 days to find new endorsement or switch to another visa route. This is your most critical vulnerability.</li>
+      <li>Set calendar reminders: <strong>12-month contact point</strong>, <strong>24-month contact point</strong>, <strong>6 months before visa expiry</strong> (ILR application preparation or extension).</li>
+    </ol>
+    <div class="warning-box">
+      <strong>Important:</strong> Supplementary employment is permitted — up to 20 hours per week in a job outside your endorsed business, provided that job does not become your primary activity. Your endorsed business must always be your primary professional focus. If the Home Office or your endorsing body determines that your business has become secondary, your endorsement is at risk.
+    </div>
+  </div>
+
+  <!-- TRACK H: SELF-SPONSORED -->
+  <div id="track-H" class="track-content">
+    <div class="track-intro">
+      <strong>Self-Sponsored Skilled Worker (own limited company)</strong> — you have incorporated a UK limited company, obtained a Skilled Worker sponsor licence for that company, assigned yourself a Certificate of Sponsorship (CoS), and applied for a Skilled Worker visa. You are both the employer and the employee. This is legal, growing in popularity, and scrutinised heavily by the Home Office. Your compliance obligations are significant.
+    </div>
+    <ol class="steps">
+      <li>Log into your <strong>UKVI online account</strong> and note your visa expiry date. Also confirm your visa is linked to the correct passport — as with all eVisas, passport changes require updating the linkage. Take a screenshot and save it.</li>
+      <li>Locate your <strong>Certificate of Sponsorship (CoS) reference number</strong> and your company's <strong>sponsor licence number</strong>. These are your two most important compliance documents. Keep them filed and accessible.</li>
+      <li>Confirm your <strong>salary compliance</strong>: as of July 2025, the minimum salary threshold for Skilled Worker self-sponsorship is <strong>£41,700 per year</strong> (or the going rate for your SOC code, whichever is higher), and your role must be at <strong>RQF Level 6</strong> (graduate level) or above, unless your occupation is on the Immigration Salary List or Temporary Shortage List. If your salary falls below this threshold, your visa is at risk.</li>
+      <li>Understand your <strong>sponsor licence compliance obligations</strong>: your company (as the sponsor) must maintain HR records, report changes to the Home Office within 20 working days (including salary changes, role changes, and company address changes), and keep right-to-work records for all employees. If the Home Office visits and finds non-compliance, the licence can be suspended or revoked — and if the licence is revoked, you have 60 days to find another sponsor or leave the UK.</li>
+      <li>Confirm your <strong>role genuineness</strong>: the single most scrutinised aspect of self-sponsorship is whether the role you are sponsoring yourself for is genuine. Your SOC code must accurately reflect your duties. If an audit finds your actual duties do not match the sponsored role, the Home Office can curtail your visa. Review your CoS role description against what you are actually doing.</li>
+      <li>Set reminders: <strong>any salary changes</strong> (must be reported within 10 working days), <strong>any company address changes</strong> (within 20 working days), <strong>6 months before visa expiry</strong> (extension application), <strong>5-year mark</strong> (ILR eligibility).</li>
+    </ol>
+    <div class="warning-box">
+      <strong>The 60-day rule applies to you too:</strong> If your sponsor licence is revoked — for any reason including non-compliance, company insolvency, or Home Office audit failure — your visa is curtailed and you have 60 days to either obtain a new sponsor or switch to another immigration route. Unlike a traditional Skilled Worker where the employer carries this risk, you carry it directly as both employer and employee. This is the most important risk to manage.
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">What to expect to feel</div>
+  <div class="feel-box">The business and talent immigration routes were sold to you — rightly — as freedom routes. No employer tie. Control over your own future. And that is true. But freedom comes with compliance obligations that nobody fully explains until something goes wrong. Reading through conditions, milestones, and monitoring requirements can feel like the system is watching you. It is. That is the deal. Knowing the deal in detail is not paranoia — it is how you protect everything you are building.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Tools and resources</div>
+
+  <div class="resource-card">
+    <div class="resource-icon">📋</div>
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:start"><div class="resource-name">Guide: How to read your eVisa and find every key date</div><span class="tag">In-app</span></div>
+      <div class="resource-desc">Step-by-step walkthrough of the UKVI online account — what each field means and how to find your most critical compliance dates.</div>
+    </div>
+  </div>
+
+  <div class="resource-card">
+    <div class="resource-icon">📅</div>
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:start"><div class="resource-name">Visa Deadline Tracker (interactive tool)</div><span class="tag">In-app</span></div>
+      <div class="resource-desc">Enter your visa expiry, ILR eligibility date, and (for Track G) your contact point meeting dates. The tracker calculates all milestones and syncs with push notifications.</div>
+    </div>
+  </div>
+
+  <div class="resource-card">
+    <div class="resource-icon">🌐</div>
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:start"><div class="resource-name">UKVI Online Account — view your immigration status</div><span class="ext">External</span></div>
+      <div class="resource-desc">gov.uk/view-prove-immigration-status — your eVisa, conditions, and expiry date. Bookmark this page.</div>
+    </div>
+  </div>
+
+  <div class="resource-card">
+    <div class="resource-icon">⚖️</div>
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:start"><div class="resource-name">OISC-regulated immigration adviser finder</div><span class="ext">External</span></div>
+      <div class="resource-desc">gov.uk/find-an-immigration-adviser — for business and talent route holders, a regulated adviser is worth the investment at every extension point. Never use unregulated advisers.</div>
+    </div>
+  </div>
+
+  <div class="resource-card">
+    <div class="resource-icon">🏢</div>
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:start"><div class="resource-name">Companies House — company records and filings</div><span class="ext">External (Track H)</span></div>
+      <div class="resource-desc">find-and-update.company-information.service.gov.uk — keep your company's registered address, director records, and confirmation statements up to date. HMRC and Home Office both check this.</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="prompt-box">
+    <div class="prompt-label">✏ Completion prompt</div>
+    <div class="prompt-text">Enter both fields below. This information seeds your Visa Deadline Dashboard and push notification schedule.</div>
+    <div class="pf">
+      <label>Your visa expiry date</label>
+      <input type="date" id="visa-date" oninput="checkPrompt()" />
+    </div>
+    <div class="pf">
+      <label>The single most important compliance action you must take before that date (be specific to your route)</label>
+      <input type="text" id="visa-action" placeholder="e.g. Contact endorsing body for 12-month checkpoint / Confirm salary meets £41,700 threshold / Apply for ILR by March 2027" oninput="checkPrompt()" />
+    </div>
+    <button class="done-btn" id="done-btn">✓ Mark task 1.1 complete</button>
+  </div>
+</div>
+
+<script>
+function switchTrack(t){
+  document.querySelectorAll('.track-tab').forEach((el,i)=>{
+    const tracks=['F','G','H'];
+    el.classList.toggle('active',tracks[i]===t);
+  });
+  ['F','G','H'].forEach(id=>{
+    const el=document.getElementById('track-'+id);
+    el.classList.toggle('active',id===t);
+  });
+}
+function checkPrompt(){
+  const d=document.getElementById('visa-date').value;
+  const a=document.getElementById('visa-action').value.trim();
+  document.getElementById('done-btn').classList.toggle('active',d!==''&&a.length>10);
+}
+</script>
+
+</body>
+</html>

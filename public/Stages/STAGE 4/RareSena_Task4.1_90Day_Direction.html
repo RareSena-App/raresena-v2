@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RareSena — Task 4.1 — Define Your 90-Day Direction</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f0;color:#222;padding:24px;max-width:820px;margin:0 auto}
+.stage-badge{display:inline-flex;align-items:center;gap:6px;background:#7D3C0F;color:#fff;font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;margin-bottom:14px}
+.task-header{border-left:5px solid #B8962E;padding:14px 18px;background:#fff;border-radius:0 10px 10px 0;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.task-title{font-size:20px;font-weight:700;color:#7D3C0F;margin-bottom:5px}
+.task-meta{font-size:13px;color:#888}
+.section{margin-bottom:24px}
+.section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B8962E;margin-bottom:9px}
+.section-body{font-size:14px;line-height:1.75;color:#444}
+.steps{counter-reset:step;list-style:none;padding:0}
+.steps li{counter-increment:step;display:flex;gap:12px;margin-bottom:14px;font-size:14px;line-height:1.65;color:#444}
+.steps li::before{content:counter(step);min-width:26px;height:26px;background:#B8962E;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
+.divider{height:1px;background:#e0e0dc;margin:22px 0}
+.sovereignty-banner{background:#1B2D5B;color:#fff;border-radius:12px;padding:16px 20px;margin-bottom:20px}
+.sb-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;opacity:.6;margin-bottom:6px}
+.sb-text{font-size:14px;line-height:1.65;font-style:italic;opacity:.9}
+.direction-builder{background:#fff;border:1px solid #e0e0dc;border-radius:10px;padding:20px;margin-bottom:16px}
+.db-title{font-size:14px;font-weight:700;color:#7D3C0F;margin-bottom:14px}
+.path-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.path-tab{padding:7px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid #ccc;background:#fff;color:#555;transition:all .15s}
+.path-tab.active{background:#7D3C0F;color:#fff;border-color:#7D3C0F}
+.path-content{display:none}
+.path-content.active{display:block}
+.path-intro{background:#fdf5f0;border-left:4px solid #7D3C0F;padding:12px 16px;border-radius:0 8px 8px 0;font-size:13px;color:#5a2d0c;line-height:1.65;margin-bottom:14px}
+.example-directions{margin-bottom:14px}
+.ex-label{font-size:11px;font-weight:700;color:#B8962E;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.ex-item{background:#f9f9f7;border:1px solid #e8e8e4;border-radius:7px;padding:10px 13px;margin-bottom:6px;font-size:13px;color:#444;line-height:1.5;cursor:pointer;transition:all .15s}
+.ex-item:hover{border-color:#B8962E;background:#fffaf0}
+.ex-item.selected{border-color:#7D3C0F;background:#fdf5f0}
+.field-group{margin-bottom:14px}
+.field-group label{font-size:12px;font-weight:700;color:#555;display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em}
+.field-group input,.field-group textarea{width:100%;padding:9px 12px;border-radius:7px;border:1.5px solid #ccc;font-size:13px;color:#222;background:#fafafa;font-family:Arial,sans-serif}
+.field-group textarea{resize:vertical;min-height:70px;line-height:1.5}
+.field-group input:focus,.field-group textarea:focus{outline:none;border-color:#7D3C0F;background:#fff}
+.direction-output{background:#7D3C0F;color:#fff;border-radius:10px;padding:18px;margin-top:16px}
+.do-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;opacity:.7;margin-bottom:8px}
+.do-statement{font-size:16px;font-weight:700;line-height:1.6;min-height:28px}
+.do-breakdown{margin-top:12px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.do-bd-item{background:rgba(255,255,255,.12);border-radius:7px;padding:10px;font-size:12px;line-height:1.4}
+.do-bd-label{opacity:.6;font-size:10px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.milestone-planner{background:#fff;border:1px solid #e0e0dc;border-radius:10px;padding:18px;margin-bottom:16px}
+.mp-title{font-size:14px;font-weight:700;color:#7D3C0F;margin-bottom:12px}
+.milestone-row{display:grid;grid-template-columns:80px 1fr;gap:10px;align-items:start;margin-bottom:10px}
+.milestone-tag{background:#7D3C0F;color:#fff;border-radius:6px;padding:5px 10px;font-size:12px;font-weight:700;text-align:center}
+.milestone-input{padding:8px 12px;border-radius:7px;border:1.5px solid #ccc;font-size:13px;color:#222;width:100%;background:#fafafa}
+.milestone-input:focus{outline:none;border-color:#7D3C0F}
+.ecosystem-signpost{background:#f0f4ff;border:1px solid #1B2D5B;border-radius:10px;padding:16px;margin-bottom:16px}
+.es-title{font-size:13px;font-weight:700;color:#1B2D5B;margin-bottom:8px}
+.es-body{font-size:13px;color:#444;line-height:1.6;margin-bottom:12px}
+.es-links{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.es-link{background:#1B2D5B;color:#fff;border-radius:8px;padding:10px 13px;font-size:13px;font-weight:600;cursor:pointer;text-align:center;transition:all .15s}
+.es-link:hover{background:#142244}
+.es-link.gold{background:#B8962E}
+.feel-box{background:#fff8e6;border:1.5px solid #e6b800;border-radius:8px;padding:14px 16px;font-size:14px;line-height:1.65;color:#7a5a00}
+.prompt-box{background:#fdf5f0;border:1.5px solid #7D3C0F;border-radius:10px;padding:18px}
+.prompt-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7D3C0F;margin-bottom:8px}
+.pf{margin-bottom:12px}
+.pf label{font-size:12px;color:#555;display:block;margin-bottom:4px;font-weight:600}
+.pf input{width:100%;padding:9px 12px;border-radius:7px;border:1.5px solid #ccc;font-size:13px;color:#222;background:#fff}
+.pf input:focus{outline:none;border-color:#7D3C0F}
+.done-btn{width:100%;padding:13px;background:#B8962E;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;opacity:.35;pointer-events:none;transition:opacity .2s;margin-top:14px}
+.done-btn.active{opacity:1;pointer-events:auto}
+.profile-save{background:#e6f4ea;border:1px solid #1a6b2e;border-radius:7px;padding:10px 13px;font-size:12px;color:#1a5c1a;margin-top:12px;line-height:1.5}
+</style>
+</head>
+<body>
+
+<div class="stage-badge">📈 Stage 4 — Rise</div>
+<div class="task-header">
+  <div class="task-title">Task 4.1 — Define your 90-day direction in one sentence</div>
+  <div class="task-meta">⏱ 30–45 min · Saved to your dashboard · All tracks</div>
+</div>
+
+<div class="section">
+  <div class="section-label">Why this matters</div>
+  <div class="section-body">You have stabilised. You have rediscovered who you are beneath what changed. You have built a daily architecture that holds. Now comes the question that Stage 4 is built around: <em>what are you actually building toward in the next 90 days?</em><br><br>Not in your life generally. Not eventually. In the next 90 days, specifically. One direction. One sentence.<br><br>The 90-day window is deliberate. It is long enough to accomplish something real. Short enough to stay specific. And precise enough that at the end of it, you will know whether you moved or not — not by feeling, but by fact.<br><br>Stage 3 gave you a routine. Stage 4 gives that routine a direction. Without this task, everything you do consistently goes nowhere in particular. With it, every habit, every weekly review, every financial decision has a destination.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Your sovereignty definition — carried forward</div>
+  <div class="sovereignty-banner">
+    <div class="sb-label">From Task 2.5 — your north star</div>
+    <div class="sb-text" id="sovereignty-display">"A life that cannot be destabilised by a single letter from an employer or the Home Office." — Enter your personal sovereignty definition from Task 2.5 to see it here.</div>
+  </div>
+  <div style="margin-bottom:16px">
+    <label style="font-size:12px;font-weight:700;color:#555;display:block;margin-bottom:5px">Your sovereignty definition (from Task 2.5 — paste or retype here)</label>
+    <textarea id="sovereignty-input" placeholder="e.g. Sovereignty for me means ILR by 2027, practising as a registered nurse, and an income my family can live on without depending on one employer..." style="width:100%;padding:9px 12px;border-radius:7px;border:1.5px solid #B8962E;font-size:13px;color:#222;background:#fffaf0;resize:vertical;min-height:65px;font-family:Arial,sans-serif;line-height:1.5" oninput="updateSovereignty()"></textarea>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">What to do</div>
+  <ol class="steps">
+    <li>Select your primary path below — the one area where the next 90 days will be most focused. You are not abandoning the others. You are choosing what gets your primary energy and attention for this window.</li>
+    <li>Read the example direction statements for your path. Select one that resonates or use it as a starting point to write your own.</li>
+    <li>Use the direction builder to turn your focus area into one precise sentence starting with: <em>"In the next 90 days I will..."</em></li>
+    <li>Set three milestones — what you will have achieved at 30 days, 60 days, and 90 days. These become your Stage 4 checkpoints.</li>
+    <li>Your direction statement saves to your profile dashboard. It appears at the top of your Stage 4 view every time you open the app — a constant reminder of what this window is for.</li>
+  </ol>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">90-day direction builder</div>
+  <div class="direction-builder">
+    <div class="db-title">Select your primary path for the next 90 days</div>
+    <div class="path-tabs">
+      <div class="path-tab active" onclick="switchPath(this,'employment')">Employment</div>
+      <div class="path-tab" onclick="switchPath(this,'registration')">Professional registration</div>
+      <div class="path-tab" onclick="switchPath(this,'business')">Business building</div>
+      <div class="path-tab" onclick="switchPath(this,'creator')">Creator / UGC</div>
+      <div class="path-tab" onclick="switchPath(this,'immigration')">Immigration and settlement</div>
+      <div class="path-tab" onclick="switchPath(this,'financial')">Financial foundation</div>
+    </div>
+
+    <div id="path-employment" class="path-content active">
+      <div class="path-intro">You are focused on securing employment that uses your skills at an appropriate level — not survival employment, but a role that begins to restore the professional identity you mapped in Stage 2.</div>
+      <div class="example-directions">
+        <div class="ex-label">Example direction statements</div>
+        <div class="ex-item" onclick="useExample(this)">In the next 90 days I will secure a role in [my sector] that uses my [specific skill] — at minimum at [level], with a clear progression path.</div>
+        <div class="ex-item" onclick="useExample(this)">In the next 90 days I will move from survival employment into a role aligned with my professional background by applying to at least 3 relevant positions per week and attending 2 professional networking events.</div>
+        <div class="ex-item" onclick="useExample(this)">In the next 90 days I will complete my UK ENIC application, update my CV to UK conventions, and make contact with at least 10 professionals in my sector via LinkedIn and Rare Circle.</div>
+      </div>
+    </div>
+
+    <div id="path-registration" class="path-content">
+      <div class="path-intro">You are in a regulated profession — medicine, nursing, law, teaching, engineering, social work, or another field that requires UK registration before you can practise. The next 90 days are about navigating that system with clarity and speed.</div>
+      <div class="example-directions">
+        <div class="ex-label">Example direction statements</div>
+        <div class="ex-item" onclick="useExample(this)">In the next 90 days I will complete and submit my NMC application, book my CBT test date, and begin structured preparation for the OSCE.</div>
+        <div class="ex-item" onclick="useExample(this)">In the next 90 days I will pass PLAB 1, submit my GMC registration application, and secure a clinical observer position to begin building my UK clinical portfolio.</div>
+        <div class="ex-item" onclick="useExample(this)">In the next 90 days I will complete my SQE1 preparation course, submit my law firm training contract applications, and pass my first SQE1 mock examination with a score above 75%.</div>
+      </div>
+    </div>
+
+    <div id="path-business" class="path-content">
+      <div class="path-intro">You are building a business — on a Self-Sponsored visa, an Innovator Founder route, or as a side income that grows into your primary one. The next 90 days are about validation, first revenue, and sustainable structure.</div>
+      <div class="example-directions">
+        <div class="ex-label">Example direction statements</div>
+        <div class="ex-item" onclick="useExample(this)">In the next 90 days I will validate my business idea using RareStack, acquire my first 3 paying clients, and generate my first £500 in business revenue.</div>
+        <div class="ex-item" onclick="useExample(this)">In the next 90 days I will complete my Innovator Founder endorsement business plan, submit it to my endorsing body, and prepare for my 12-month checkpoint meeting.</div>
+        <div class="ex-item" onclick="useExample(this)">In the next 90 days I will incorporate my UK limited company, apply for a sponsor licence, and consult with a regulated immigration adviser about the self-sponsorship route.</div>
+      </div>
+    </div>
+
+    <div id="path-creator" class="path-content">
+      <div class="path-intro">You are building income as a creator or UGC specialist — within your visa conditions, on your own terms, using your unique perspective as an immigrant navigating UK life. The next 90 days are about output, audience, and first brand income.</div>
+      <div class="example-directions">
+        <div class="ex-label">Example direction statements</div>
+        <div class="ex-item" onclick="useExample(this)">In the next 90 days I will post consistently on [platform] 4x per week, complete the UGC Mastery course, join Rare Studio, and pitch to my first 10 brands.</div>
+        <div class="ex-item" onclick="useExample(this)">In the next 90 days I will build a UGC portfolio of 15 pieces across 3 categories, create my media kit, and secure my first paid brand collaboration.</div>
+        <div class="ex-item" onclick="useExample(this)">In the next 90 days I will grow my [platform] audience to [number], monetise through [specific mechanism], and generate at least £300 in creator income — all within my visa conditions.</div>
+      </div>
+    </div>
+
+    <div id="path-immigration" class="path-content">
+      <div class="path-intro">Your most urgent focus is immigration — a visa extension, ILR application, status change, or navigating a complex situation that requires expert support. The next 90 days are about securing your legal foundation before everything else.</div>
+      <div class="example-directions">
+        <div class="ex-label">Example direction statements</div>
+        <div class="ex-item" onclick="useExample(this)">In the next 90 days I will submit my ILR application with all supporting documentation, instruct a regulated immigration adviser to review my case, and ensure all continuous residence evidence is in order.</div>
+        <div class="ex-item" onclick="useExample(this)">In the next 90 days I will switch from my current visa to [target route], complete a regulated adviser consultation, and have all documents ready for submission.</div>
+        <div class="ex-item" onclick="useExample(this)">In the next 90 days I will resolve my immigration situation with expert support through the RareSena Sovereignty Programme, so that my status is secure and documented.</div>
+      </div>
+    </div>
+
+    <div id="path-financial" class="path-content">
+      <div class="path-intro">Your primary focus is financial — building the foundation that makes everything else possible. A specific savings target, a credit profile milestone, a debt cleared, a first income stream activated. The next 90 days are about money with intention.</div>
+      <div class="example-directions">
+        <div class="ex-label">Example direction statements</div>
+        <div class="ex-item" onclick="useExample(this)">In the next 90 days I will build a 3-month emergency fund of £[amount], open a credit-builder card, register on the electoral roll, and activate rent reporting through CreditLadder.</div>
+        <div class="ex-item" onclick="useExample(this)">In the next 90 days I will eliminate my highest-interest debt of £[amount], reduce my monthly expenses by £[amount] through a bill audit, and open a Help to Buy ISA.</div>
+        <div class="ex-item" onclick="useExample(this)">In the next 90 days I will activate my first income stream outside of employment, generating at least £[amount]/month, and build my credit score from [current] to [target].</div>
+      </div>
+    </div>
+
+    <div class="field-group" style="margin-top:14px">
+      <label>Your 90-day direction statement — one sentence, starting with "In the next 90 days I will..."</label>
+      <textarea id="direction-statement" placeholder="In the next 90 days I will..." oninput="buildOutput()" rows="3"></textarea>
+    </div>
+
+    <div class="direction-output" id="direction-output" style="display:none">
+      <div class="do-label">Your 90-day direction — saved to dashboard</div>
+      <div class="do-statement" id="do-statement-text"></div>
+      <div class="do-breakdown" id="do-breakdown"></div>
+    </div>
+  </div>
+
+  <div class="milestone-planner">
+    <div class="mp-title">Your three milestones</div>
+    <p style="font-size:13px;color:#666;margin-bottom:14px;line-height:1.6">What will you have achieved at each checkpoint? Be specific — not "make progress" but a named outcome.</p>
+    <div class="milestone-row">
+      <div class="milestone-tag">Day 30</div>
+      <input class="milestone-input" type="text" placeholder="e.g. ENIC application submitted and CBT test date booked" oninput="buildOutput()" />
+    </div>
+    <div class="milestone-row">
+      <div class="milestone-tag">Day 60</div>
+      <input class="milestone-input" type="text" placeholder="e.g. CBT passed and OSCE preparation course started" oninput="buildOutput()" />
+    </div>
+    <div class="milestone-row">
+      <div class="milestone-tag">Day 90</div>
+      <input class="milestone-input" type="text" placeholder="e.g. OSCE booked and NMC application under active review" oninput="buildOutput()" />
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Explore the RareSena ecosystem for this stage</div>
+  <div class="ecosystem-signpost">
+    <div class="es-title">🌐 The full RareSena ecosystem is available to you</div>
+    <div class="es-body">Based on your 90-day direction, one or more of the products below may be directly relevant to where you are heading. Explore at your own pace — you decide what is right for your rebuild and when.</div>
+    <div class="es-links">
+      <div class="es-link" onclick="window.open('https://raresena.com','_blank')">RareSena ecosystem — explore all products</div>
+      <div class="es-link gold" onclick="alert('Toggle to Rare Studio using the toggle at the top of the app')">Rare Studio — toggle in app</div>
+      <div class="es-link" onclick="window.open('https://raresena.com','_blank')">RareStack — business building</div>
+      <div class="es-link" onclick="window.open('https://raresena.com','_blank')">Sovereignty Programme — immigration support</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">What to expect to feel</div>
+  <div class="feel-box">Naming a 90-day direction makes it real in a way that general ambition does not. It also makes failure more specific — if you do not move in this direction, you will know it. That accountability is uncomfortable before it is useful. Lean into it. The specificity is the point. A vague intention to "do better" cannot be measured, cannot be celebrated, and cannot be learned from. A 90-day direction can be all three.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="prompt-box">
+    <div class="prompt-label">✏ Completion prompt</div>
+    <p style="font-size:14px;color:#222;margin-bottom:12px;line-height:1.6">Enter your 90-day direction in one sentence. Start with: "In the next 90 days I will..." Saved to your profile dashboard.</p>
+    <div class="pf">
+      <label>Your 90-day direction</label>
+      <input type="text" id="direction-final" placeholder="In the next 90 days I will..." oninput="checkPrompt()" />
+    </div>
+    <button class="done-btn" id="done-btn">✓ Mark task 4.1 complete</button>
+    <div class="profile-save">✓ Your 90-day direction will be saved to your profile dashboard and displayed at the top of your Stage 4 view throughout this window.</div>
+  </div>
+</div>
+
+<script>
+function switchPath(el,id){
+  document.querySelectorAll('.path-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.path-content').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('path-'+id).classList.add('active');
+}
+function useExample(el){
+  document.querySelectorAll('.ex-item').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+  const text=el.textContent.trim();
+  document.getElementById('direction-statement').value=text;
+  document.getElementById('direction-final').value=text;
+  buildOutput();
+  checkPrompt();
+}
+function updateSovereignty(){
+  const v=document.getElementById('sovereignty-input').value.trim();
+  if(v)document.getElementById('sovereignty-display').textContent='"'+v+'"';
+}
+function buildOutput(){
+  const stmt=document.getElementById('direction-statement').value.trim();
+  const m=[...document.querySelectorAll('.milestone-input')].map(i=>i.value.trim());
+  const out=document.getElementById('direction-output');
+  if(!stmt){out.style.display='none';return;}
+  out.style.display='block';
+  document.getElementById('do-statement-text').textContent=stmt;
+  const bd=document.getElementById('do-breakdown');
+  bd.innerHTML=['Day 30','Day 60','Day 90'].map((label,i)=>`<div class="do-bd-item"><div class="do-bd-label">${label}</div>${m[i]||'Not yet set'}</div>`).join('');
+  document.getElementById('direction-final').value=stmt;
+  checkPrompt();
+}
+function checkPrompt(){
+  const v=document.getElementById('direction-final').value.trim();
+  document.getElementById('done-btn').classList.toggle('active',v.length>20&&v.toLowerCase().includes('will'));
+}
+</script>
+</body>
+</html>

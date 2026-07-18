@@ -128,9 +128,11 @@ export const ROADMAP_TASKS = {
       ],
     },
     resources: [
-      { type: 'guide', title: 'How to read your eVisa and find every key date', guideFile: 'RareSena_Guide_Reading_Your_eVisa_Key_Dates.html' },
-      { type: 'tracker', title: 'Visa & ILR Countdown Tracker (interactive tool)' },
-      { type: 'guide', title: 'How to create your UKVI account (step-by-step)', guideFile: 'RareSena_Guide_Create_UKVI_Account_StepByStep.html' },
+      { type: 'guide', title: 'Task 1.1 — Visa deadlines guide (Tracks A–E: Skilled Worker, Student, Family, BN(O), Refugee)', guideFile: 'Stages/STAGE 1/RareSena_Task1.1_Tracks_AE_All_Standard_Visas_2.html' },
+      { type: 'guide', title: 'Task 1.1 — Visa deadlines guide (Tracks F, G, H: Global Talent, Innovator, Self-Sponsored)', guideFile: 'Stages/STAGE 1/RareSena_Task1.1_Tracks_FGH_Global_Talent_Innovator_SelfSponsor.html' },
+      { type: 'guide', title: 'How to read your eVisa and find every key date', guideFile: 'Stages/STAGE 1/RareSena_Guide_Reading_Your_eVisa_Key_Dates.html' },
+      { type: 'guide', title: 'How to create your UKVI account step-by-step', guideFile: 'Stages/STAGE 1/RareSena_Guide_Create_UKVI_Account_StepByStep.html' },
+      { type: 'guide', title: 'Visa & ILR Countdown Tracker (interactive tool)', guideFile: 'Stages/files/RareSena_Tool_Visa_ILR_Countdown_Tracker.html' },
     ],
     whatToExpectToFeel: 'Reading through visa conditions can trigger a specific anxiety — the feeling that your entire life here rests on a document. That feeling is real and reasonable. The system was designed to be managed, not to be kind. What this task does is move you from passive anxiety to active knowledge. Knowing your dates does not remove the pressure — but it removes the thing that makes pressure dangerous: not knowing.',
     completionPrompt: {
@@ -166,9 +168,9 @@ export const ROADMAP_TASKS = {
       H: 'Your company must pay you the minimum salary threshold (£41,700 as of July 2025) to maintain compliance. If the company cannot yet sustain this, you have a compliance risk as well as a financial one. These are linked.',
     },
     resources: [
-      { type: 'template', title: 'Basic Budget Builder — income vs expenses for UK new arrivals' },
-      { type: 'guide', title: 'Breaking the banking catch-22: how to open a UK account with no credit history', guideFile: 'RareSena_Guide_Banking_Catchup22_UK.html' },
-      { type: 'guide', title: 'Building UK credit from zero: the 6-step sequence', guideFile: 'RareSena_Guide_UK_Credit_Building_6_Steps.html' },
+      { type: 'guide', title: 'Basic Budget Builder — income vs expenses for UK new arrivals', guideFile: 'Stages/STAGE 1/RareSena_Task1.2_Financial_Gap_Budget_Builder.html' },
+      { type: 'guide', title: 'Breaking the banking catch-22: how to open a UK account with no credit history', guideFile: 'Stages/STAGE 1/RareSena_Guide_Banking_Catchup22_UK.html' },
+      { type: 'guide', title: 'Building UK credit from zero: the 6-step sequence', guideFile: 'Stages/STAGE 1/RareSena_Guide_UK_Credit_Building_6_Steps.html' },
     ],
     whatToExpectToFeel: 'Writing down numbers that feel frightening makes them more frightening for about five minutes — and then something shifts. The anxiety moves from diffuse to specific. A specific problem is something you can act on. Vague financial dread is not. If the numbers look very difficult right now, that is real information — not a verdict on you, and not a permanent state. It tells you exactly where the work needs to start. That is more useful than not knowing.',
     completionPrompt: {
@@ -198,8 +200,9 @@ export const ROADMAP_TASKS = {
       H: 'If your business address and home address are the same, ensure your Companies House registered address is compliant and that you understand how this affects your right-to-rent documentation for any future moves.',
     },
     resources: [
-      { type: 'guide', title: 'Renting in the UK as a new arrival: your rights and how to use them', guideFile: 'RareSena_Guide_Renting_UK_New_Arrival_Rights.html' },
-      { type: 'guide', title: 'How to check if your deposit is protected', guideFile: 'RareSena_Guide_Deposit_Protection_Check.html' },
+      { type: 'guide', title: 'Task 1.3 — Secure stable housing: full guide with rights and track notes', guideFile: 'Stages/STAGE 1/RareSena_Task1.3_Secure_Stable_Housing.html' },
+      { type: 'guide', title: 'Renting in the UK as a new arrival: your rights and how to use them', guideFile: 'Stages/files2/RareSena_Guide_Renting_UK_New_Arrival_Rights.html' },
+      { type: 'guide', title: 'How to check if your deposit is protected', guideFile: 'Stages/files2/RareSena_Guide_Deposit_Protection_Check.html' },
       { type: 'contacts', title: 'Emergency housing contacts: Shelter helpline, local council, Refugee Council' },
     ],
     whatToExpectToFeel: 'Housing in the UK as a new arrival involves navigating a market that was not designed to include you easily — and research confirms this is structural, not personal. The discrimination documented in this market is real. If you have experienced it, that is not a reflection of your worth, your capability, or your future here. It is a documented system problem. Knowing your rights does not solve everything — but it changes the power dynamic in every conversation with a landlord or letting agent. You are not asking for a favour. You are exercising rights.',
@@ -226,7 +229,7 @@ export const ROADMAP_TASKS = {
       'Commit to 7 consecutive days before you evaluate whether the habit is right for you. Do not change it after day 2 because it feels too small. Small is the point. Consistency is the point. The streak tracker below starts counting from today.',
     ],
     resources: [
-      { type: 'interactive', title: 'Habit selector — 8 pre-set options with custom input' },
+      { type: 'guide', title: 'Task 1.4 — Daily anchor habit and streak tracker guide', guideFile: 'Stages/STAGE 1/RareSena_Task1.4_Daily_Anchor_Habit_Streak_Tracker.html' },
       { type: 'tracker', title: 'In-app streak tracker — current streak, best streak, last logged date' },
     ],
     whatToExpectToFeel: 'The urge to pick something ambitious is strong right now — something that signals to yourself that you are serious, that you are moving, that you are not falling behind. Resist it. A 30-minute workout you do twice is worth less than a 5-minute walk you do every single day for 90 days. The value of this task is not the habit you pick. It is the act of deciding and then keeping your decision. That is the muscle you are actually building — and it is the muscle every other stage of the rebuild runs on.',
@@ -254,8 +257,8 @@ export const ROADMAP_TASKS = {
     ],
     resources: [
       { type: 'circle_link', title: 'Rare Circle — Reset group (Stage 1 members)', group: 'Reset' },
-      { type: 'guide', title: 'How to introduce yourself in Rare Circle without oversharing' },
-      { type: 'guide', title: 'Finding diaspora communities near you in the UK', guideFile: 'RareSena_Guide_Finding_Diaspora_Communities.html' },
+      { type: 'guide', title: 'Task 1.5 — Connect with one person: guide with Rare Circle prompts and starter scripts', guideFile: 'Stages/STAGE 1/RareSena_Task1.5_Connect_With_One_Person.html' },
+      { type: 'guide', title: 'Finding diaspora communities near you in the UK', guideFile: 'Stages/files2/RareSena_Guide_Finding_Diaspora_Communities.html' },
     ],
     whatToExpectToFeel: 'Reaching out when you are low is one of the hardest things to do — it requires admitting that you need something, and that runs against every instinct you have been using to hold yourself together since you arrived. Do it anyway. The research on loneliness and immigrant wellbeing is clear: connection is not a comfort — it is infrastructure. One message this week. That is all this task asks. You are not being needy. You are being strategic about your own recovery.',
     completionPrompt: {
@@ -282,6 +285,7 @@ export const ROADMAP_TASKS = {
       'Save your values to your profile. They will be visible on your dashboard throughout the rebuild as a reminder of what you are building toward — and why.',
     ],
     resources: [
+      { type: 'guide', title: 'Task 2.1 — Values identification exercise: full guide', guideFile: 'Stages/STAGE 2/RareSena_Task2.1_Values_Identification.html' },
       { type: 'interactive', title: 'Values card sort — 50 values, select and save to profile' },
       { type: 'template', title: 'Reflection template pre-filled with your top 3 values' },
       { type: 'product', title: '5R Rebuild Workbook (£22)', url: 'https://raresena.com' },
@@ -307,10 +311,11 @@ export const ROADMAP_TASKS = {
       'Use the professional summary builder below to draft your UK professional summary — a paragraph that describes who you are, what you do, and what you are looking for, in UK language and conventions.',
     ],
     resources: [
-      { type: 'guide', title: 'Is my qualification recognised in the UK? The complete sector guide', guideFile: 'RareSena_Guide_Qualification_Recognition_Sector_Guide.html' },
+      { type: 'guide', title: 'Task 2.2 — Map your professional identity to the UK market: full guide', guideFile: 'Stages/STAGE 2/RareSena_Task2.2_Professional_Identity_UK.html' },
+      { type: 'guide', title: 'UK CV conventions: what to include, exclude, and never say', guideFile: 'Stages/files2/RareSena_Guide_UK_CV_Conventions_2.html' },
+      { type: 'guide', title: 'Is my qualification recognised in the UK? The complete sector guide', guideFile: 'Stages/files2/RareSena_Guide_Qualification_Recognition_Sector_Guide.html' },
       { type: 'external', title: 'UK ENIC Statement of Comparability application', url: 'https://www.enic.org.uk' },
       { type: 'interactive', title: 'UK professional summary builder' },
-      { type: 'guide', title: 'UK CV conventions: what to include, exclude, and never say', guideFile: 'RareSena_Guide_UK_CV_Conventions.html' },
       { type: 'product', title: 'Stage Worksheets Bundle (£25)', url: 'https://raresena.com' },
     ],
     whatToExpectToFeel: 'Mapping your professional identity to a new market can bring up something close to grief. You built expertise over years. You were good at what you did. And now you are being asked to translate, re-qualify, and prove yourself again to a system that does not yet know you. That is not failure. That is the cost of arrival — and it is a cost that says nothing about your capability and everything about the system\'s lack of portability. The work you do in this task starts building the bridge.',
@@ -336,7 +341,9 @@ export const ROADMAP_TASKS = {
       'Decide how it will remain present in your life in the UK specifically. Not "I will try to maintain it" — a concrete decision: what day, how often, with whom, in what form.',
       'Write it as a commitment statement using the builder below. This is saved to your profile as a permanent reminder of what you are protecting alongside what you are building.',
     ],
-    resources: [],
+    resources: [
+      { type: 'guide', title: 'Task 2.3 — Name your cultural anchor: full guide', guideFile: 'Stages/STAGE 2/RareSena_Task2.3_Cultural_Anchor.html' },
+    ],
     whatToExpectToFeel: 'Naming a cultural anchor can feel small and significant at the same time. Small because it is just one thing. Significant because saying it out loud — or writing it here — makes it real in a way that silent intention does not. You may also feel the weight of what you have already let slip since arriving, without even noticing. That is not failure — it is the cost of survival mode. This task is about moving out of survival mode, one deliberate decision at a time.',
     completionPrompt: {
       type: 'reflection',
@@ -358,7 +365,7 @@ export const ROADMAP_TASKS = {
       'Come back and complete the prompt below with what happened. What was the community? What did you do or say? What did you take from it?',
     ],
     resources: [
-      { type: 'guide', title: 'Where to find your people in the UK: a directory by city and background' },
+      { type: 'guide', title: 'Task 2.4 — Find your community: full guide with directory by city and background', guideFile: 'Stages/STAGE 2/RareSena_Task2.4_Find_Your_Community.html' },
       { type: 'circle_link', title: 'Rare Circle — Rediscover group', group: 'Rediscover' },
     ],
     whatToExpectToFeel: 'Walking into a new community — online or in person — requires a specific kind of courage that often goes unacknowledged: the courage to be new, to not yet belong, to be seen before you are known. Most people feel awkward. Most introductions feel clunky. Most first attendances feel slightly wrong. Go anyway. The awkwardness is the cost of entry — not a sign that it is the wrong place. Belonging is built through consistent exposure, not through a perfect first experience.',
@@ -382,7 +389,7 @@ export const ROADMAP_TASKS = {
       'This definition is saved to your profile and displayed on your dashboard throughout the rebuild as a north star. Every stage is designed to move you closer to it.',
     ],
     resources: [
-      { type: 'guide', title: 'What sovereignty means: the RareSena framework' },
+      { type: 'guide', title: 'Task 2.5 — What sovereignty means: the RareSena framework', guideFile: 'Stages/STAGE 2/RareSena_Task2.5_Define_Sovereignty.html' },
     ],
     whatToExpectToFeel: 'Defining sovereignty when you are still in Reset or early Rediscover can feel presumptuous — like you are not yet in a position to claim it as a destination. That feeling is wrong. The definition is not a claim. It is a compass. You do not need to be close to sovereignty to name what it looks like. In fact, the further you are from it, the more important it is to name it — because without a destination, survival becomes the goal. And survival is not what you came here for.',
     completionPrompt: {
@@ -409,8 +416,9 @@ export const ROADMAP_TASKS = {
       'Decide what your routine looks like on a bad day — when everything is running late, when you are anxious, when the visa anxiety is loud. Name the three things that are non-negotiable even then. Everything else is optional on bad days.',
     ],
     resources: [
+      { type: 'guide', title: 'Task 3.1 — Design a morning routine you can genuinely keep: full guide', guideFile: 'Stages/STAGE 3/RareSena_Task3.1_Morning_Routine_Builder.html' },
       { type: 'interactive', title: 'Morning routine builder — time slots, habit categories, custom items' },
-      { type: 'guide', title: 'Nutrition Calculator — World Foods Edition (interactive tool)', guideFile: 'RareSena_Tool_Nutrition_Calculator_World_Foods.html' },
+      { type: 'guide', title: 'Nutrition Calculator — World Foods Edition (interactive tool)', guideFile: 'Stages/files/RareSena_Tool_Nutrition_Calculator_World_Foods.html' },
       { type: 'product', title: 'Habit and Routine Planner (£12)', url: 'https://raresena.com' },
     ],
     whatToExpectToFeel: 'Designing a routine feels easier than running one. The first week often goes well — novelty carries you. The second week is when the system is actually tested, because the novelty is gone and real life has reasserted itself. If week two is hard, that is not a sign the routine is wrong. It is the system working as it should — showing you which parts need to flex and which parts need to hold. Adjust, do not abandon.',
@@ -437,9 +445,10 @@ export const ROADMAP_TASKS = {
       'Your five habits will seed the in-app daily tracker. Each morning you log them. The streak tracker counts consecutive days across all five. Stage 3, Task 3.4 auto-completes when you reach 30 consecutive days.',
     ],
     resources: [
+      { type: 'guide', title: 'Task 3.2 — Identify your 5 core daily habits: full guide', guideFile: 'Stages/STAGE 3/RareSena_Task3.2_Five_Core_Daily_Habits.html' },
       { type: 'interactive', title: 'Habit library — 30 pre-set habits by category with custom input' },
       { type: 'tracker', title: 'In-app streak tracker' },
-      { type: 'guide', title: 'Nutrition Calculator — World Foods Edition (interactive tool)', guideFile: 'RareSena_Tool_Nutrition_Calculator_World_Foods.html' },
+      { type: 'guide', title: 'Nutrition Calculator — World Foods Edition (interactive tool)', guideFile: 'Stages/files/RareSena_Tool_Nutrition_Calculator_World_Foods.html' },
       { type: 'product', title: 'Ultimate Planner (£19)', url: 'https://raresena.com' },
     ],
     whatToExpectToFeel: 'Five habits sounds like a lot when you are already carrying the weight of a rebuild. It is not five new burdens — it is five anchors. Each one addresses a part of your life that, without deliberate attention, tends to drift during rebuilding: your body, your finances, your relationships, your progress, and your mind. When all five are running, you will notice something that is hard to describe until you feel it: a quiet confidence that comes not from having solved everything, but from knowing that the fundamentals are being tended to every day.',
@@ -468,6 +477,7 @@ export const ROADMAP_TASKS = {
       'After your first review, respond to the completion prompt. Your biggest win and your biggest gap this week — two honest sentences. That is what marks this task done.',
     ],
     resources: [
+      { type: 'guide', title: 'Task 3.3 — Build a weekly review practice: full guide', guideFile: 'Stages/STAGE 3/RareSena_Task3.3_Weekly_Review.html' },
       { type: 'template', title: 'Weekly Review template — embedded and fillable' },
     ],
     whatToExpectToFeel: 'The first weekly review is the most uncomfortable one. You are looking honestly at a week that probably had gaps — things you said you would do and did not, money that went somewhere you did not plan, connection you intended to make but did not. That discomfort is the point. A review that only acknowledges what went well is not a review — it is a performance. The value is in the gap between intention and reality, because the gap tells you exactly what needs to change.',
@@ -486,6 +496,7 @@ export const ROADMAP_TASKS = {
     whyThisMatters: 'This task does not require you to do anything new. It requires you to keep doing what you have already committed to — every single day, for thirty consecutive days.\n\nThat sounds simple. It is not. Thirty consecutive days is long enough to encounter at least one bad week, at least one crisis, at least one day when everything feels too heavy for a morning routine and five habits. The value of this task is not the streak number. It is what you discover about yourself when the streak is threatened and you choose to protect it anyway.\n\nThis task auto-completes. There is no prompt, no submission, no button to press. When the streak tracker records 30 consecutive logged days, the task marks itself done and Stage 3 moves one step closer to complete. All you have to do is show up.',
     whatToDo: null,
     resources: [
+      { type: 'guide', title: 'Task 3.4 — 30-day streak: how it works and what to do when it breaks', guideFile: 'Stages/STAGE 3/RareSena_Task3.4_30Day_Streak_AutoComplete.html' },
       { type: 'tracker', title: 'In-app streak tracker with daily notification' },
     ],
     whatToExpectToFeel: 'Around day 10 to 14 the novelty is gone and something harder sets in — the question of whether this is worth it when nothing has dramatically changed yet. Keep going. The change that thirty days of consistent habits creates is not dramatic. It is structural. You will not wake up on day 31 transformed. You will wake up as someone who has proved to themselves that they keep their commitments for thirty days. That proof is more valuable than almost anything else you could have done with those thirty days.',
@@ -508,9 +519,11 @@ export const ROADMAP_TASKS = {
       'Complete the prompt with your three numbers: monthly income, monthly expenses, and your financial goal target. All three required.',
     ],
     resources: [
+      { type: 'guide', title: 'Task 3.5 — Build a financial tracking system: full guide', guideFile: 'Stages/STAGE 3/RareSena_Task3.5_Financial_Tracker_Goals.html' },
+      { type: 'guide', title: 'Credit Score Tracker (interactive tool)', guideFile: 'Stages/files/RareSena_Tool_Credit_Score_Tracker.html' },
       { type: 'template', title: 'Monthly income vs expenses tracker — pre-filled with UK categories' },
-      { type: 'guide', title: 'Reading your UK credit report: Experian, Equifax, TransUnion', guideFile: 'RareSena_Guide_Reading_UK_Credit_Report.html' },
-      { type: 'guide', title: 'How rent reporting tools build your credit score', guideFile: 'RareSena_Guide_Rent_Reporting_Credit_Building.html' },
+      { type: 'guide', title: 'Reading your UK credit report: Experian, Equifax, TransUnion', guideFile: 'Stages/files2/RareSena_Guide_Reading_UK_Credit_Report.html' },
+      { type: 'guide', title: 'How rent reporting tools build your credit score', guideFile: 'Stages/files2/RareSena_Guide_Rent_Reporting_Credit_Building.html' },
     ],
     whatToExpectToFeel: 'Setting a financial goal when money is tight can feel like cruelty — like being asked to dream about a destination when you are not sure you can afford the bus. Do it anyway. The goal is not a fantasy. It is a structural device. It changes the relationship between income and expenditure from passive to intentional. Even if the first month you can only save £10 toward the goal — £10 toward something is categorically different from £10 spent on nothing. Direction matters more than speed.',
     completionPrompt: {
@@ -541,8 +554,8 @@ export const ROADMAP_TASKS = {
       'Your direction statement saves to your profile dashboard. It appears at the top of your Stage 4 view every time you open the app — a constant reminder of what this window is for.',
     ],
     resources: [
+      { type: 'guide', title: 'Task 4.1 — Define your 90-day direction: full guide', guideFile: 'Stages/STAGE 4/RareSena_Task4.1_90Day_Direction.html' },
       { type: 'template', title: '90-day direction framework — embedded worksheet' },
-      { type: 'guide', title: 'Example direction statements by sector and visa track' },
     ],
     whatToExpectToFeel: 'Naming a 90-day direction makes it real in a way that general ambition does not. It also makes failure more specific — if you do not move in this direction, you will know it. That accountability is uncomfortable before it is useful. Lean into it. The specificity is the point. A vague intention to "do better" cannot be measured, cannot be celebrated, and cannot be learned from. A 90-day direction can be all three.',
     completionPrompt: {
@@ -563,9 +576,9 @@ export const ROADMAP_TASKS = {
     whyThisMatters: 'By Stage 4 you have a routine, a direction, and a financial tracking system. Now comes the question that determines whether the rebuild becomes sovereign or stays precarious: where is your income coming from, and is it building toward independence or deepening dependence?\n\nMost immigrants in the UK reach Stage 4 with one income source — usually employment or a single employer — and no plan for what happens if that source disappears. A Skilled Worker who loses their sponsor. A student who graduates and enters the 60-day clock. A spouse whose relationship changes. A refugee whose Universal Credit is reviewed.\n\nThis task is about identifying the primary income stream that is right for your visa track and your stage — and taking the first concrete action to activate or grow it. Not a plan. An action. This week.',
     whatToDo: null,
     resources: [
-      { type: 'guide', title: 'Income stream guide by visa track — what is permitted and what is not', guideFile: 'RareSena_Guide_Income_Options_By_Visa_Type.html' },
+      { type: 'guide', title: 'Task 4.2 — Identify and start your primary income stream: full guide', guideFile: 'Stages/STAGE 4/RareSena_Task4.2_Primary_Income_Stream.html' },
+      { type: 'guide', title: 'Income stream guide by visa track — what is permitted and what is not', guideFile: 'Stages/files2/RareSena_Guide_Income_Options_By_Visa_Type.html' },
       { type: 'circle_link', title: 'Rare Studio — creator pathway', group: 'Rise' },
-      { type: 'guide', title: 'Employment pathway: Breaking Barriers, RefuAid, sector job boards' },
       { type: 'product', title: 'RareStack (£39/mo) — for business-builders', url: 'https://raresena.com' },
     ],
     whatToExpectToFeel: 'Income anxiety in Stage 4 is different from income anxiety in Stage 1. In Stage 1 it was survival anxiety — will I have enough to eat and pay rent? In Stage 4 it is direction anxiety — am I building the right thing, am I moving fast enough, is this actually going anywhere? Both are real. Both require action rather than reassurance. The action this task asks for is small and specific — one thing, this week. That is enough for now.',
@@ -589,10 +602,11 @@ export const ROADMAP_TASKS = {
       'Log your contacts in the tracker below. Every meaningful professional contact logged is a relationship being managed deliberately rather than left to chance.',
     ],
     resources: [
-      { type: 'guide', title: 'Networking in the UK without pretending to be someone else', guideFile: 'RareSena_Guide_Networking_UK_Authentically.html' },
-      { type: 'guide', title: 'UK CV conventions: what to include, exclude, and never say', guideFile: 'RareSena_Guide_UK_CV_Conventions.html' },
+      { type: 'guide', title: 'Task 4.3 — Build your professional network in the UK: full guide', guideFile: 'Stages/STAGE 4/RareSena_Task4.3_Professional_Network_UK.html' },
+      { type: 'guide', title: 'UK CV conventions: what to include, exclude, and never say', guideFile: 'Stages/files2/RareSena_Guide_UK_CV_Conventions_2.html' },
+      { type: 'guide', title: 'Application Pipeline & Sponsor Check (interactive tool)', guideFile: 'Stages/files/RareSena_Tool_Application_Pipeline_Sponsor_Check.html' },
+      { type: 'guide', title: 'Networking in the UK without pretending to be someone else', guideFile: 'Stages/files2/RareSena_Guide_Networking_UK_Authentically.html' },
       { type: 'checklist', title: 'LinkedIn profile checklist' },
-      { type: 'guide', title: 'Directory of UK professional communities by sector' },
     ],
     whatToExpectToFeel: 'Professional networking as an immigrant in the UK carries a specific discomfort that does not get talked about enough: the feeling that you are asking for something you have not yet earned, in a language that is not always yours, in a culture whose unspoken rules you are still learning. That feeling is real — and it does not mean you do not belong in these spaces. It means you are doing something genuinely hard. The discomfort reduces with every contact you make. It does not go away — it just becomes less loud.',
     completionPrompt: {
@@ -614,6 +628,7 @@ export const ROADMAP_TASKS = {
     whyThisMatters: 'The Sovereignty Programme exists for a specific situation: an immigrant who is navigating immigration complexity — a visa that is becoming precarious, a route that needs to change, a settlement application that needs expert guidance — and who needs someone to walk alongside them through it, not just point them to a website.\n\nNot every user in Stage 4 needs the Sovereignty Programme right now. But every user in Stage 4 should know it exists, understand what it does, and be honest with themselves about whether they are in a situation that needs this level of support.\n\nThis task is not a sales prompt. It is a readiness assessment — a structured way of asking yourself: is my immigration situation one that I can navigate alone with the knowledge I have built in this app, or is it one that requires expert, regulated, hand-held support? The answer to that question should drive your decision.',
     whatToDo: null,
     resources: [
+      { type: 'guide', title: 'Task 4.4 — Sovereignty Programme assessment: full guide', guideFile: 'Stages/STAGE 4/RareSena_Task4.4_Sovereignty_Programme.html' },
       { type: 'product', title: 'Sovereignty Programme (£3,500) — assessment and overview', url: 'https://raresena.com' },
     ],
     whatToExpectToFeel: 'The Sovereignty Programme is a significant financial investment — and if you are in Stage 4 of a rebuild, that number lands differently than it would at a different point in your life. The question this task asks is not "can you afford it right now" but "is this the thing that, if resolved, changes the trajectory of everything else?" For some users the answer is clearly yes. For others it is not yet. Both are honest answers — and this task accepts both.',
@@ -637,7 +652,8 @@ export const ROADMAP_TASKS = {
       'When complete, paste a link, upload evidence, or describe the completed project in the prompt below. That evidence is what marks this task done.',
     ],
     resources: [
-      { type: 'guide', title: 'Project brief template', guideFile: 'RareSena_Guide_Project_Brief_Template.html' },
+      { type: 'guide', title: 'Task 4.5 — Complete one demonstration project: full guide', guideFile: 'Stages/STAGE 4/RareSena_Task4.5_Demonstration_Project.html' },
+      { type: 'guide', title: 'Project brief template', guideFile: 'Stages/files2/RareSena_Guide_Project_Brief_Template.html' },
       { type: 'circle_link', title: 'Rare Circle — Rise group (accountability)', group: 'Rise' },
     ],
     whatToExpectToFeel: 'Completing something in Stage 4 — even one thing — creates a disproportionate shift in your sense of agency. Not because the project itself is transformative, but because completion breaks the cycle of planning without proving. After Task 4.5, you are no longer someone who is going to do something. You are someone who has done something. That shift is internal, and it is permanent. Nobody can take it from you.',
@@ -667,6 +683,7 @@ export const ROADMAP_TASKS = {
       'Export your Rebuild Record as a PDF. It is yours. Keep it somewhere permanent. You may also choose to share parts of it in Rare Circle — many members say reading someone else\'s full journey was the moment they believed their own was possible.',
     ],
     resources: [
+      { type: 'guide', title: 'Task 5.1 — Document your full rebuild journey: full guide', guideFile: 'Stages/STAGE 5/RareSena_Task5.1_Document_Rebuild_Journey.html' },
       { type: 'template', title: 'Journey documentation template — pulls in all completion prompt responses from Stages 1–5' },
     ],
     whatToExpectToFeel: 'Reading your own Stage 1 responses from where you now stand is one of the most powerful moments in the entire rebuild — and it can be unexpectedly emotional. The person who wrote those early answers was carrying so much and knew so little about what was coming. You are allowed to feel grief for them and pride at the same time. Both are accurate. That distance between then and now — that is the rebuild, measured not in tasks completed but in who you became while completing them.',
@@ -690,7 +707,8 @@ export const ROADMAP_TASKS = {
       'Complete the prompt when your stream is activated — meaning it exists in the world and can receive money, even if it has not yet.',
     ],
     resources: [
-      { type: 'guide', title: 'Income options by visa type — what is permitted and what is not', guideFile: 'RareSena_Guide_Income_Options_By_Visa_Type.html' },
+      { type: 'guide', title: 'Task 5.2 — Build a passive income stream: full guide', guideFile: 'Stages/STAGE 5/RareSena_Task5.2_Passive_Income_Stream.html' },
+      { type: 'guide', title: 'Income options by visa type — what is permitted and what is not', guideFile: 'Stages/files2/RareSena_Guide_Income_Options_By_Visa_Type.html' },
       { type: 'product', title: 'Rare Studio membership (from £19.99/mo)', url: 'https://raresena.com' },
       { type: 'product', title: 'Sovereignty Programme – Graduate (£3,000)', url: 'https://raresena.com' },
     ],
@@ -718,8 +736,8 @@ export const ROADMAP_TASKS = {
       'Complete the prompt: who you are supporting (no names needed), what stage they are in, and one thing you shared that you wish someone had told you.',
     ],
     resources: [
+      { type: 'guide', title: 'Task 5.3 — Mentor one person in an earlier stage: full guide', guideFile: 'Stages/STAGE 5/RareSena_Task5.3_Mentor_Someone.html' },
       { type: 'circle_link', title: 'Rare Circle — Realize group', group: 'Realize' },
-      { type: 'guide', title: 'Mentor introduction guide — how to support without overpromising' },
     ],
     whatToExpectToFeel: 'Two things tend to surprise people about this task. The first is how much you know — answers will come out of you that you did not realise you were carrying. The second is how much it moves you to watch someone take your hard-won knowledge and skip a struggle you had to endure. Some people also feel a quieter thing: grief that nobody did this for them. If that arrives, let it. Then notice what you are doing about it — you are becoming the person you needed. That is not a consolation prize. That is the whole point of Realize.',
     completionPrompt: {
@@ -742,8 +760,9 @@ export const ROADMAP_TASKS = {
       'Complete the prompt with your three most important sovereignty milestones and their dates. These save to your dashboard permanently.',
     ],
     resources: [
-      { type: 'template', title: 'Sovereignty Plan framework — ILR timeline, financial targets, housing plan, legacy statement' },
-      { type: 'guide', title: 'The ILR evidence file — what to keep and how to organise it', guideFile: 'RareSena_Guide_ILR_Evidence_File.html' },
+      { type: 'guide', title: 'Task 5.4 — Complete your sovereignty plan: full guide', guideFile: 'Stages/STAGE 5/RareSena_Task5.4_Sovereignty_Plan.html' },
+      { type: 'guide', title: 'ILR Evidence File Checklist (interactive tool)', guideFile: 'Stages/files/RareSena_Tool_ILR_Evidence_File_Checklist.html' },
+      { type: 'guide', title: 'The ILR evidence file — what to keep and how to organise it', guideFile: 'Stages/files2/RareSena_Guide_ILR_Evidence_File.html' },
       { type: 'product', title: 'Sovereignty Programme – Graduate (£3,000)', url: 'https://raresena.com' },
     ],
     whatToExpectToFeel: 'Writing dates next to sovereignty milestones does something uncomfortable: it makes the distance visible. Your ILR date might be years away. The deposit fund might look impossibly far from today\'s balance. Let the distance be visible anyway — because the alternative is not a shorter distance, it is an unmapped one. Every immigrant who reached sovereignty crossed this same distance. The only difference between drifting toward it and building toward it is the plan you are holding right now.',
@@ -767,7 +786,7 @@ export const ROADMAP_TASKS = {
       'Complete the prompt describing what you contributed and where it lives. This marks Task 5.5 — and the entire 5R Rebuild Method — complete.',
     ],
     resources: [
-      { type: 'guide', title: 'Contribution ideas library — by background, skill, and capacity' },
+      { type: 'guide', title: 'Task 5.5 — Define what you are giving back: full guide', guideFile: 'Stages/STAGE 5/RareSena_Task5.5_Giving_Back.html' },
       { type: 'circle_link', title: 'Rare Circle — share your giving back publicly', group: 'Realize' },
     ],
     whatToExpectToFeel: 'Finishing something this long is strangely quiet. There is no ceremony — just an ordinary day on which you happen to complete the final task of a framework you started in a very different chapter of your life. Let it be quiet, and mark it anyway: tell one person, cook the meal from home, take the walk. And expect one more thing — the question "what now?" arrives quickly. The answer is already in your hands: the sovereignty plan from Task 5.4 is your map for the years ahead. The rebuild ends. The building does not.',

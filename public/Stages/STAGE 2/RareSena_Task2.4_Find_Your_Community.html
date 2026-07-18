@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RareSena — Task 2.4 — Find Your Community</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f5f0;color:#222;padding:24px;max-width:820px;margin:0 auto}
+.stage-badge{display:inline-flex;align-items:center;gap:6px;background:#1A3A5C;color:#fff;font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;margin-bottom:14px}
+.task-header{border-left:5px solid #B8962E;padding:14px 18px;background:#fff;border-radius:0 10px 10px 0;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.task-title{font-size:20px;font-weight:700;color:#1A3A5C;margin-bottom:5px}
+.task-meta{font-size:13px;color:#888}
+.section{margin-bottom:24px}
+.section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#B8962E;margin-bottom:9px}
+.section-body{font-size:14px;line-height:1.75;color:#444}
+.steps{counter-reset:step;list-style:none;padding:0}
+.steps li{counter-increment:step;display:flex;gap:12px;margin-bottom:14px;font-size:14px;line-height:1.65;color:#444}
+.steps li::before{content:counter(step);min-width:26px;height:26px;background:#B8962E;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
+.community-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.com-tab{padding:7px 14px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid #ccc;background:#fff;color:#555;transition:all .15s}
+.com-tab.active{background:#1A3A5C;color:#fff;border-color:#1A3A5C}
+.com-content{display:none}
+.com-content.active{display:block}
+.org-card{background:#fff;border:1px solid #e0e0dc;border-radius:8px;padding:13px 15px;margin-bottom:9px;display:flex;align-items:flex-start;gap:12px}
+.org-icon{width:32px;height:32px;border-radius:6px;background:#1A3A5C;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;color:#fff}
+.org-name{font-size:13px;font-weight:700;color:#1A3A5C;margin-bottom:2px}
+.org-desc{font-size:12px;color:#666;line-height:1.5}
+.org-url{font-size:11px;color:#B8962E;margin-top:3px;font-weight:600}
+.circle-card{background:#1A3A5C;border-radius:12px;padding:20px;color:#fff;margin-bottom:16px}
+.circle-card h3{font-size:16px;font-weight:700;margin-bottom:8px}
+.circle-card p{font-size:13px;opacity:.85;line-height:1.6;margin-bottom:14px}
+.circle-btn{display:inline-flex;align-items:center;gap:8px;background:#B8962E;color:#fff;border:none;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer}
+.feel-box{background:#fff8e6;border:1.5px solid #e6b800;border-radius:8px;padding:14px 16px;font-size:14px;line-height:1.65;color:#7a5a00}
+.divider{height:1px;background:#e0e0dc;margin:22px 0}
+.prompt-box{background:#f0f4ff;border:1.5px solid #1A3A5C;border-radius:10px;padding:18px}
+.prompt-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1A3A5C;margin-bottom:8px}
+.pf label{font-size:12px;color:#555;display:block;margin-bottom:4px;font-weight:600}
+textarea{width:100%;padding:10px 12px;border-radius:7px;border:1.5px solid #ccc;font-size:13px;color:#222;background:#fff;resize:vertical;min-height:80px;font-family:Arial,sans-serif;line-height:1.55}
+textarea:focus{outline:none;border-color:#1A3A5C}
+.char-count{font-size:11px;color:#999;text-align:right;margin-top:3px;margin-bottom:14px}
+.done-btn{width:100%;padding:13px;background:#B8962E;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;opacity:.35;pointer-events:none;transition:opacity .2s}
+.done-btn.active{opacity:1;pointer-events:auto}
+.tag{font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;background:#e8f0fe;color:#1A3A5C;margin-left:6px}
+</style>
+</head>
+<body>
+
+<div class="stage-badge">🔭 Stage 2 — Rediscover</div>
+
+<div class="task-header">
+  <div class="task-title">Task 2.4 — Find your community</div>
+  <div class="task-meta">⏱ This week &nbsp;·&nbsp; 🤝 Belonging requires a decision &nbsp;·&nbsp; All tracks · Circle integration</div>
+</div>
+
+<div class="section">
+  <div class="section-label">Why this matters</div>
+  <div class="section-body">Research on immigrant wellbeing consistently identifies one finding above all others: belonging through work is the most reported route to feeling at home in the UK. But until work is established — until you are in a role that uses your skills, with colleagues who see what you bring — community is the bridge.<br><br>Belonging does not happen passively. It does not arrive because you moved to a new country and started a new life. It happens because you make a decision, take an action, show up somewhere, and do it again. One community. One attendance. One introduction. That is what this task asks for — not a social life, not a network, just one deliberate move toward connection in the right direction.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">What to do</div>
+  <ol class="steps">
+    <li>Identify one community that is relevant to your life here — based on your background, profession, faith, interest, or simply your current stage in the rebuild. The directory below is organised by community type to help you find the right starting point.</li>
+    <li>Join or attend once this week. Online counts. An in-person meetup counts. A Rare Circle post counts. The medium matters less than the action.</li>
+    <li>Introduce yourself to one person in that space. One message, one conversation, one comment. That is all.</li>
+    <li>Come back and complete the prompt below with what happened. What was the community? What did you do or say? What did you take from it?</li>
+  </ol>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">Start here — Rare Circle Rediscover group</div>
+  <div class="circle-card">
+    <h3>🔭 Rare Circle — Rediscover group</h3>
+    <p>You are already in a community of people navigating the same rebuild. The Rediscover group is where Stage 2 members are — people working through professional identity, cultural anchors, and community belonging at the same time you are. Introduce yourself. Ask who is in your city. Ask what community has helped them most.</p>
+    <button class="circle-btn">→ Open Rare Circle — Rediscover group</button>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">Community directory — find your people in the UK</div>
+  <div class="community-tabs">
+    <div class="com-tab active" onclick="switchCom(this,'diaspora')">Diaspora and cultural</div>
+    <div class="com-tab" onclick="switchCom(this,'professional')">Professional networks</div>
+    <div class="com-tab" onclick="switchCom(this,'refugee')">Refugee and asylum support</div>
+    <div class="com-tab" onclick="switchCom(this,'faith')">Faith communities</div>
+    <div class="com-tab" onclick="switchCom(this,'local')">Local and general</div>
+  </div>
+
+  <div id="diaspora" class="com-content active">
+    <div class="org-card"><div class="org-icon">🌍</div><div><div class="org-name">African Caribbean Community Initiative (ACCI)</div><div class="org-desc">Community support, networking, and advocacy for African and Caribbean communities across the UK. Events, business networking, and community development programmes.</div><div class="org-url">acci.org.uk</div></div></div>
+    <div class="org-card"><div class="org-icon">🇭🇰</div><div><div class="org-name">BN(O) Welcome Centre Network</div><div class="org-desc">Community and peer support network for Hong Kong BN(O) arrivals. Settlement advice, professional networks, and cultural community events. Local groups in major UK cities.</div><div class="org-url">Search "Welcome Centre Hong Kongers [your city]"</div></div></div>
+    <div class="org-card"><div class="org-icon">🇮🇳</div><div><div class="org-name">British Asian Trust</div><div class="org-desc">Support and community for South Asian diaspora communities in the UK. Professional networking, social impact projects, and cultural programmes.</div><div class="org-url">britishasiantrust.org</div></div></div>
+    <div class="org-card"><div class="org-icon">🤝</div><div><div class="org-name">InterNations — local expat chapters</div><div class="org-desc">Global expat community with active local chapters in London, Manchester, Birmingham, Leeds, Edinburgh, and more. Regular social events and professional meetups. Useful for all visa tracks, particularly professional routes.</div><div class="org-url">internations.org — search your city</div></div></div>
+    <div class="org-card"><div class="org-icon">🌐</div><div><div class="org-name">Meetup — diaspora and cultural groups</div><div class="org-desc">Search "Nigerian", "Filipino", "Ukrainian", "Ethiopian", "Pakistani" (or your own background) + your city on Meetup. Thousands of diaspora groups have active local chapters. Free to join most groups.</div><div class="org-url">meetup.com</div></div></div>
+    <div class="org-card"><div class="org-icon">🏘️</div><div><div class="org-name">Local council community centres and libraries</div><div class="org-desc">Most UK councils run or support cultural community groups, ESOL classes, and social integration events. Check your local council website under "community events" or visit your nearest library and ask what programmes exist for new arrivals.</div><div class="org-url">Your local council website</div></div></div>
+  </div>
+
+  <div id="professional" class="com-content">
+    <div class="org-card"><div class="org-icon">💼</div><div><div class="org-name">Rare Studio creator community<span class="tag">RareSena</span></div><div class="org-desc">For immigrants building a presence as UGC creators, content creators, or digital entrepreneurs. Access to brand opportunities, peer community, and a professional network that understands the immigrant creator experience.</div><div class="org-url">raresena.com/studio</div></div></div>
+    <div class="org-card"><div class="org-icon">📊</div><div><div class="org-name">RareStack — idea validation and business building<span class="tag">RareSena</span></div><div class="org-desc">For immigrants building businesses or navigating IFV pathways. Community of immigrant founders, tools for idea validation, and a network of people building on their own terms.</div><div class="org-url">rarestack.co</div></div></div>
+    <div class="org-card"><div class="org-icon">🔗</div><div><div class="org-name">LinkedIn local groups</div><div class="org-desc">Search "immigrant professionals [city]", "global talent network [city]", or your specific sector + UK. LinkedIn has thousands of active professional communities. Joining and engaging even minimally puts you on the radar of recruiters and peers.</div><div class="org-url">linkedin.com/groups</div></div></div>
+    <div class="org-card"><div class="org-icon">🏥</div><div><div class="org-name">Sector-specific professional associations</div><div class="org-desc">Most UK professional bodies have local branches with networking events. BMA (medicine), NMC (nursing), Law Society (law), RIBA (architecture), ICE (engineering). Membership often includes community access even during registration processes.</div><div class="org-url">Search your profession + "UK professional association"</div></div></div>
+    <div class="org-card"><div class="org-icon">🚀</div><div><div class="org-name">Minority Supplier Development UK (MSDUK)</div><div class="org-desc">Professional network and supplier diversity organisation for ethnic minority-owned businesses and professionals in the UK. Annual conference, networking events, and business connections.</div><div class="org-url">msduk.org.uk</div></div></div>
+  </div>
+
+  <div id="refugee" class="com-content">
+    <div class="org-card"><div class="org-icon">🏠</div><div><div class="org-name">Refugee Council — peer support</div><div class="org-desc">Peer support groups connecting newly arrived refugees with those who have been through the same journey. Available in major UK cities. Particularly valuable during Stage 2 when you are establishing identity and belonging.</div><div class="org-url">refugeecouncil.org.uk</div></div></div>
+    <div class="org-card"><div class="org-icon">🤝</div><div><div class="org-name">Refugee Action</div><div class="org-desc">Community integration support, English classes, and peer networks for refugees and asylum seekers across England. Local offices in London, Manchester, Birmingham, Leeds, Liverpool, and Bristol.</div><div class="org-url">refugee-action.org.uk</div></div></div>
+    <div class="org-card"><div class="org-icon">💬</div><div><div class="org-name">Migrant Help community resources</div><div class="org-desc">Beyond the 24/7 helpline, Migrant Help connects asylum seekers and refugees with local community groups and integration support in their area.</div><div class="org-url">migranthelpuk.org · 0808 8010 503</div></div></div>
+    <div class="org-card"><div class="org-icon">🌱</div><div><div class="org-name">City of Sanctuary — local networks</div><div class="org-desc">City of Sanctuary is a national movement of cities welcoming refugees. Local groups organise community events, social activities, and connection opportunities for new arrivals. Search your city.</div><div class="org-url">cityofsanctuary.org</div></div></div>
+    <div class="org-card"><div class="org-icon">👨‍💼</div><div><div class="org-name">Breaking Barriers employment communities</div><div class="org-desc">Beyond employment support, Breaking Barriers has peer networks and professional community groups specifically for refugees rebuilding careers. London-based with some national reach.</div><div class="org-url">breaking-barriers.co.uk</div></div></div>
+  </div>
+
+  <div id="faith" class="com-content">
+    <div class="section-body" style="margin-bottom:12px">Faith communities are one of the most consistently reported sources of belonging for immigrants — across all religions and traditions. Most major UK cities have mosques, churches, temples, gurdwaras, and synagogues with active diaspora congregations.</div>
+    <div class="org-card"><div class="org-icon">🕌</div><div><div class="org-name">Muslim Council of Britain — mosque finder</div><div class="org-desc">Find your nearest mosque and Islamic community centre. Many UK mosques have active programmes for new arrivals including Arabic classes, community meals, and social support.</div><div class="org-url">mcb.org.uk — mosque finder tool</div></div></div>
+    <div class="org-card"><div class="org-icon">⛪</div><div><div class="org-name">Churches Together in England</div><div class="org-desc">Directory of churches across all denominations in England. Many UK churches have specific outreach to new communities and immigrants, including African, Caribbean, and Asian congregations in most cities.</div><div class="org-url">cte.org.uk</div></div></div>
+    <div class="org-card"><div class="org-icon">🛕</div><div><div class="org-name">Hindu Council UK / Sikh Federation UK</div><div class="org-desc">National bodies for Hindu and Sikh communities with local temple (mandir/gurdwara) directories and community events. Gurdwaras in particular are widely known for their open-door langar (community meals) which welcome all.</div><div class="org-url">hinducouncil.net / sikhfederation.com</div></div></div>
+  </div>
+
+  <div id="local" class="com-content">
+    <div class="org-card"><div class="org-icon">📚</div><div><div class="org-name">Local library — free community hub</div><div class="org-desc">UK public libraries are free, warm, and run more community programmes than most people realise — English conversation groups, reading clubs, job search support, digital skills, and community noticeboard for local groups. Visit yours and ask what is available.</div><div class="org-url">Your local council website — library services</div></div></div>
+    <div class="org-card"><div class="org-icon">🏃</div><div><div class="org-name">parkrun — free weekly community run</div><div class="org-desc">Free, weekly 5K run held in parks across the UK every Saturday at 9am. No sign-up fee, no pressure, all levels. One of the most effective community-building events in the UK — consistent attendance builds real connections.</div><div class="org-url">parkrun.org.uk — find your nearest event</div></div></div>
+    <div class="org-card"><div class="org-icon">🌿</div><div><div class="org-name">Volunteering — local opportunities</div><div class="org-desc">Volunteering builds connection, develops UK work references, and creates a sense of contribution while you are establishing yourself. Do-it.org is the largest UK volunteering database — search by location and interest.</div><div class="org-url">do-it.org</div></div></div>
+    <div class="org-card"><div class="org-icon">🤝</div><div><div class="org-name">Meetup — social and interest groups</div><div class="org-desc">Non-diaspora Meetup groups by interest — hiking, board games, language exchange, photography, coding, book clubs. Meeting people around a shared interest rather than a shared background creates a different kind of connection. Both matter.</div><div class="org-url">meetup.com — search your city and interest</div></div></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="section-label">What to expect to feel</div>
+  <div class="feel-box">Walking into a new community — online or in person — requires a specific kind of courage that often goes unacknowledged: the courage to be new, to not yet belong, to be seen before you are known. Most people feel awkward. Most introductions feel clunky. Most first attendances feel slightly wrong. Go anyway. The awkwardness is the cost of entry — not a sign that it is the wrong place. Belonging is built through consistent exposure, not through a perfect first experience.</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+  <div class="prompt-box">
+    <div class="prompt-label">✏ Completion prompt</div>
+    <p style="font-size:14px;color:#222;margin-bottom:12px;line-height:1.6">Which community did you join or attend, and what was one thing you took from the experience? Minimum 20 characters.</p>
+    <div class="pf">
+      <label>Your answer</label>
+      <textarea id="prompt-answer" placeholder="e.g. I joined the Rare Circle Rediscover group and posted an introduction. Three people responded within two hours — one of whom is also a nurse working through NMC registration in Manchester. We have arranged to speak this week.&#10;&#10;OR&#10;&#10;I went to a local parkrun on Saturday. It was overwhelming at first but I spoke to two people while walking the last kilometre. One of them has been in the UK for 4 years and gave me the name of a Nigerian community group in my borough." oninput="checkPrompt()"></textarea>
+      <div class="char-count" id="char-count">0 / 20 minimum characters</div>
+    </div>
+    <button class="done-btn" id="done-btn">✓ Mark task 2.4 complete</button>
+  </div>
+</div>
+
+<script>
+function switchCom(el,id){
+  document.querySelectorAll('.com-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.com-content').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+function checkPrompt(){
+  const t=document.getElementById('prompt-answer').value.trim();
+  document.getElementById('char-count').textContent=t.length+' / 20 minimum characters';
+  document.getElementById('done-btn').classList.toggle('active',t.length>=20);
+}
+</script>
+</body>
+</html>
