@@ -915,6 +915,7 @@ export default function RebuildPortal({ onLogout }) {
         stageCol={sd.col}
         steps={steps}
         trackNote={trackNote}
+        userVisaTrack={user.visaTrack}
         alreadyComplete={alreadyComplete}
         isPremium={user.isPremium}
         onBack={() => setScreen('roadmap')}
@@ -1443,11 +1444,12 @@ function PostCard({ post, user, onUpgrade, onLike, liked = false }) {
 }
 
 // ── TASK DETAIL VIEW ─────────────────────────────────────────────
-function TaskDetailView({ task, taskKey, stageNum, stageName, stageCol, steps, trackNote, alreadyComplete, isPremium, onBack, onComplete, onAdvanceStage, onExportPDF, onRedo, onGoToCircle }) {
+function TaskDetailView({ task, taskKey, stageNum, stageName, stageCol, steps, trackNote, userVisaTrack, alreadyComplete, isPremium, onBack, onComplete, onAdvanceStage, onExportPDF, onRedo, onGoToCircle }) {
   const [promptValues, setPromptValues] = useState({})
   const [submitting, setSubmitting] = useState(false)
   const [justCompleted, setJustCompleted] = useState(false)
   const [activeGuide, setActiveGuide] = useState(null)
+  const [selectedTrack, setSelectedTrack] = useState(userVisaTrack || 'A')
 
   const p = task.completionPrompt
 
@@ -1540,28 +1542,106 @@ function TaskDetailView({ task, taskKey, stageNum, stageName, stageCol, steps, t
         )}
 
         {/* 2. WHAT TO DO */}
-        {steps && (
-          <TaskSection label="WHAT TO DO" color={stageCol}>
-            {steps.map((step, i) => (
-              <div key={i} style={{ display: 'flex', gap: '12px', marginBottom: '14px' }}>
-                <div style={{ width: '24px', height: '24px', borderRadius: '50%',
-                  background: `${stageCol}22`, flexShrink: 0,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <span style={{ color: stageCol, fontSize: '11px', fontWeight: '800' }}>{i + 1}</span>
+        {(() => {
+          const isTrackAdaptive = task.whatToDo && !Array.isArray(task.whatToDo) && typeof task.whatToDo === 'object'
+          const displaySteps = isTrackAdaptive ? getWhatToDo(task, selectedTrack) : steps
+          if (!displaySteps && !isTrackAdaptive) return null
+          const activeTrackInfo = VISA_TRACKS.find(t => t.id === selectedTrack)
+          return (
+            <TaskSection label="WHAT TO DO" color={stageCol}>
+              {isTrackAdaptive && (
+                <div style={{ marginBottom: '18px' }}>
+                  <p style={{ fontSize: '11px', color: T.mutedDk, fontWeight: '700',
+                    textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '10px' }}>
+                    Select your visa type
+                  </p>
+                  <div style={{ display: 'flex', gap: '6px', overflowX: 'auto',
+                    paddingBottom: '8px', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none' }}>
+                    {VISA_TRACKS.map(track => {
+                      const isSel = selectedTrack === track.id
+                      return (
+                        <button key={track.id}
+                          onClick={() => setSelectedTrack(track.id)}
+                          style={{
+                            flexShrink: 0,
+                            padding: '7px 14px',
+                            borderRadius: '20px',
+                            border: `1.5px solid ${isSel ? T.gold : T.bg4}`,
+                            background: isSel ? T.gold : T.bg3,
+                            color: isSel ? T.bg : T.muted,
+                            fontSize: '12px',
+                            fontWeight: isSel ? '700' : '500',
+                            cursor: 'pointer',
+                            fontFamily: 'inherit',
+                            whiteSpace: 'nowrap',
+                            transition: 'all 0.15s',
+                          }}>
+                          {track.id} — {track.label}
+                        </button>
+                      )
+                    })}
+                  </div>
+                  {activeTrackInfo && (
+                    <div style={{ background: `${T.gold}12`, border: `1px solid ${T.gold}33`,
+                      borderRadius: '8px', padding: '9px 13px', marginTop: '10px' }}>
+                      <p style={{ fontSize: '12px', color: T.gold, fontWeight: '700', marginBottom: '2px' }}>
+                        Track {activeTrackInfo.id}: {activeTrackInfo.label}
+                      </p>
+                      <p style={{ fontSize: '11px', color: T.mutedDk, lineHeight: 1.5 }}>
+                        {activeTrackInfo.desc}
+                      </p>
+                    </div>
+                  )}
                 </div>
-                <p style={{ color: T.white, fontSize: '14px', lineHeight: '1.65', flex: 1 }}>{step}</p>
-              </div>
-            ))}
-            {trackNote && (
-              <div style={{ background: `${stageCol}11`, border: `1px solid ${stageCol}33`,
-                borderRadius: '8px', padding: '10px 14px', marginTop: '6px' }}>
-                <p style={{ color: stageCol, fontSize: '11px', fontWeight: '700',
-                  letterSpacing: '0.06em', marginBottom: '4px' }}>YOUR TRACK NOTE</p>
-                <p style={{ color: T.muted, fontSize: '13px', lineHeight: '1.6' }}>{trackNote}</p>
-              </div>
-            )}
-          </TaskSection>
-        )}
+              )}
+              {/* Track E — urgent alert box */}
+              {task.trackAlert?.[selectedTrack] && (
+                <div style={{ background: 'rgba(204,34,34,0.1)', border: '1.5px solid rgba(204,34,34,0.5)',
+                  borderRadius: '8px', padding: '12px 14px', marginBottom: '16px' }}>
+                  <p style={{ fontSize: '13px', color: '#ff6b6b', lineHeight: 1.6 }}>
+                    {task.trackAlert[selectedTrack]}
+                  </p>
+                </div>
+              )}
+              {/* Track F/G/H — intro blurb */}
+              {task.trackIntro?.[selectedTrack] && (
+                <div style={{ background: 'rgba(27,45,91,0.5)', borderLeft: `4px solid ${T.gold}`,
+                  borderRadius: '0 8px 8px 0', padding: '12px 14px', marginBottom: '16px' }}>
+                  <p style={{ fontSize: '13px', color: T.muted, lineHeight: 1.6 }}>
+                    {task.trackIntro[selectedTrack]}
+                  </p>
+                </div>
+              )}
+              {displaySteps && displaySteps.map((step, i) => (
+                <div key={i} style={{ display: 'flex', gap: '12px', marginBottom: '14px' }}>
+                  <div style={{ width: '24px', height: '24px', borderRadius: '50%',
+                    background: `${stageCol}22`, flexShrink: 0,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <span style={{ color: stageCol, fontSize: '11px', fontWeight: '800' }}>{i + 1}</span>
+                  </div>
+                  <p style={{ color: T.white, fontSize: '14px', lineHeight: '1.65', flex: 1 }}>{step}</p>
+                </div>
+              ))}
+              {/* Track F/G/H — warning box after steps */}
+              {task.trackWarning?.[selectedTrack] && (
+                <div style={{ background: 'rgba(184,150,46,0.12)', border: `1.5px solid ${T.gold}55`,
+                  borderRadius: '8px', padding: '12px 14px', marginTop: '6px' }}>
+                  <p style={{ fontSize: '13px', color: T.gold, lineHeight: 1.6 }}>
+                    {task.trackWarning[selectedTrack]}
+                  </p>
+                </div>
+              )}
+              {trackNote && (
+                <div style={{ background: `${stageCol}11`, border: `1px solid ${stageCol}33`,
+                  borderRadius: '8px', padding: '10px 14px', marginTop: '6px' }}>
+                  <p style={{ color: stageCol, fontSize: '11px', fontWeight: '700',
+                    letterSpacing: '0.06em', marginBottom: '4px' }}>YOUR TRACK NOTE</p>
+                  <p style={{ color: T.muted, fontSize: '13px', lineHeight: '1.6' }}>{trackNote}</p>
+                </div>
+              )}
+            </TaskSection>
+          )
+        })()}
 
         {/* 2b. INTERACTIVE TRACKER */}
         {taskKey === '1.1' && (
@@ -1685,13 +1765,20 @@ function TaskDetailView({ task, taskKey, stageNum, stageName, stageCol, steps, t
         )}
 
         {/* 4. WHAT TO EXPECT TO FEEL */}
-        {task.whatToExpectToFeel && (
-          <TaskSection label="WHAT TO EXPECT TO FEEL" color={stageCol}>
-            <p style={{ color: T.muted, fontSize: '14px', lineHeight: '1.75', fontStyle: 'italic' }}>
-              {task.whatToExpectToFeel}
-            </p>
-          </TaskSection>
-        )}
+        {(() => {
+          const feelRaw = task.whatToExpectToFeel
+          const feelText = feelRaw && typeof feelRaw === 'object'
+            ? (feelRaw[selectedTrack] || feelRaw.default || null)
+            : feelRaw
+          if (!feelText) return null
+          return (
+            <TaskSection label="WHAT TO EXPECT TO FEEL" color={stageCol}>
+              <p style={{ color: T.muted, fontSize: '14px', lineHeight: '1.75', fontStyle: 'italic' }}>
+                {feelText}
+              </p>
+            </TaskSection>
+          )
+        })()}
 
         {/* 5. COMPLETION PROMPT */}
         <TaskSection label="COMPLETION PROMPT" color={stageCol}>
