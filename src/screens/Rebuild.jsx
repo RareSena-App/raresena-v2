@@ -1541,6 +1541,19 @@ function TaskDetailView({ task, taskKey, stageNum, stageName, stageCol, steps, t
           </TaskSection>
         )}
 
+        {/* 1b. CARRYING FORWARD */}
+        {task.carryForwardNote && (
+          <TaskSection label="CARRYING FORWARD FROM STAGE 1" color={stageCol}>
+            <div style={{ background: `${T.gold}12`, border: `1.5px solid ${T.gold}44`,
+              borderRadius: '8px', padding: '13px 15px' }}>
+              <p style={{ fontSize: '12px', fontWeight: '700', color: T.gold, marginBottom: '5px' }}>
+                ⚓ Your Stage 1 anchor habit carries into this stage
+              </p>
+              <p style={{ fontSize: '13px', color: T.muted, lineHeight: 1.6 }}>{task.carryForwardNote}</p>
+            </div>
+          </TaskSection>
+        )}
+
         {/* 2. WHAT TO DO */}
         {(() => {
           const isTrackAdaptive = task.whatToDo && !Array.isArray(task.whatToDo) && typeof task.whatToDo === 'object'
@@ -1643,7 +1656,42 @@ function TaskDetailView({ task, taskKey, stageNum, stageName, stageCol, steps, t
           )
         })()}
 
-        {/* 2b. INTERACTIVE TRACKER */}
+        {/* 2b. KEY RIGHTS */}
+        {task.keyRights?.length > 0 && (
+          <TaskSection label="YOUR RIGHTS" color={stageCol}>
+            {task.keyRights.map((right, i) => (
+              <div key={i} style={{ display: 'flex', gap: '10px', marginBottom: '10px', alignItems: 'flex-start' }}>
+                <span style={{ color: T.green, fontSize: '13px', fontWeight: '700', flexShrink: 0, marginTop: '2px' }}>✓</span>
+                <p style={{ color: T.muted, fontSize: '13px', lineHeight: '1.6', flex: 1 }}>{right}</p>
+              </div>
+            ))}
+          </TaskSection>
+        )}
+
+        {/* 2c. STARTER SCRIPTS */}
+        {task.starterScripts?.length > 0 && (
+          <TaskSection label="HOW TO INTRODUCE YOURSELF" color={stageCol}>
+            <p style={{ fontSize: '13px', color: T.mutedDk, lineHeight: 1.6, marginBottom: '14px' }}>
+              Three starter phrases that make it easy to show up without feeling exposed. Copy and adapt for Rare Circle or any message.
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              {task.starterScripts.map((s, i) => (
+                <div key={i} style={{ background: T.bg3, border: `1px solid ${T.bg4}`,
+                  borderRadius: '10px', padding: '12px 14px' }}>
+                  <p style={{ fontSize: '10px', fontWeight: '800', color: T.gold,
+                    textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '6px' }}>
+                    {s.label}
+                  </p>
+                  <p style={{ fontSize: '12px', color: T.muted, lineHeight: 1.55, fontStyle: 'italic' }}>
+                    {s.text}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </TaskSection>
+        )}
+
+        {/* 2d. INTERACTIVE TRACKER */}
         {taskKey === '1.1' && (
           <TaskSection label="VISA & ILR COUNTDOWN TRACKER" color={stageCol}>
             <VisaCountdownTracker />
@@ -1662,6 +1710,19 @@ function TaskDetailView({ task, taskKey, stageNum, stageName, stageCol, steps, t
             }} />
           </TaskSection>
         )}
+        {taskKey === '1.4' && task.streakMilestones && (
+          <TaskSection label="STREAK MILESTONES" color={stageCol}>
+            {task.streakMilestones.map((m, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px',
+                padding: '10px 14px', borderRadius: '8px', marginBottom: '8px',
+                background: T.bg3, border: `1px solid ${T.bg4}` }}>
+                <span style={{ fontSize: '15px', fontWeight: '800', color: T.gold,
+                  minWidth: '30px', textAlign: 'center' }}>{m.days}</span>
+                <p style={{ fontSize: '13px', color: T.muted, lineHeight: 1.4 }}>{m.label}</p>
+              </div>
+            ))}
+          </TaskSection>
+        )}
         {taskKey === '2.1' && (
           <TaskSection label="VALUES CARD SORT" color={stageCol}>
             <ValuesExercise onComplete={(summary) => {
@@ -1677,12 +1738,86 @@ function TaskDetailView({ task, taskKey, stageNum, stageName, stageCol, steps, t
             }} />
           </TaskSection>
         )}
+        {taskKey === '2.3' && task.researchEvidence && (
+          <TaskSection label="THE EVIDENCE" color={stageCol}>
+            <div style={{ background: 'rgba(27,45,91,0.5)', borderLeft: `4px solid ${T.gold}`,
+              borderRadius: '0 8px 8px 0', padding: '13px 15px' }}>
+              <p style={{ fontSize: '13px', color: T.muted, lineHeight: 1.65 }}>{task.researchEvidence}</p>
+            </div>
+          </TaskSection>
+        )}
+        {taskKey === '2.3' && task.anchorCategories?.length > 0 && (
+          <TaskSection label="WHAT CATEGORY DOES YOUR ANCHOR FALL INTO?" color={stageCol}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
+              {task.anchorCategories.map((cat, i) => (
+                <div key={i} style={{ background: T.bg3, border: `1px solid ${T.bg4}`,
+                  borderRadius: '8px', padding: '12px', textAlign: 'center' }}>
+                  <div style={{ fontSize: '22px', marginBottom: '4px' }}>{cat.icon}</div>
+                  <p style={{ fontSize: '12px', fontWeight: '700', color: T.white, marginBottom: '4px' }}>{cat.label}</p>
+                  <p style={{ fontSize: '10px', color: T.mutedDk, lineHeight: 1.4 }}>{cat.examples}</p>
+                </div>
+              ))}
+            </div>
+          </TaskSection>
+        )}
+        {taskKey === '2.5' && task.sovereigntyDefinition && (
+          <TaskSection label="THE RARESENA DEFINITION" color={stageCol}>
+            <div style={{ background: '#1B2D5B', borderRadius: '12px', padding: '20px' }}>
+              <p style={{ fontSize: '10px', fontWeight: '700', color: 'rgba(255,255,255,0.6)',
+                textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '10px' }}>
+                RareSena — 5R Rebuild Method
+              </p>
+              <p style={{ fontSize: '14px', color: T.white, lineHeight: 1.75, fontStyle: 'italic' }}>
+                "{task.sovereigntyDefinition}"
+              </p>
+              <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', marginTop: '10px' }}>
+                — RareSena 5R Rebuild Method · Realize Stage
+              </p>
+            </div>
+          </TaskSection>
+        )}
+        {taskKey === '2.5' && task.sovereigntyDimensions?.length > 0 && (
+          <TaskSection label="WHAT DOES SOVEREIGNTY LOOK LIKE FOR YOU?" color={stageCol}>
+            <p style={{ fontSize: '13px', color: T.mutedDk, lineHeight: 1.5, marginBottom: '12px' }}>
+              Select the dimensions that matter most to your situation. All of them, some, or just one — your definition is yours.
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              {task.sovereigntyDimensions.map((dim, i) => (
+                <div key={i} style={{ background: T.bg3, border: `1px solid ${T.bg4}`,
+                  borderRadius: '8px', padding: '12px' }}>
+                  <div style={{ fontSize: '20px', marginBottom: '5px' }}>{dim.icon}</div>
+                  <p style={{ fontSize: '12px', fontWeight: '700', color: T.white, marginBottom: '4px' }}>{dim.label}</p>
+                  <p style={{ fontSize: '11px', color: T.mutedDk, lineHeight: 1.4 }}>{dim.desc}</p>
+                </div>
+              ))}
+            </div>
+          </TaskSection>
+        )}
+        {taskKey === '2.5' && task.sovereigntyExamples?.length > 0 && (
+          <TaskSection label="EXAMPLES — SOVEREIGNTY AS OTHERS HAVE DEFINED IT" color={stageCol}>
+            {task.sovereigntyExamples.map((ex, i) => (
+              <div key={i} style={{ borderLeft: `3px solid ${T.gold}`, padding: '10px 14px',
+                marginBottom: '10px', background: T.bg3, borderRadius: '0 8px 8px 0' }}>
+                <p style={{ fontSize: '13px', color: T.muted, lineHeight: 1.6, fontStyle: 'italic' }}>"{ex}"</p>
+              </div>
+            ))}
+          </TaskSection>
+        )}
         {taskKey === '3.1' && (
           <TaskSection label="MORNING ROUTINE BUILDER" color={stageCol}>
             <MorningRoutineBuilder onSave={(startTime, firstThree) => {
               setField('start_time', startTime)
               setField('first_three', firstThree)
             }} />
+            {task.survivabilityRule && (
+              <div style={{ background: 'rgba(27,45,91,0.5)', borderLeft: `4px solid ${stageCol}`,
+                borderRadius: '0 8px 8px 0', padding: '12px 14px', marginTop: '14px' }}>
+                <p style={{ fontSize: '12px', fontWeight: '700', color: stageCol, marginBottom: '4px' }}>
+                  The rule that makes routines survive
+                </p>
+                <p style={{ fontSize: '13px', color: T.muted, lineHeight: 1.65 }}>{task.survivabilityRule}</p>
+              </div>
+            )}
           </TaskSection>
         )}
         {taskKey === '3.2' && (
@@ -1697,6 +1832,17 @@ function TaskDetailView({ task, taskKey, stageNum, stageName, stageCol, steps, t
             }} />
           </TaskSection>
         )}
+        {taskKey === '4.1' && task.sovereigntyCarryForwardNote && (
+          <TaskSection label="CARRIED FORWARD FROM STAGE 2" color={stageCol}>
+            <div style={{ background: `${T.gold}12`, border: `1.5px solid ${T.gold}44`,
+              borderRadius: '8px', padding: '13px 15px' }}>
+              <p style={{ fontSize: '12px', fontWeight: '700', color: T.gold, marginBottom: '5px' }}>
+                🎯 Your sovereignty definition from Task 2.5 is your north star for this task
+              </p>
+              <p style={{ fontSize: '13px', color: T.muted, lineHeight: 1.6 }}>{task.sovereigntyCarryForwardNote}</p>
+            </div>
+          </TaskSection>
+        )}
         {taskKey === '4.1' && (
           <TaskSection label="90-DAY DIRECTION WORKSHEET" color={stageCol}>
             <NinetyDayDirectionWorksheet onSave={(dir) => {
@@ -1707,6 +1853,20 @@ function TaskDetailView({ task, taskKey, stageNum, stageName, stageCol, steps, t
         {taskKey === '4.2' && (
           <TaskSection label="APPLICATION PIPELINE & SPONSOR CHECK" color={stageCol}>
             <ApplicationPipelineTracker />
+          </TaskSection>
+        )}
+        {taskKey === '4.3' && task.networkingStrategies?.length > 0 && (
+          <TaskSection label="NETWORKING STRATEGIES THAT WORK WITHOUT PRETENDING TO BE SOMEONE ELSE" color={stageCol}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              {task.networkingStrategies.map((s, i) => (
+                <div key={i} style={{ background: T.bg3, border: `1px solid ${T.bg4}`,
+                  borderRadius: '8px', padding: '13px' }}>
+                  <p style={{ fontSize: '12px', fontWeight: '700', color: stageCol, marginBottom: '5px' }}>{s.title}</p>
+                  <p style={{ fontSize: '12px', color: T.mutedDk, lineHeight: 1.5, marginBottom: '6px' }}>{s.body}</p>
+                  <p style={{ fontSize: '11px', fontWeight: '700', color: T.gold }}>→ {s.action}</p>
+                </div>
+              ))}
+            </div>
           </TaskSection>
         )}
         {taskKey === '4.3' && (
@@ -1734,6 +1894,238 @@ function TaskDetailView({ task, taskKey, stageNum, stageName, stageCol, steps, t
         {taskKey === '5.4' && (
           <TaskSection label="ILR EVIDENCE FILE CHECKLIST" color={stageCol}>
             <ILREvidenceChecklist />
+          </TaskSection>
+        )}
+        {taskKey === '3.4' && task.autoCompleteNote && (
+          <TaskSection label="HOW AUTO-COMPLETION WORKS" color={stageCol}>
+            <div style={{ background: 'rgba(27,45,91,0.5)', borderLeft: `4px solid ${stageCol}`,
+              borderRadius: '0 8px 8px 0', padding: '13px 15px', marginBottom: '16px' }}>
+              <p style={{ fontSize: '13px', color: T.muted, lineHeight: 1.65 }}>{task.autoCompleteNote}</p>
+            </div>
+            {task.streakMilestones?.length > 0 && (
+              <div>
+                <p style={{ fontSize: '11px', fontWeight: '800', color: T.gold,
+                  letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '10px' }}>
+                  MILESTONE CHECKPOINTS
+                </p>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+                  {task.streakMilestones.map((m, i) => (
+                    <div key={i} style={{ background: T.bg3, border: `1px solid ${T.bg4}`,
+                      borderRadius: '8px', padding: '12px', textAlign: 'center' }}>
+                      <div style={{ fontSize: '22px', fontWeight: '800', color: stageCol }}>{m.days}</div>
+                      <p style={{ fontSize: '11px', color: T.mutedDk, lineHeight: 1.4, marginTop: '4px' }}>{m.label}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </TaskSection>
+        )}
+        {taskKey === '5.1' && task.journeyStages?.length > 0 && (
+          <TaskSection label="THE ROAD YOU HAVE ALREADY WALKED" color={stageCol}>
+            <div style={{ background: '#4A235A', borderRadius: '14px', padding: '18px' }}>
+              <p style={{ fontSize: '13px', fontWeight: '700', color: 'rgba(255,255,255,0.85)',
+                marginBottom: '14px' }}>Five stages. One rebuild — yours.</p>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '6px' }}>
+                {task.journeyStages.map((s, i) => (
+                  <div key={i} style={{ background: i < 4 ? 'rgba(184,150,46,0.35)' : 'rgba(255,255,255,0.1)',
+                    border: i < 4 ? '1px solid rgba(184,150,46,0.5)' : 'none',
+                    borderRadius: '8px', padding: '10px 6px', textAlign: 'center' }}>
+                    <div style={{ fontSize: '18px', marginBottom: '3px' }}>{s.icon}</div>
+                    <p style={{ fontSize: '11px', fontWeight: '700', color: T.white }}>{s.name}</p>
+                    <p style={{ fontSize: '10px', color: i < 4 ? T.gold : 'rgba(255,255,255,0.5)',
+                      marginTop: '2px' }}>{i < 4 ? '✓ Complete' : 'In progress'}</p>
+                  </div>
+                ))}
+              </div>
+              <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', marginTop: '12px', lineHeight: 1.5 }}>
+                In the full app, your completion responses from all 25 tasks assemble automatically into your Rebuild Record.
+              </p>
+            </div>
+          </TaskSection>
+        )}
+        {taskKey === '5.2' && task.visaComplianceNote && (
+          <TaskSection label="VISA COMPLIANCE — READ BEFORE CHOOSING" color={stageCol}>
+            <div style={{ background: 'rgba(139,0,0,0.12)', border: '1.5px solid rgba(204,34,34,0.5)',
+              borderRadius: '8px', padding: '13px 15px' }}>
+              <p style={{ fontSize: '12px', fontWeight: '700', color: '#cc4444', marginBottom: '4px' }}>
+                ⚠ Confirm your stream is permitted on your visa before activating
+              </p>
+              <p style={{ fontSize: '12px', color: T.muted, lineHeight: 1.6 }}>{task.visaComplianceNote}</p>
+            </div>
+          </TaskSection>
+        )}
+        {taskKey === '5.2' && task.incomeStreamOptions?.length > 0 && (
+          <TaskSection label="SECOND INCOME STREAM OPTIONS" color={stageCol}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              {task.incomeStreamOptions.map((s, i) => (
+                <div key={i} style={{ background: T.bg3, border: `1px solid ${T.bg4}`,
+                  borderRadius: '10px', padding: '13px' }}>
+                  <div style={{ fontSize: '20px', marginBottom: '5px' }}>{s.icon}</div>
+                  <p style={{ fontSize: '12px', fontWeight: '700', color: stageCol, marginBottom: '4px' }}>{s.title}</p>
+                  <p style={{ fontSize: '11px', color: T.mutedDk, lineHeight: 1.4, marginBottom: '6px' }}>{s.desc}</p>
+                  {s.effortSetup && (
+                    <p style={{ fontSize: '10px', fontWeight: '700', color: T.gold, marginBottom: '4px' }}>
+                      {s.effortSetup}{s.effortOngoing ? ` · ${s.effortOngoing}` : ''}
+                    </p>
+                  )}
+                  <p style={{ fontSize: '10px', color: T.mutedDk, lineHeight: 1.35 }}>{s.visaNote}</p>
+                </div>
+              ))}
+            </div>
+          </TaskSection>
+        )}
+        {taskKey === '5.3' && task.mentoringModes?.length > 0 && (
+          <TaskSection label="CHOOSE YOUR MENTORING MODE" color={stageCol}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '16px' }}>
+              {task.mentoringModes.map((m, i) => (
+                <div key={i} style={{ background: T.bg3, border: `1px solid ${T.bg4}`,
+                  borderRadius: '8px', padding: '13px' }}>
+                  <div style={{ fontSize: '20px', marginBottom: '5px' }}>{m.icon}</div>
+                  <p style={{ fontSize: '12px', fontWeight: '700', color: stageCol, marginBottom: '4px' }}>{m.title}</p>
+                  <p style={{ fontSize: '11px', color: T.mutedDk, lineHeight: 1.4 }}>{m.desc}</p>
+                </div>
+              ))}
+            </div>
+            {task.mentoringPrinciples?.length > 0 && (
+              <div style={{ background: T.bg3, border: `1px solid ${T.bg4}`,
+                borderRadius: '8px', padding: '14px' }}>
+                <p style={{ fontSize: '11px', fontWeight: '800', color: T.gold,
+                  letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '10px' }}>
+                  HOW TO MENTOR WELL — WHAT YOU NEEDED, NOT WHAT SOUNDS GOOD
+                </p>
+                {task.mentoringPrinciples.map((p, i) => (
+                  <div key={i} style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                    <span style={{ fontSize: '11px', fontWeight: '700', color: stageCol, flexShrink: 0 }}>
+                      {i + 1}.
+                    </span>
+                    <p style={{ fontSize: '12px', color: T.muted, lineHeight: 1.55 }}>{p}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </TaskSection>
+        )}
+        {taskKey === '5.4' && task.sovereigntyPillars?.length > 0 && (
+          <TaskSection label="THE FIVE PILLARS OF YOUR SOVEREIGNTY PLAN" color={stageCol}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '8px', marginBottom: '14px' }}>
+              {task.sovereigntyPillars.map((p, i) => (
+                <div key={i} style={{ background: T.bg3, border: `1px solid ${T.bg4}`,
+                  borderRadius: '8px', padding: '13px', display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                  <div style={{ fontSize: '22px', flexShrink: 0, marginTop: '2px' }}>{p.icon}</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                      <p style={{ fontSize: '13px', fontWeight: '700', color: stageCol }}>{p.title}</p>
+                      <span style={{ fontSize: '10px', fontWeight: '700', color: T.gold,
+                        background: `${T.gold}18`, padding: '2px 8px', borderRadius: '10px' }}>{p.tag}</span>
+                    </div>
+                    <p style={{ fontSize: '12px', color: T.mutedDk, lineHeight: 1.5 }}>{p.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {task.reviewRhythmItems?.length > 0 && (
+              <div style={{ background: `${stageCol}10`, border: `1px solid ${stageCol}33`,
+                borderRadius: '8px', padding: '13px' }}>
+                <p style={{ fontSize: '11px', fontWeight: '800', color: stageCol,
+                  letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '8px' }}>
+                  YOUR REVIEW RHYTHM
+                </p>
+                {task.reviewRhythmItems.map((item, i) => (
+                  <div key={i} style={{ display: 'flex', gap: '8px', marginBottom: '6px' }}>
+                    <span style={{ color: T.gold, fontWeight: '700', fontSize: '12px', flexShrink: 0 }}>✓</span>
+                    <p style={{ fontSize: '12px', color: T.muted, lineHeight: 1.5 }}>{item}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </TaskSection>
+        )}
+        {taskKey === '5.5' && task.contributionOptions?.length > 0 && (
+          <TaskSection label="CHOOSE YOUR CONTRIBUTION" color={stageCol}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '16px' }}>
+              {task.contributionOptions.map((c, i) => (
+                <div key={i} style={{ background: T.bg3, border: `1px solid ${T.bg4}`,
+                  borderRadius: '10px', padding: '13px' }}>
+                  <div style={{ fontSize: '20px', marginBottom: '5px' }}>{c.icon}</div>
+                  <p style={{ fontSize: '12px', fontWeight: '700', color: stageCol, marginBottom: '4px' }}>{c.title}</p>
+                  <p style={{ fontSize: '11px', color: T.mutedDk, lineHeight: 1.4 }}>{c.desc}</p>
+                </div>
+              ))}
+            </div>
+            {task.completionCardBody && (
+              <div style={{ background: 'linear-gradient(135deg, #4A235A, #1B2D5B)',
+                borderRadius: '14px', padding: '24px', textAlign: 'center' }}>
+                <div style={{ fontSize: '38px', marginBottom: '8px' }}>🏆</div>
+                <p style={{ fontSize: '16px', fontWeight: '700', color: T.gold, marginBottom: '10px' }}>
+                  The 5R Rebuild Method — Complete
+                </p>
+                {task.completionCardBody.split('\n\n').map((para, i) => (
+                  <p key={i} style={{ fontSize: '13px', color: 'rgba(255,255,255,0.85)',
+                    lineHeight: 1.7, marginBottom: '10px' }}>{para}</p>
+                ))}
+              </div>
+            )}
+          </TaskSection>
+        )}
+        {taskKey === '4.4' && task.programmeFeatures?.length > 0 && (
+          <TaskSection label="THE SOVEREIGNTY PROGRAMME" color={stageCol}>
+            <div style={{ background: '#1B2D5B', borderRadius: '14px', padding: '20px' }}>
+              <p style={{ fontSize: '10px', fontWeight: '700', color: 'rgba(255,255,255,0.6)',
+                textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '6px' }}>
+                RareSena — high-touch immigration and rebuild support
+              </p>
+              <p style={{ fontSize: '18px', fontWeight: '700', color: T.white, marginBottom: '12px' }}>Sovereignty Programme</p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '14px' }}>
+                {task.programmeFeatures.map((f, i) => (
+                  <div key={i} style={{ background: 'rgba(255,255,255,0.1)', borderRadius: '7px', padding: '10px 12px' }}>
+                    <p style={{ fontSize: '10px', fontWeight: '700', color: T.gold, textTransform: 'uppercase',
+                      letterSpacing: '0.05em', marginBottom: '4px' }}>{f.title}</p>
+                    <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.85)', lineHeight: 1.4 }}>{f.desc}</p>
+                  </div>
+                ))}
+              </div>
+              {task.programmePrice && (
+                <p style={{ fontSize: '20px', fontWeight: '700', color: T.gold }}>{task.programmePrice}</p>
+              )}
+              {task.programmePriceNote && (
+                <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', marginTop: '3px' }}>{task.programmePriceNote}</p>
+              )}
+              <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: '7px',
+                padding: '10px 12px', marginTop: '12px' }}>
+                <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.5 }}>
+                  ⚠ Immigration advice within the Sovereignty Programme is delivered by or under the supervision of OISC-regulated advisers. For formal legal representation, you will be referred to a regulated solicitor.
+                </p>
+              </div>
+            </div>
+          </TaskSection>
+        )}
+        {taskKey === '4.5' && task.projectExamples?.length > 0 && (
+          <TaskSection label="WHAT COULD YOUR PROJECT BE?" color={stageCol}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              {task.projectExamples.map((p, i) => (
+                <div key={i} style={{ background: T.bg3, border: `1px solid ${T.bg4}`,
+                  borderRadius: '10px', padding: '13px' }}>
+                  <p style={{ fontSize: '10px', fontWeight: '700', color: T.gold,
+                    textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '4px' }}>{p.track}</p>
+                  <p style={{ fontSize: '12px', fontWeight: '700', color: stageCol, marginBottom: '4px' }}>{p.title}</p>
+                  <p style={{ fontSize: '11px', color: T.mutedDk, lineHeight: 1.4 }}>{p.desc}</p>
+                </div>
+              ))}
+            </div>
+          </TaskSection>
+        )}
+        {taskKey === '3.5' && task.savingsStrategies?.length > 0 && (
+          <TaskSection label="SAVINGS STRATEGIES THAT WORK ON A UK REBUILD BUDGET" color={stageCol}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              {task.savingsStrategies.map((s, i) => (
+                <div key={i} style={{ background: T.bg3, border: `1px solid ${T.bg4}`,
+                  borderRadius: '8px', padding: '13px' }}>
+                  <p style={{ fontSize: '12px', fontWeight: '700', color: stageCol, marginBottom: '5px' }}>{s.title}</p>
+                  <p style={{ fontSize: '12px', color: T.mutedDk, lineHeight: 1.5 }}>{s.desc}</p>
+                </div>
+              ))}
+            </div>
           </TaskSection>
         )}
 

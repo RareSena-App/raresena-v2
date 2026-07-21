@@ -2,14 +2,14 @@ import { useState, useEffect } from 'react'
 import { useApp, T, supabase } from '../App.jsx'
 
 const PRESET_HABITS = [
-  { id: 'journal', icon: '📓', name: 'Morning journal', desc: '5 minutes of free writing on waking' },
-  { id: 'walk', icon: '🚶', name: '10-minute walk', desc: 'Outside, phone away' },
-  { id: 'task', icon: '✅', name: 'One task before 10am', desc: 'Complete one thing before anything else' },
-  { id: 'gratitude', icon: '🙏', name: 'Gratitude note', desc: 'One thing, written down' },
-  { id: 'water', icon: '💧', name: 'Drink water on waking', desc: 'Before coffee, before the phone' },
-  { id: 'read', icon: '📖', name: 'Read for 10 minutes', desc: 'Not news, not social media' },
-  { id: 'breathe', icon: '🧘', name: '5-minute breathing', desc: 'Box breathing or simple stillness' },
-  { id: 'plan', icon: '📋', name: 'Review your day', desc: '2 minutes on what matters today' },
+  { id: 'journal', icon: '📓', name: 'Morning journal', desc: '5 minutes. Write whatever comes. No editing.' },
+  { id: 'walk', icon: '🚶', name: '10-minute walk outside', desc: 'Fresh air and movement. Same route is fine.' },
+  { id: 'task', icon: '✅', name: 'One task before 10am', desc: 'The smallest meaningful thing. Done first.' },
+  { id: 'gratitude', icon: '❤️', name: 'One gratitude note', desc: 'One sentence. What was present today that was good.' },
+  { id: 'breathe', icon: '🌬️', name: '5 min breathwork / stillness', desc: 'Box breathing, meditation, or just sitting quietly.' },
+  { id: 'read', icon: '📖', name: 'Read for 15 minutes', desc: 'Anything. Fiction, non-fiction, news. Just reading.' },
+  { id: 'nophone', icon: '📵', name: 'No phone — first 20 min', desc: 'Own your morning before the world does.' },
+  { id: 'evening', icon: '🌙', name: 'Evening review — 5 min', desc: 'What happened today. One win. One thing to carry forward.' },
 ]
 
 export default function HabitSelector({ onSelect }) {
